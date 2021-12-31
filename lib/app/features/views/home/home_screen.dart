@@ -143,146 +143,152 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (_, userManager, planManager, __) {
           if (userManager.loading) {
             return HomeLoadingScreen();
-          }
-          return SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(top: 24),
-                    margin: const EdgeInsets.only(left: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+          } else {
+            return SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!userManager.loading) ...[
+                    Container(
+                        padding: const EdgeInsets.only(top: 24),
+                        margin: const EdgeInsets.only(left: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "Olá, ${capitalizeString(userManager.user.name)}",
-                              style: TextStyle(
-                                  fontFamily: AppFonts.gothamBold,
-                                  fontSize: 33,
-                                  color: AppColors.mainColor),
-                            ),
-                            Text(
-                              !dayHasTraining
-                                  ? homeMessage()
-                                  : 'Seu treino de hoje é:',
-                              style: TextStyle(
-                                  fontFamily: AppFonts.gothamThin,
-                                  fontSize: 20,
-                                  color: AppColors.white),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Olá, ${capitalizeString(userManager.user.name)}",
+                                  style: TextStyle(
+                                      fontFamily: AppFonts.gothamBold,
+                                      fontSize: 33,
+                                      color: AppColors.mainColor),
+                                ),
+                                Text(
+                                  !dayHasTraining
+                                      ? homeMessage()
+                                      : 'Seu treino de hoje é:',
+                                  style: TextStyle(
+                                      fontFamily: AppFonts.gothamThin,
+                                      fontSize: 20,
+                                      color: AppColors.white),
+                                ),
+                              ],
                             ),
                           ],
+                        )),
+                  ],
+                  if (!dayHasTraining) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24.0, left: 22.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.planilhas);
+                        },
+                        child: Text(
+                          'Acessar meus treinos',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: AppFonts.gothamBold,
+                              color: AppColors.mainColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                  SingleChildScrollView(
+                    controller: scrollController,
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: 5.0, top: dayHasTraining ? 12.0 : 0),
+                      child: Row(
+                        children: List.generate(planilhas.length, (index) {
+                          return PlanilhaContainer(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.exerciciosPlanilha,
+                                  arguments: ExerciciosPlanilhaArguments(
+                                    title: planilhas[index].title,
+                                    idPlanilha: planilhas[index].id,
+                                    idUser: userManager.user.id,
+                                  ));
+                            },
+                            title: planilhas[index].title,
+                            description: planilhas[index].description,
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 10.0),
+                    child: Column(
+                      children: [
+                        HomeButton(
+                          title: 'Biblioteca de Exercícios',
+                          description:
+                              'Uma lista com mais de 150 exercícios para você usar nos seus treinos e executá-los corretamente',
+                          isMainColor: true,
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, AppRoutes.listaExercicios);
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 14.0),
+                          child: HomeButton(
+                            title: 'Pesquisar Amigos',
+                            description:
+                                'Siga seus amigos e tenha acesso a suas listas de treinos disponíveis',
+                            isMainColor: false,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.buscarAmigos);
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 14.0),
+                          child: HomeButton(
+                            title: userManager.user.isPersonal
+                                ? "Meus Alunos"
+                                : "Meu Personal\nTrainer",
+                            description: userManager.user.isPersonal
+                                ? 'Controle a planilha de seus alunos ou adicione um aluno novo na sua área de Personal Trainer'
+                                : 'Adicione seu Personal Trainer para que ter seus treinos montados remotamente',
+                            isMainColor: true,
+                            onTap: () {
+                              if (userManager.user.isPersonal) {
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    AppRoutes.alunos, (route) => false);
+                              } else {
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    AppRoutes.personal, (route) => false);
+                              }
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 14.0, bottom: 8),
+                          child: HomeButton(
+                            title: 'Treinos Fáceis',
+                            description:
+                                'Lista de treinos prontos para você usar no seu dia a dia',
+                            isMainColor: false,
+                            onTap: () {},
+                          ),
                         ),
                       ],
-                    )),
-                if (!dayHasTraining) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24.0, left: 22.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, AppRoutes.planilhas);
-                      },
-                      child: Text(
-                        'Acessar meus treinos',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: AppFonts.gothamBold,
-                            color: AppColors.mainColor),
-                      ),
                     ),
                   ),
                 ],
-                SingleChildScrollView(
-                  controller: scrollController,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 5.0, top: dayHasTraining ? 12.0 : 0),
-                    child: Row(
-                      children: List.generate(planilhas.length, (index) {
-                        return PlanilhaContainer(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, AppRoutes.exerciciosPlanilha,
-                                arguments: ExerciciosPlanilhaArguments(
-                                    planilhas[index].title,
-                                    planilhas[index].id));
-                          },
-                          title: planilhas[index].title,
-                          description: planilhas[index].description,
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0, vertical: 10.0),
-                  child: Column(
-                    children: [
-                      HomeButton(
-                        title: 'Biblioteca de Exercícios',
-                        description:
-                            'Uma lista com mais de 150 exercícios para você usar nos seus treinos e executá-los corretamente',
-                        isMainColor: true,
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, AppRoutes.listaExercicios);
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 14.0),
-                        child: HomeButton(
-                          title: 'Pesquisar Amigos',
-                          description:
-                              'Siga seus amigos e tenha acesso a suas listas de treinos disponíveis',
-                          isMainColor: false,
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.planilhas);
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 14.0),
-                        child: HomeButton(
-                          title: userManager.user.isPersonal
-                              ? "Meus Alunos"
-                              : "Meu Personal\nTrainer",
-                          description: userManager.user.isPersonal
-                              ? 'Controle a planilha de seus alunos ou adicione um aluno novo na sua área de Personal Trainer'
-                              : 'Adicione seu Personal Trainer para que ter seus treinos montados remotamente',
-                          isMainColor: true,
-                          onTap: () {
-                            if (userManager.user.isPersonal) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, AppRoutes.alunos, (route) => false);
-                            } else {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  AppRoutes.personal, (route) => false);
-                            }
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 14.0, bottom: 8),
-                        child: HomeButton(
-                          title: 'Treinos Fáceis',
-                          description:
-                              'Lista de treinos prontos para você usar no seu dia a dia',
-                          isMainColor: false,
-                          onTap: () {},
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
+              ),
+            );
+          }
         },
       ),
     );

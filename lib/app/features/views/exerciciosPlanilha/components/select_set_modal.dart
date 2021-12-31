@@ -1,18 +1,23 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/lista_exercicios_modal.dart';
 import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
+import 'package:provider/provider.dart';
 
 class SelectSetModal extends StatelessWidget {
   final String idPlanilha;
   final String titlePlanilha;
   final int tamPlan;
+  final String idUser;
 
   SelectSetModal(
       {@required this.idPlanilha,
       @required this.titlePlanilha,
-      @required this.tamPlan});
+      @required this.tamPlan,
+      @required this.idUser});
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +34,17 @@ class SelectSetModal extends StatelessWidget {
                     topLeft: const Radius.circular(25.0),
                     topRight: const Radius.circular(25.0))),
             child: Padding(
-              padding: EdgeInsets.only(top: 18.0, left: 15),
+              padding: EdgeInsets.only(top: 18.0, left: 15, right: 8.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      await context
+                          .read<ExercisesManager>()
+                          .loadMyListExercises(
+                              idUser: context.read<UserManager>().user.id);
                       showModalBottomSheet(
                           backgroundColor: Colors.transparent,
                           isScrollControlled: true,
@@ -44,6 +53,7 @@ class SelectSetModal extends StatelessWidget {
                                 titlePlanilha: titlePlanilha,
                                 idPlanilha: idPlanilha,
                                 tamPlan: tamPlan,
+                                idUser: idUser,
                               ));
                     },
                     child: Container(
@@ -82,7 +92,12 @@ class SelectSetModal extends StatelessWidget {
                     thickness: 2,
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      await context
+                          .read<ExercisesManager>()
+                          .loadMyListExercises(
+                              idUser: context.read<UserManager>().user.id);
+                    },
                     child: Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,

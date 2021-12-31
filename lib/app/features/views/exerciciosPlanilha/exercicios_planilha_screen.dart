@@ -16,8 +16,16 @@ import 'components/bi_set_card.dart';
 class ExerciciosPlanilhaArguments {
   final String title;
   final String idPlanilha;
+  final String idUser;
+  final bool isPersonalAcess;
+  final bool isFriendAcess;
 
-  ExerciciosPlanilhaArguments(this.title, this.idPlanilha);
+  ExerciciosPlanilhaArguments(
+      {this.title,
+      this.idPlanilha,
+      this.idUser,
+      this.isPersonalAcess = false,
+      this.isFriendAcess = false});
 }
 
 class ExerciciosPlanilhaScreen extends StatefulWidget {
@@ -93,9 +101,15 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
     return Consumer<ExerciciosPlanilhaManager>(builder: (_, exercicios, __) {
       return WillPopScope(
         onWillPop: () async {
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.planilhas, (route) => false);
-          return true;
+          if (widget.arguments.isPersonalAcess ||
+              widget.arguments.isFriendAcess) {
+            Navigator.pop(context);
+            return true;
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppRoutes.planilhas, (route) => false);
+            return true;
+          }
         },
         child: Scaffold(
           appBar: AppBar(
@@ -104,26 +118,29 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
             elevation: 25,
             centerTitle: false,
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    size: 28,
+              if (!widget.arguments.isFriendAcess) ...[
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.add_circle_outline,
+                      size: 28,
+                    ),
+                    tooltip: 'Adicionar Novo Exercício',
+                    onPressed: () {
+                      showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (_) => SelectSetModal(
+                              idUser: widget.arguments.idUser,
+                              titlePlanilha: widget.arguments.title,
+                              idPlanilha: widget.arguments.idPlanilha,
+                              tamPlan: tamPlan));
+                    },
                   ),
-                  tooltip: 'Adicionar Novo Exercício',
-                  onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (_) => SelectSetModal(
-                            titlePlanilha: widget.arguments.title,
-                            idPlanilha: widget.arguments.idPlanilha,
-                            tamPlan: tamPlan));
-                  },
                 ),
-              ),
+              ]
             ],
             title: Text(
               widget.arguments.title,
@@ -181,8 +198,11 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                             enableDrag: false,
                                             context: context,
                                             builder: (_) => ExercicioViewModal(
-                                                exercicio:
-                                                    snapshot.data[index]));
+                                                  exercicio:
+                                                      snapshot.data[index],
+                                                  isFriendAcess: widget
+                                                      .arguments.isFriendAcess,
+                                                ));
                                       },
                                     )
                                   : BiSetCard(
@@ -190,7 +210,8 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                       idPlanilha: widget.arguments.idPlanilha,
                                       exercicio: snapshot.data[index],
                                       isChanging: false,
-                                    );
+                                      isFriendAcess:
+                                          widget.arguments.isFriendAcess);
                             }),
                           ),
                         ),

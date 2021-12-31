@@ -7,10 +7,10 @@ import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 
 class CardAluno extends StatelessWidget {
   final Aluno aluno;
+  final Function excluirAluno;
+  final Function acessarPlanilhas;
 
-  const CardAluno({
-    this.aluno,
-  });
+  const CardAluno({this.aluno, this.excluirAluno, this.acessarPlanilhas});
 
   @override
   Widget build(BuildContext context) {
@@ -81,13 +81,13 @@ class CardAluno extends StatelessWidget {
                 text: 'Excluir Aluno',
                 color: Colors.red,
                 textColor: AppColors.white,
-                onTap: () {}),
+                onTap: excluirAluno),
             CustomButton(
                 width: 140,
                 text: 'Acessar Planilhas',
                 color: AppColors.grey,
                 textColor: AppColors.white,
-                onTap: () {})
+                onTap: acessarPlanilhas)
           ],
         )
       ]),

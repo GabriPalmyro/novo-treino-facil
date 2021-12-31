@@ -50,7 +50,7 @@ def keystoreProperties = new Properties()
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "br.com.palmyro.treino_facil"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 14
         versionName "2.0.14"

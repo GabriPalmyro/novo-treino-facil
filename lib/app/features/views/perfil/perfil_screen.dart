@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
+import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/perfil/components/card_option.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
-class MeuPerfiLScreen extends StatelessWidget {
+class MeuPerfiLScreen extends StatefulWidget {
+  @override
+  _MeuPerfiLScreenState createState() => _MeuPerfiLScreenState();
+}
+
+class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
+  @override
+  void initState() {
+    super.initState();
+    carregarMeusExercicios();
+  }
+
+  Future<void> carregarMeusExercicios() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String id = context.read<UserManager>().user.id;
+      await context.read<ExercisesManager>().loadMyListExercises(idUser: id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -23,7 +43,7 @@ class MeuPerfiLScreen extends StatelessWidget {
         child: Scaffold(
           drawer: CustomDrawer(pageNow: 5),
           appBar: AppBar(
-            toolbarHeight: 70,
+            toolbarHeight: 60,
             shadowColor: Colors.grey[850],
             elevation: 25,
             centerTitle: true,
@@ -35,8 +55,10 @@ class MeuPerfiLScreen extends StatelessWidget {
                     Icons.settings,
                     size: 28,
                   ),
-                  tooltip: 'Adicionar Nova Planiha',
-                  onPressed: () {},
+                  tooltip: 'Configurações',
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.preferencias);
+                  },
                 ),
               ),
             ],
@@ -51,6 +73,7 @@ class MeuPerfiLScreen extends StatelessWidget {
           ),
           backgroundColor: const Color(0xff313131),
           body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: [
                 Container(
@@ -192,15 +215,33 @@ class MeuPerfiLScreen extends StatelessWidget {
                             text: 'Editar Perfil',
                             color: AppColors.grey300,
                             textColor: AppColors.white,
-                            onTap: () {}),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.editarPerfil);
+                            }),
                       )
                     ],
                   ),
                 ),
-                CardOption(title: 'Minha Conta', onTap: () {}),
-                CardOption(title: 'Meus Exercícios', onTap: () {}),
-                CardOption(title: 'Alterar Senha', onTap: () {}),
-                CardOption(title: 'Preferências', onTap: () {}),
+                //CardOption(title: 'Minha Conta', onTap: () {}),
+                CardOption(
+                    title: 'Meus Exercícios',
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.meusExercicios);
+                    }),
+                CardOption(
+                    title: 'Alterar Senha',
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.preferencias);
+                    }),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: CardOption(
+                      title: 'Preferências',
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.preferencias);
+                      }),
+                ),
               ],
             ),
           ),

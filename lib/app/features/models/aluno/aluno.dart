@@ -28,7 +28,7 @@ class Aluno {
   factory Aluno.fromMap(Map<String, dynamic> map) {
     return Aluno(
       id: map['id'],
-      alunoId: map['client_id'],
+      alunoId: map['client_Id'],
       alunoEmail: map['client_email'],
       alunoName: map['client_name'],
       alunoNumero: map['client_phoneNumber'],

@@ -15,13 +15,15 @@ class BiSetCard extends StatefulWidget {
   final BiSetExercise exercicio;
   final bool isChanging;
   final Function onTap;
+  final bool isFriendAcess;
 
   const BiSetCard(
       {this.index,
       this.idPlanilha,
       this.exercicio,
       this.isChanging,
-      this.onTap});
+      this.onTap,
+      this.isFriendAcess = false});
 
   @override
   _BiSetCardState createState() => _BiSetCardState();
@@ -134,7 +136,10 @@ class _BiSetCardState extends State<BiSetCard> {
                                           enableDrag: false,
                                           context: context,
                                           builder: (_) => ExercicioViewModal(
-                                              exercicio: exercicio));
+                                                exercicio: exercicio,
+                                                isFriendAcess:
+                                                    widget.isFriendAcess,
+                                              ));
                                     } catch (e) {
                                       debugPrint(e.toString());
                                     }

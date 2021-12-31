@@ -11,12 +11,14 @@ class LoginTextFormField extends StatefulWidget {
   final Color labelColor;
   final String labelText;
   final Function(String) validator;
+  final Function(String) onFieldSubmitted;
   final List<TextInputFormatter> inputFormatters;
   final Widget prefixIcon;
   final Widget suffixIcon;
   final bool isObscure;
   final bool enable;
   final double width;
+  final FocusNode focusNode;
 
   const LoginTextFormField(
       {this.textInputType,
@@ -30,7 +32,9 @@ class LoginTextFormField extends StatefulWidget {
       this.validator,
       this.inputFormatters,
       this.enable,
-      this.width});
+      this.width,
+      this.focusNode,
+      this.onFieldSubmitted});
 
   @override
   _LoginTextFormFieldState createState() => _LoginTextFormFieldState();
@@ -50,6 +54,8 @@ class _LoginTextFormFieldState extends State<LoginTextFormField> {
           controller: widget.textController,
           obscureText: widget.isObscure,
           enabled: widget.enable,
+          onFieldSubmitted: widget.onFieldSubmitted,
+          focusNode: widget.focusNode,
           style: TextStyle(
               fontFamily: AppFonts.gotham,
               color: widget.textColor,

@@ -12,12 +12,16 @@ class CustomButton extends StatelessWidget {
   final Function onTap;
   final double width;
   final double height;
+  final double verticalPad;
+  final double horizontalPad;
 
   const CustomButton(
       {@required this.text,
       @required this.color,
       @required this.textColor,
       @required this.onTap,
+      this.verticalPad = 12,
+      this.horizontalPad = 10,
       this.height = 40,
       this.width = 130});
 
@@ -26,7 +30,8 @@ class CustomButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+        padding: EdgeInsets.symmetric(
+            vertical: verticalPad, horizontal: horizontalPad),
         decoration:
             BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
         child: Center(

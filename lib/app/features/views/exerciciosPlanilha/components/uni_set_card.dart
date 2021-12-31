@@ -9,8 +9,14 @@ class UniSetCard extends StatelessWidget {
   final bool isChanging;
   final ExerciciosPlanilha exercicio;
   final Function onTap;
+  final bool isFriendAcess;
 
-  const UniSetCard({this.index, this.isChanging, this.exercicio, this.onTap});
+  const UniSetCard(
+      {this.index,
+      this.isChanging,
+      this.exercicio,
+      this.onTap,
+      this.isFriendAcess = false});
 
   @override
   Widget build(BuildContext context) {

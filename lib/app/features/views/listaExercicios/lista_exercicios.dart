@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 import 'components/card_exercicio.dart';
@@ -14,6 +17,32 @@ class ListaExerciciosScreen extends StatefulWidget {
 }
 
 class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
+  @override
+  void initState() {
+    super.initState();
+    carregarMeusExercicios();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    context.read<ExercisesManager>().searchResultList(
+        searchController: _searchController.text, selectedType: _selTypeSearch);
+  }
+
+  Future<void> carregarMeusExercicios() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String id = context.read<UserManager>().user.id;
+      await context.read<ExercisesManager>().loadMyListExercises(idUser: id);
+    });
+  }
+
   bool _isSearching = false;
   final _searchController = TextEditingController();
 
@@ -31,13 +60,15 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
       ),
       enableInteractiveSelection: true,
       decoration: InputDecoration(
-          hintText: _selTypeSearch == "title"
-              ? "Procure um exercício"
-              : _selTypeSearch == "home_exe"
-                  ? "Fazer em casa"
-                  : _selTypeSearch == "muscleId"
-                      ? "Procure um músculo"
-                      : "Procure em $_selTypeSearch",
+          hintText: _selTypeSearch == "mines"
+              ? "Meus Exercícios"
+              : _selTypeSearch == "title"
+                  ? "Procure um exercício"
+                  : _selTypeSearch == "home_exe"
+                      ? "Fazer em casa"
+                      : _selTypeSearch == "muscleId"
+                          ? "Procure um músculo"
+                          : "Procure em $_selTypeSearch",
           border: InputBorder.none,
           hintStyle: TextStyle(
               fontSize: 18, color: Colors.grey[900].withOpacity(0.9))),
@@ -80,6 +111,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   }
 
   List filters = [
+    "mines",
     "title",
     "home_exe",
     "abdomen",
@@ -92,6 +124,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   ];
 
   List titles = [
+    "Meus Exercícios",
     "Título",
     "Fazer em casa",
     "Abdômen",
@@ -144,7 +177,8 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                               setState(() {
                                 _selTypeSearch = filters[index];
                                 exercicios.searchResultList(
-                                    _searchController.text, _selTypeSearch);
+                                    searchController: _searchController.text,
+                                    selectedType: _selTypeSearch);
                               });
                             },
                             filter: filters[index],

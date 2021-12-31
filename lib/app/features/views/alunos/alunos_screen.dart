@@ -6,6 +6,7 @@ import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/alunos/components/aluno_card.dart';
 import 'package:tabela_treino/app/features/views/alunos/components/novo_aluno_modal.dart';
+import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class AlunosScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class AlunosScreen extends StatefulWidget {
 
 class _AlunosScreenState extends State<AlunosScreen>
     with SingleTickerProviderStateMixin {
-  bool isExpanded = false;
+  bool isExpanded = true;
   bool loading = true;
 
   AnimationController expandController;
@@ -154,10 +155,13 @@ class _AlunosScreenState extends State<AlunosScreen>
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Expanded(
                                       flex: 80,
                                       child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.0),
                                         child: AutoSizeText(
                                             'Ver Lista de Alunos',
                                             maxLines: 1,
@@ -207,6 +211,21 @@ class _AlunosScreenState extends State<AlunosScreen>
                                         children: List.generate(
                                             userManager.alunos.length, (index) {
                                           return CardAluno(
+                                              acessarPlanilhas: () {
+                                                Navigator.pushNamed(context,
+                                                    AppRoutes.planilhasAluno,
+                                                    arguments:
+                                                        PlanilhaAlunoArguments(
+                                                            nomeUser:
+                                                                userManager
+                                                                    .alunos[
+                                                                        index]
+                                                                    .alunoName,
+                                                            idUser: userManager
+                                                                .alunos[index]
+                                                                .alunoId));
+                                              },
+                                              excluirAluno: () {},
                                               aluno: userManager.alunos[index]);
                                         }),
                                       ),

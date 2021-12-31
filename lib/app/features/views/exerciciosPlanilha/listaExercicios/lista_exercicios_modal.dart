@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
@@ -10,11 +11,13 @@ class ListaExerciciosModal extends StatefulWidget {
   final String idPlanilha;
   final String titlePlanilha;
   final int tamPlan;
+  final String idUser;
 
   ListaExerciciosModal(
       {@required this.idPlanilha,
       @required this.titlePlanilha,
-      @required this.tamPlan});
+      @required this.tamPlan,
+      @required this.idUser});
 
   @override
   _ListaExerciciosModalState createState() => _ListaExerciciosModalState();
@@ -38,13 +41,15 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
       ),
       enableInteractiveSelection: true,
       decoration: InputDecoration(
-          hintText: _selTypeSearch == "title"
-              ? "Procure um exercício"
-              : _selTypeSearch == "home_exe"
-                  ? "Fazer em casa"
-                  : _selTypeSearch == "muscleId"
-                      ? "Procure um músculo"
-                      : "Procure em $_selTypeSearch",
+          hintText: _selTypeSearch == "mines"
+              ? "Meus Exercícios"
+              : _selTypeSearch == "title"
+                  ? "Procure um exercício"
+                  : _selTypeSearch == "home_exe"
+                      ? "Fazer em casa"
+                      : _selTypeSearch == "muscleId"
+                          ? "Procure um músculo"
+                          : "Procure em $_selTypeSearch",
           border: InputBorder.none,
           hintStyle: TextStyle(
               fontSize: 18, color: Colors.grey[900].withOpacity(0.9))),
@@ -87,6 +92,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
   }
 
   List filters = [
+    "mines",
     "title",
     "home_exe",
     "abdomen",
@@ -99,6 +105,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
   ];
 
   List titles = [
+    "Meus Exercícios",
     "Título",
     "Fazer em casa",
     "Abdômen",
@@ -147,9 +154,12 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 12, bottom: 8),
-                  child: Text(
+                  padding: const EdgeInsets.only(
+                      top: 12, bottom: 8, left: 12.0, right: 12.0),
+                  child: AutoSizeText(
                     'Selecione o exercício a ser adicionado:',
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
                       fontFamily: AppFonts.gothamBold,
@@ -174,7 +184,8 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                 setState(() {
                                   _selTypeSearch = filters[index];
                                   exercicios.searchResultList(
-                                      _searchController.text, _selTypeSearch);
+                                      searchController: _searchController.text,
+                                      selectedType: _selTypeSearch);
                                 });
                               },
                               filter: filters[index],
@@ -195,6 +206,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                           return CardExercicio(
                             index: index,
                             onTap: () {},
+                            idUser: widget.idUser,
                             titlePlanilha: widget.titlePlanilha,
                             idPlanilha: widget.idPlanilha,
                             tamPlan: widget.tamPlan,

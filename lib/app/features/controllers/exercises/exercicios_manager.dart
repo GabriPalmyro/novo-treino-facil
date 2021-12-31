@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
@@ -8,12 +10,13 @@ class ExercisesManager extends ChangeNotifier {
   }
 
   List<Exercise> listaExercicios = [];
+  List<Exercise> listaMeusExercicios = [];
   List<Exercise> resultList = [];
 
 // METHOD 1
   Future<void> loadListExercises() async {
     Map<String, dynamic> data = {};
-
+    listaExercicios = [];
     debugPrint('LOADING LIST EXERCISES');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
@@ -36,7 +39,7 @@ class ExercisesManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void searchResultList(String searchController, String selectedType) {
+  void searchResultList({String searchController, String selectedType}) {
     List<Exercise> showResults = [];
 
     //se o controlador não estiver vazio
@@ -57,6 +60,7 @@ class ExercisesManager extends ChangeNotifier {
           //se o tipo for "muscleId"
         } else if (selectedType == "muscleId") {
           if (muscleId.startsWith(searchController.toUpperCase())) {
+            log('adicionando ${tripSnapshot.toString()}');
             showResults.add(tripSnapshot);
           }
         } else if (selectedType == "title") {
@@ -64,6 +68,14 @@ class ExercisesManager extends ChangeNotifier {
           if (title.startsWith(searchController.toUpperCase())) {
             showResults
                 .add(tripSnapshot); //adiciona apenas os procurados na lista
+          }
+        } else if (selectedType == "mines") {
+          for (var meusExercicios in listaMeusExercicios) {
+            if (meusExercicios.title
+                .startsWith(searchController.toUpperCase())) {
+              showResults
+                  .add(meusExercicios); //adiciona apenas os procurados na lista
+            }
           }
         } else {
           if (title.startsWith(searchController.toUpperCase()) &&
@@ -74,6 +86,8 @@ class ExercisesManager extends ChangeNotifier {
         }
       }
       //se o controlador estiver vazio de inicio e o tipo for "home_exe"
+    } else if (selectedType == "mines") {
+      showResults = listaMeusExercicios;
     } else if (selectedType == "home_exe") {
       //se o tipo for "home_exe"
       for (var tripSnapshot in listaExercicios) {
@@ -96,6 +110,31 @@ class ExercisesManager extends ChangeNotifier {
       }
     }
     resultList = showResults;
+    notifyListeners();
+  }
+
+  Future<void> loadMyListExercises({String idUser}) async {
+    Map<String, dynamic> data = {};
+    listaMeusExercicios = [];
+    try {
+      var queryWorksheet = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(idUser)
+          .collection("exercicios")
+          .orderBy('title')
+          .get();
+
+      queryWorksheet.docs.forEach((element) {
+        data = element.data();
+        data['id'] = element.id;
+        listaMeusExercicios.add(Exercise.fromMap(data));
+      });
+
+      debugPrint('MY LIST EXERCISE LOAD SUCESS');
+    } catch (e) {
+      listaMeusExercicios = [];
+      debugPrint('ERROR LOADING: ' + e.toString());
+    }
     notifyListeners();
   }
 }

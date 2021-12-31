@@ -10,6 +10,8 @@ import 'components/info_dialog.dart';
 import 'components/nova_planilha_modal.dart';
 
 class PlanilhaScreen extends StatefulWidget {
+  final String idUser;
+  PlanilhaScreen({@required this.idUser});
   @override
   _PlanilhaScreenState createState() => _PlanilhaScreenState();
 }
@@ -86,8 +88,10 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                     onTap: () {
                       Navigator.pushNamed(context, AppRoutes.exerciciosPlanilha,
                           arguments: ExerciciosPlanilhaArguments(
-                              planilhas.listaPlanilhas[index].title,
-                              planilhas.listaPlanilhas[index].id));
+                            title: planilhas.listaPlanilhas[index].title,
+                            idPlanilha: planilhas.listaPlanilhas[index].id,
+                            idUser: widget.idUser,
+                          ));
                     },
                     planilha: planilhas.listaPlanilhas[index],
                     index: index,

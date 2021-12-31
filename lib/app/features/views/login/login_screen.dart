@@ -59,6 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: AppColors.white,
                         )),
                     validator: (text) {},
+                    onFieldSubmitted: (text) {
+                      passNode.requestFocus();
+                    },
                   )),
                 ),
                 Padding(
@@ -73,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelColor: AppColors.mainColor,
                     labelText: 'Senha',
                     isObscure: _obscureTextPass,
+                    focusNode: passNode,
                     prefixIcon: Padding(
                         padding: EdgeInsets.only(right: 10.0),
                         child: Icon(
@@ -193,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.pushNamed(context, AppRoutes.register);
                         },
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             AutoSizeText(
                               "Ainda não possui uma conta?",
@@ -201,18 +205,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: TextStyle(
                                   color: AppColors.white,
                                   fontFamily: AppFonts.gotham,
-                                  fontSize: 14),
+                                  fontSize: 12),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: AutoSizeText(
-                                "Registre-se aqui",
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: AppColors.mainColor,
-                                    fontFamily: AppFonts.gotham,
-                                    fontSize: 16),
-                              ),
+                            AutoSizeText(
+                              "Registre-se aqui",
+                              maxLines: 1,
+                              style: TextStyle(
+                                  color: AppColors.mainColor,
+                                  fontFamily: AppFonts.gotham,
+                                  fontSize: 16),
                             ),
                           ],
                         )),
@@ -235,7 +236,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onSucess() {
-    mostrarSnackBar('Vamos lá!', Colors.green);
     Navigator.pushNamedAndRemoveUntil(
         context, AppRoutes.home, (route) => false);
   }

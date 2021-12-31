@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
@@ -15,10 +18,13 @@ class CardExercicio extends StatefulWidget {
   final String titlePlanilha;
   final int tamPlan;
   final Function onTap;
+  final String idUser;
+
   const CardExercicio(
       {this.index,
       @required this.exercise,
       this.onTap,
+      @required this.idUser,
       @required this.titlePlanilha,
       @required this.idPlanilha,
       @required this.tamPlan});
@@ -29,6 +35,8 @@ class CardExercicio extends StatefulWidget {
 
 class _CardExercicioState extends State<CardExercicio>
     with SingleTickerProviderStateMixin {
+  Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
+
   bool onHover = false;
   bool isExpanded = false;
 
@@ -195,12 +203,20 @@ class _CardExercicioState extends State<CardExercicio>
                             child: CustomButton(
                               color: AppColors.grey,
                               onTap: () {
+                                log(widget.idUser != _auth.currentUser.uid
+                                    ? true.toString()
+                                    : false.toString());
                                 showModalBottomSheet(
                                     backgroundColor: Colors.transparent,
                                     isScrollControlled: true,
                                     enableDrag: false,
                                     context: context,
                                     builder: (_) => ExercicioAddModal(
+                                        idUser: widget.idUser,
+                                        isPersonalManag: widget.idUser !=
+                                                _auth.currentUser.uid
+                                            ? true
+                                            : false,
                                         titlePlanilha: widget.titlePlanilha,
                                         idPlanilha: widget.idPlanilha,
                                         tamPlan: widget.tamPlan,
