@@ -141,18 +141,18 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
                       pageController: _pageController,
                       video: _video,
                       pickVideo: pickVideo,
-                      enviarExercicio: () {
+                      enviarExercicio: () async {
                         if (_titleController.text.isNotEmpty &&
-                            _video == null) {
-                          userManager.createNewExe(
+                            _video != null) {
+                          await userManager.createNewExe(
                               video: _video,
                               title: _titleController.text,
                               muscleText: agrupamentoMusc,
                               level: dificuldade,
                               homeExe: isHomeExe,
                               onSucess: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, AppRoutes.home, (route) => false);
                               });
                         } else {
                           showCustomAlertDialog(

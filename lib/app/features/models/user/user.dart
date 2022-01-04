@@ -1,3 +1,5 @@
+import 'package:tabela_treino/app/core/core.dart';
+
 class User {
   String id;
   String nickname;
@@ -58,14 +60,14 @@ class User {
     return User(
       id: map['id'] as String ?? '',
       nickname: map['nickname'] as String ?? '',
-      name: map['name'] as String,
-      lastName: map['last_name'] as String,
-      email: map['email'] as String,
-      phoneNumber: map['phone_number'] as String,
-      photoURL: map['photoURL'] as String,
-      sex: map['sexo'] as String,
-      isPersonal: map['personal_type'] as bool,
-      isPayApp: map['payApp'] as bool,
+      name: map['name'] as String ?? '',
+      lastName: map['last_name'] as String ?? '',
+      email: map['email'] as String ?? '',
+      phoneNumber: map['phone_number'] as String ?? '',
+      photoURL: map['photoURL'] as String ?? AppTexts.photoURL,
+      sex: map['sexo'] as String ?? '',
+      isPersonal: map['personal_type'] as bool ?? false,
+      isPayApp: map['payApp'] as bool ?? false,
       seguidores: map['seguidores'] as int ?? 0,
       seguindo: map['seguindo'] as int ?? 0,
       mostrarPlanilhasPerfil: map['mostrar_planilhas_perfil'] as bool ?? true,

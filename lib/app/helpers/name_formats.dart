@@ -1,3 +1,8 @@
 String capitalizeString(String fullName) {
-  return fullName[0].toUpperCase() + fullName.substring(1);
+  if (fullName == null)
+    return '';
+  else if (fullName.isEmpty)
+    return '';
+  else
+    return fullName[0].toUpperCase() + fullName.substring(1);
 }

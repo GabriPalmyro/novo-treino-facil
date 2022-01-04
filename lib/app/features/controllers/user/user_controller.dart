@@ -72,15 +72,19 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<void> logout({VoidCallback onSucess}) async {
+  Future<void> logout() async {
     loading = true;
+    User userTemp = user;
+
     try {
-      await _auth.signOut();
-      onSucess();
       user = User();
+      await Future.delayed(Duration(milliseconds: 500));
+      await _auth.signOut();
       firebaseUser = null;
       loading = false;
+      user = User();
     } catch (e) {
+      user = userTemp;
       loading = false;
       debugPrint(e.toString());
     }
@@ -407,6 +411,7 @@ class UserManager extends ChangeNotifier {
       int level,
       bool homeExe,
       Function onSucess}) async {
+    log('Enviando!');
     await FirebaseStorage.instance
         .refFromURL(
             "gs://treino-facil-22856.appspot.com/exercicios_compartilhados/${user.id}/exercicios/$muscleText")
@@ -433,13 +438,16 @@ class UserManager extends ChangeNotifier {
               .then((value) {
             print("Succesfuly Uploaded");
             onSucess();
+            return null;
           }).catchError((error) {
             print(error);
+            return error.toString();
           });
         });
       }
     }).catchError((error) {
       print(error);
+      return error.toString();
     });
   }
 }

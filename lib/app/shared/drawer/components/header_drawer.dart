@@ -23,44 +23,46 @@ class HeaderDrawer extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.4),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // changes position of shadow
+              if (photoURL.isNotEmpty) ...[
+                Container(
+                  decoration: new BoxDecoration(
+                    borderRadius: BorderRadius.circular(60),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.4),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(60),
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: new BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Image.network(photoURL, fit: BoxFit.fitWidth,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+                        return Center(child: CircularProgressIndicator());
+                      }),
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: Container(
-                    height: 80,
-                    width: 80,
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: Image.network(photoURL, fit: BoxFit.fitWidth,
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      }
-                      return Center(child: CircularProgressIndicator());
-                    }),
                   ),
                 ),
-              ),
+              ],
               SizedBox(
                 height: 20,
               ),

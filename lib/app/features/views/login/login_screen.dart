@@ -77,6 +77,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: 'Senha',
                     isObscure: _obscureTextPass,
                     focusNode: passNode,
+                    onFieldSubmitted: (text) async {
+                      if (_formKey.currentState.validate()) {
+                        setState(() {
+                          _isEnable = false;
+                        });
+                        await userManager.signIn(_emailController.text,
+                            _passController.text, _onSucess, _onFailed);
+                        setState(() {
+                          _isEnable = true;
+                        });
+                      }
+                    },
                     prefixIcon: Padding(
                         padding: EdgeInsets.only(right: 10.0),
                         child: Icon(

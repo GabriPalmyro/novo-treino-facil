@@ -9,7 +9,7 @@ import 'package:tabela_treino/app/features/views/home/components/planilha_widget
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import '/app/core/core.dart';
 import '/app/features/controllers/user/user_controller.dart';
-import '/app/features/views/home/components/loading_screen.dart';
+import '../../../shared/shimmer/home/home_shimmer.dart';
 import '/app/helpers/name_formats.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     filterDay();
   }
+
+  bool _isLoading = false;
 
   ScrollController scrollController = ScrollController();
 
@@ -141,8 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xff313131),
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
-          if (userManager.loading) {
-            return HomeLoadingScreen();
+          if (userManager.loading || _isLoading) {
+            return HomeLoadingShimmer();
           } else {
             return SingleChildScrollView(
               physics: BouncingScrollPhysics(),
@@ -254,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 14.0),
                           child: HomeButton(
-                            title: userManager.user.isPersonal
+                            title: userManager.user.isPersonal ?? false
                                 ? "Meus Alunos"
                                 : "Meu Personal\nTrainer",
                             description: userManager.user.isPersonal

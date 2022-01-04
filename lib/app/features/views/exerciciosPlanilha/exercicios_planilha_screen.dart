@@ -10,6 +10,7 @@ import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/exercicio_modal.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/select_set_modal.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/uni_set_card.dart';
+import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
 
 import 'components/bi_set_card.dart';
 
@@ -155,67 +156,46 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
           body: FutureBuilder<List>(
               future: loadExerciciosPlanilha(),
               builder: (context, snapshot) {
-                return snapshot.connectionState == ConnectionState.waiting
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Align(
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator()),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 24.0),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Buscando informações do seu treino',
-                                //textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: AppColors.mainColor,
-                                    fontFamily: AppFonts.gothamBook,
-                                    fontSize: 16),
-                              ),
-                            ),
-                          )
-                        ],
-                      )
-                    : SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 70.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children:
-                                List.generate(snapshot.data.length, (index) {
-                              return snapshot.data[index].setType == "uniset"
-                                  ? UniSetCard(
-                                      index: index,
-                                      isChanging: false,
-                                      exercicio: snapshot.data[index],
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            isScrollControlled: true,
-                                            enableDrag: false,
-                                            context: context,
-                                            builder: (_) => ExercicioViewModal(
-                                                  exercicio:
-                                                      snapshot.data[index],
-                                                  isFriendAcess: widget
-                                                      .arguments.isFriendAcess,
-                                                ));
-                                      },
-                                    )
-                                  : BiSetCard(
-                                      index: index,
-                                      idPlanilha: widget.arguments.idPlanilha,
-                                      exercicio: snapshot.data[index],
-                                      isChanging: false,
-                                      isFriendAcess:
-                                          widget.arguments.isFriendAcess);
-                            }),
-                          ),
-                        ),
-                      );
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return ExerciciosPlanilhaShimmer();
+                } else {
+                  return SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 70.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: List.generate(snapshot.data.length, (index) {
+                          return snapshot.data[index].setType == "uniset"
+                              ? UniSetCard(
+                                  index: index,
+                                  isChanging: false,
+                                  exercicio: snapshot.data[index],
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        enableDrag: false,
+                                        context: context,
+                                        builder: (_) => ExercicioViewModal(
+                                              exercicio: snapshot.data[index],
+                                              isFriendAcess: widget
+                                                  .arguments.isFriendAcess,
+                                            ));
+                                  },
+                                )
+                              : BiSetCard(
+                                  index: index,
+                                  idPlanilha: widget.arguments.idPlanilha,
+                                  exercicio: snapshot.data[index],
+                                  isChanging: false,
+                                  isFriendAcess:
+                                      widget.arguments.isFriendAcess);
+                        }),
+                      ),
+                    ),
+                  );
+                }
               }),
         ),
       );
