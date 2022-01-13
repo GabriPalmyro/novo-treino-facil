@@ -113,7 +113,7 @@ class ExercisesManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadMyListExercises({String idUser}) async {
+  Future<void> loadMyListExercises({@required String idUser}) async {
     Map<String, dynamic> data = {};
     listaMeusExercicios = [];
     try {
@@ -125,11 +125,13 @@ class ExercisesManager extends ChangeNotifier {
           .get();
 
       queryWorksheet.docs.forEach((element) {
+        debugPrint(element.data.toString());
         data = element.data();
         data['id'] = element.id;
         listaMeusExercicios.add(Exercise.fromMap(data));
       });
 
+      debugPrint(listaMeusExercicios.toString());
       debugPrint('MY LIST EXERCISE LOAD SUCESS');
     } catch (e) {
       listaMeusExercicios = [];

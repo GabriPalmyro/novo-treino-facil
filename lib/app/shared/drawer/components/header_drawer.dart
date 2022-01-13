@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 class HeaderDrawer extends StatelessWidget {
   final String fullName;
@@ -17,7 +19,7 @@ class HeaderDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.only(top: 24.0, left: 12.0, right: 12.0),
+        padding: const EdgeInsets.only(top: 50.0, left: 12.0, right: 12.0),
         child: GestureDetector(
           onTap: onTap,
           child: Column(
@@ -51,13 +53,41 @@ class HeaderDrawer extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Image.network(photoURL, fit: BoxFit.fitWidth,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent loadingProgress) {
+                      child:
+                          // CachedNetworkImage(
+                          //     imageUrl: photoURL,
+                          //     fit: BoxFit.fitWidth,
+                          //     // progressIndicatorBuilder: (_, url, download) {
+                          //     //   debugPrint(download.downloaded.toString());
+                          //     //   debugPrint(url.toString());
+                          //     //   return Center(child: CircularProgressIndicator());
+                          //     // },
+                          //     errorWidget: (context, url, error) =>
+                          //         Text("$error"),
+                          //     placeholder: (context, url) => Text("Loading $url"),
+                          //     imageBuilder: (context, imageProvider) => Container(
+                          //           width: double.infinity,
+                          //           height: 150,
+                          //           decoration: BoxDecoration(
+                          //             image: DecorationImage(
+                          //                 image: imageProvider,
+                          //                 fit: BoxFit.fitWidth),
+                          //           ),
+                          //         ))
+                          Image.network(photoURL, fit: BoxFit.fitWidth,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
                         }
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(60),
+                                child: Shimmer.fromColors(
+                                    baseColor: AppColors.lightGrey,
+                                    highlightColor: AppColors.grey300,
+                                    child: Skeleton(height: 100, width: 100))));
                       }),
                     ),
                   ),

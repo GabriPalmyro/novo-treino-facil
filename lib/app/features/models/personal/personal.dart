@@ -33,11 +33,11 @@ class Personal {
   factory Personal.fromMap(Map<String, dynamic> map) {
     return Personal(
       id: map['id'] as String,
-      personalId: map['personal_Id'] as String,
-      personalName: map['personal_name'] as String,
-      personalEmail: map['personal_email'] as String,
-      personalPhone: map['personal_phoneNumber'] as String,
-      personalPhoto: map['personal_photo'] as String,
+      personalId: map['personal_Id'] as String ?? '',
+      personalName: map['personal_name'] as String ?? '',
+      personalEmail: map['personal_email'] as String ?? '',
+      personalPhone: map['personal_phoneNumber'] as String ?? '',
+      personalPhoto: map['personal_photo'] as String ?? '',
       connectionDate: dateFormat(map['connection_date'] as String),
     );
   }

@@ -51,7 +51,9 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
                       mostrarPerfilPesquisa: mostrarPerfilPesquisa);
 
                   if (response != null) {
-                    //TODO MOSTRAR SNACKBAR
+                    mostrarSnackBar(
+                        'Ocorreu um erro. Tente novamente mais tarde.',
+                        AppColors.red);
                   } else {
                     Navigator.pop(context);
                   }
@@ -139,5 +141,15 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
         ),
       );
     });
+  }
+
+  void mostrarSnackBar(String message, Color color) {
+    SnackBar snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: color,
+    );
+
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

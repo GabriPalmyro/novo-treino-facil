@@ -132,35 +132,6 @@ class UserManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> carregarAlunos() async {
-    await Future.delayed(Duration(seconds: 1));
-    Map<String, dynamic> data = {};
-    alunos = [];
-    debugPrint('LOADING ALUNOS');
-    try {
-      var queryWorksheet = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(_auth.currentUser.uid)
-          .collection("alunos")
-          .orderBy('client_name')
-          .get();
-
-      queryWorksheet.docs.forEach((element) {
-        data = element.data();
-        data['id'] = element.id;
-        alunos.add(Aluno.fromMap(data));
-      });
-
-      debugPrint('ALUNOS LOAD SUCESS');
-      notifyListeners();
-      return null;
-    } catch (e) {
-      loading = false;
-      debugPrint(e.toString());
-      return e.toString();
-    }
-  }
-
   Future<String> changeUserInfos(
       {@required User newUser,
       @required String password,
@@ -449,5 +420,83 @@ class UserManager extends ChangeNotifier {
       print(error);
       return error.toString();
     });
+  }
+
+  //* PERSONAL AREA
+
+  Future<String> carregarAlunos() async {
+    Map<String, dynamic> data = {};
+    alunos = [];
+    debugPrint('LOADING ALUNOS');
+    try {
+      var queryWorksheet = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(_auth.currentUser.uid)
+          .collection("alunos")
+          .orderBy('client_name')
+          .get();
+
+      queryWorksheet.docs.forEach((element) {
+        data = element.data();
+        data['id'] = element.id;
+        alunos.add(Aluno.fromMap(data));
+      });
+
+      debugPrint('ALUNOS LOAD SUCESS');
+      notifyListeners();
+      return null;
+    } catch (e) {
+      loading = false;
+      debugPrint(e.toString());
+      return e.toString();
+    }
+  }
+
+  Future<String> sendAlunoRequest({String emailAluno}) async {
+    loading = true;
+    try {
+      var getResponse = await FirebaseFirestore.instance
+          .collection("users")
+          .where("email", isEqualTo: emailAluno)
+          .get();
+
+      if (getResponse.docs.isEmpty) {
+        loading = false;
+        return 'Não foi possível encontrar nenhum aluno com esse e-mail.';
+      }
+
+      String alunoId = getResponse.docs.first.id;
+
+      var alreadyRequest = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(alunoId)
+          .collection("request_list")
+          .where("personal_email", isEqualTo: user.email)
+          .get();
+
+      if (alreadyRequest.docs.isEmpty) {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(alunoId)
+            .collection("request_list")
+            .add({
+          "personal_Id": user.id,
+          "personal_name": user.name + " " + user.lastName,
+          "personal_email": user.email,
+          "personal_photo": user.photoURL,
+          "personal_phoneNumber": user.phoneNumber
+        });
+      } else {
+        loading = false;
+        return 'Você já enviou um convite de conexão para esse e-mail.';
+      }
+
+      loading = false;
+      return null;
+    } catch (e) {
+      loading = false;
+      debugPrint(e.toString());
+      return e.toString();
+    }
   }
 }

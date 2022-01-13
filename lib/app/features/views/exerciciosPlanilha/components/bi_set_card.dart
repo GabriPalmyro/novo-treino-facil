@@ -16,6 +16,7 @@ class BiSetCard extends StatefulWidget {
   final bool isChanging;
   final Function onTap;
   final bool isFriendAcess;
+  final bool isEditing;
 
   const BiSetCard(
       {this.index,
@@ -23,7 +24,8 @@ class BiSetCard extends StatefulWidget {
       this.exercicio,
       this.isChanging,
       this.onTap,
-      this.isFriendAcess = false});
+      this.isFriendAcess = false,
+      this.isEditing});
 
   @override
   _BiSetCardState createState() => _BiSetCardState();

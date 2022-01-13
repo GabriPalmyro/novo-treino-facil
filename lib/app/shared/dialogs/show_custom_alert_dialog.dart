@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 
 import 'custom_alert_dialog.dart';
 
-void showCustomAlertDialog({
+Future<void> showCustomAlertDialog({
   BuildContext context,
   Widget title,
   Widget content,
   List<Widget> androidActions,
   List<Widget> iosActions,
-}) {
+}) async {
   if (Platform.isAndroid) {
-    showDialog(
+    await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) {
@@ -25,7 +25,7 @@ void showCustomAlertDialog({
         });
   }
   if (Platform.isIOS) {
-    showCupertinoDialog(
+    await showCupertinoDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/helpers/email_valid.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
 import '/app/features/views/planilhas/components/custom_button.dart';
@@ -13,6 +14,7 @@ class NovoAlunoModal extends StatefulWidget {
 
 class _NovoAlunoModalState extends State<NovoAlunoModal> {
   TextEditingController _emailController = TextEditingController();
+  FocusNode emailFocus = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -30,11 +32,11 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
       return Form(
         key: _formKey,
         child: Padding(
-          padding: MediaQuery.of(context).viewInsets * 0.5,
+          padding: MediaQuery.of(context).viewInsets * 0.4,
           child: Container(
-            height: height * 0.55,
+            height: height * 0.45,
             child: Container(
-                height: height * 0.55,
+                height: height * 0.45,
                 decoration: new BoxDecoration(
                     color: AppColors.grey,
                     borderRadius: new BorderRadius.only(
@@ -97,6 +99,7 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
                                       keyboardType: TextInputType.text,
                                       cursorColor: AppColors.mainColor,
                                       showCursor: true,
+                                      focusNode: emailFocus,
                                       style: TextStyle(
                                           fontFamily: AppFonts.gothamBook,
                                           color: state.hasError
@@ -131,7 +134,93 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
                                 color: AppColors.mainColor,
                                 textColor: AppColors.black,
                                 onTap: () async {
-                                  if (_formKey.currentState.validate()) {}
+                                  if (_formKey.currentState.validate()) {
+                                    emailFocus.unfocus();
+
+                                    String response =
+                                        await userManager.sendAlunoRequest(
+                                            emailAluno: _emailController.text);
+
+                                    if (response != null) {
+                                      // mostrarSnackBar(response, AppColors.red);
+                                      await showCustomAlertDialog(
+                                          title: Text(
+                                            'Ocorreu um erro!',
+                                            style: TextStyle(
+                                                fontFamily: AppFonts.gothamBold,
+                                                color: Colors.red),
+                                          ),
+                                          androidActions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Ok',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            AppFonts.gotham,
+                                                        color: Colors.white)))
+                                          ],
+                                          iosActions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Ok',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            AppFonts.gotham,
+                                                        color: Colors.white)))
+                                          ],
+                                          context: context,
+                                          content: Text(
+                                            response,
+                                            style: TextStyle(
+                                                height: 1.1,
+                                                fontFamily: AppFonts.gotham,
+                                                color: Colors.white),
+                                          ));
+                                    } else {
+                                      await showCustomAlertDialog(
+                                          title: Text(
+                                            'Sucesso!',
+                                            style: TextStyle(
+                                                fontFamily: AppFonts.gothamBold,
+                                                color: AppColors.mainColor),
+                                          ),
+                                          androidActions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Ok',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            AppFonts.gotham,
+                                                        color: Colors.white)))
+                                          ],
+                                          iosActions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('Ok',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            AppFonts.gotham,
+                                                        color: Colors.white)))
+                                          ],
+                                          context: context,
+                                          content: Text(
+                                            'Convite enviado com sucesso! Agora só falta seu aluno aceitar para completar o processo.',
+                                            style: TextStyle(
+                                                height: 1.1,
+                                                fontFamily: AppFonts.gotham,
+                                                color: Colors.white),
+                                          ));
+                                      Navigator.pop(context);
+                                    }
+                                  }
                                 },
                               )
                             ],
@@ -145,5 +234,15 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
         ),
       );
     });
+  }
+
+  void mostrarSnackBar(String message, Color color) {
+    SnackBar snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: color,
+    );
+
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

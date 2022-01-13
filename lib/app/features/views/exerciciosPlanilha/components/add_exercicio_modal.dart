@@ -490,20 +490,15 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                 planilhaId: widget.idPlanilha,
                                                 exercicio: exercicio);
                                         if (response == null) {
-                                          if (!widget.isPersonalManag) {
-                                            Navigator.pushReplacementNamed(
-                                                context,
-                                                AppRoutes.exerciciosPlanilha,
-                                                arguments:
-                                                    ExerciciosPlanilhaArguments(
-                                                  title: widget.titlePlanilha,
-                                                  idPlanilha: widget.idPlanilha,
-                                                  idUser: widget.idUser,
-                                                ));
-                                          } else {
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          }
+                                          Navigator.pushReplacementNamed(
+                                              context,
+                                              AppRoutes.exerciciosPlanilha,
+                                              arguments:
+                                                  ExerciciosPlanilhaArguments(
+                                                title: widget.titlePlanilha,
+                                                idPlanilha: widget.idPlanilha,
+                                                idUser: widget.idUser,
+                                              ));
                                         } else {
                                           debugPrint('Erro $response');
                                         }

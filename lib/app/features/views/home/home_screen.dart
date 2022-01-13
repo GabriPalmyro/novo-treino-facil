@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/home/components/home_button.dart';
 import 'package:tabela_treino/app/features/views/home/components/planilha_widget.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
+import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 import '/app/core/core.dart';
 import '/app/features/controllers/user/user_controller.dart';
-import '../../../shared/shimmer/home/home_shimmer.dart';
 import '/app/helpers/name_formats.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -111,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       drawer: CustomDrawer(pageNow: 0),
       appBar: AppBar(
@@ -143,51 +146,251 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xff313131),
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
-          if (userManager.loading || _isLoading) {
-            return HomeLoadingShimmer();
-          } else {
-            return SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!userManager.loading) ...[
-                    Container(
-                        padding: const EdgeInsets.only(top: 24),
-                        margin: const EdgeInsets.only(left: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (userManager.loading || _isLoading) ...[
+                  Shimmer.fromColors(
+                    baseColor: AppColors.lightGrey,
+                    highlightColor: AppColors.lightGrey.withOpacity(0.6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0, top: 18.0),
+                          child: Skeleton(
+                            height: 50,
+                            width: width * 0.5,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 12.0,
+                          ),
+                          child: Skeleton(
+                            height: 40,
+                            width: width * 0.75,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
+                  Container(
+                      padding: const EdgeInsets.only(top: 24),
+                      margin: const EdgeInsets.only(left: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Olá, ${capitalizeString(userManager.user.name)}",
+                                style: TextStyle(
+                                    fontFamily: AppFonts.gothamBold,
+                                    fontSize: 33,
+                                    color: AppColors.mainColor),
+                              ),
+                              Text(
+                                !dayHasTraining
+                                    ? homeMessage()
+                                    : 'Seu treino de hoje é:',
+                                style: TextStyle(
+                                    fontFamily: AppFonts.gothamThin,
+                                    fontSize: 20,
+                                    color: AppColors.white),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )),
+                ],
+                if (userManager.loading || _isLoading) ...[
+                  Shimmer.fromColors(
+                    baseColor: AppColors.lightGrey,
+                    highlightColor: AppColors.lightGrey.withOpacity(0.6),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Skeleton(
+                                height: 90,
+                                width: width * 0.43,
+                              ),
+                              SizedBox(
+                                width: 14.0,
+                              ),
+                              Skeleton(
+                                height: 90,
+                                width: width * 0.43,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 12.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Skeleton(
+                                height: 80,
+                                width: (width / 3) * 0.82,
+                              ),
+                              Skeleton(
+                                height: 80,
+                                width: (width / 3) * 0.82,
+                              ),
+                              Skeleton(
+                                height: 80,
+                                width: (width / 3) * 0.82,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ] else ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 24, 12, 12),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Olá, ${capitalizeString(userManager.user.name)}",
-                                  style: TextStyle(
-                                      fontFamily: AppFonts.gothamBold,
-                                      fontSize: 33,
-                                      color: AppColors.mainColor),
-                                ),
-                                Text(
-                                  !dayHasTraining
-                                      ? homeMessage()
-                                      : 'Seu treino de hoje é:',
-                                  style: TextStyle(
-                                      fontFamily: AppFonts.gothamThin,
-                                      fontSize: 20,
-                                      color: AppColors.white),
-                                ),
-                              ],
+                            HomeButton(
+                              width: width * 0.43,
+                              title: 'Exercícios',
+                              icon: Icons.line_weight,
+                              iconePath: AppImages.listaExercicios,
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.listaExercicios);
+                              },
+                            ),
+                            SizedBox(
+                              width: 14.0,
+                            ),
+                            HomeButton(
+                              width: width * 0.43,
+                              title: 'Amigos',
+                              icon: Icons.people_alt_outlined,
+                              iconePath: AppImages.amigos,
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.buscarAmigos);
+                              },
                             ),
                           ],
-                        )),
-                  ],
+                        ),
+                        SizedBox(
+                          height: 14.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HomeButtonMin(
+                              width: (width / 3) * 0.8,
+                              title: 'Meus Exercícios',
+                              icon: Icons.people_alt_outlined,
+                              iconePath: AppImages.meusExercicios,
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.meusExercicios);
+                              },
+                            ),
+                            HomeButtonMin(
+                              width: (width / 3) * 0.8,
+                              title: userManager.user.isPersonal ?? false
+                                  ? "Alunos"
+                                  : "Personal\nTrainer",
+                              icon: userManager.user.isPersonal ?? false
+                                  ? Icons.people_rounded
+                                  : Icons.live_help,
+                              iconePath: AppImages.personal,
+                              onTap: () {
+                                if (userManager.user.isPersonal) {
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      AppRoutes.alunos, (route) => false);
+                                } else {
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      AppRoutes.personal, (route) => false);
+                                }
+                              },
+                            ),
+                            HomeButtonMin(
+                              width: (width / 3) * 0.8,
+                              title: 'Treinos Fáceis',
+                              icon: Icons.fitness_center,
+                              iconePath: AppImages.treinosFaceis,
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                if (userManager.loading || _isLoading) ...[
+                  Shimmer.fromColors(
+                    baseColor: AppColors.lightGrey,
+                    highlightColor: AppColors.lightGrey.withOpacity(0.6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 24.0,
+                            left: 12.0,
+                          ),
+                          child: Skeleton(
+                            height: 40,
+                            width: width * 0.65,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 6.0, bottom: 12.0),
+                          child: Row(
+                            children: List.generate(
+                                2,
+                                (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Skeleton(
+                                          height: 100, width: width * 0.4),
+                                    )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
                   if (!dayHasTraining) ...[
                     Padding(
-                      padding: const EdgeInsets.only(top: 24.0, left: 22.0),
+                      padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, AppRoutes.planilhas);
+                          Navigator.pushNamed(context, AppRoutes.planilhas,
+                              arguments: userManager.user.id);
                         },
                         child: Text(
                           'Acessar meus treinos',
@@ -205,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Padding(
                       padding: EdgeInsets.only(
-                          left: 5.0, top: dayHasTraining ? 12.0 : 0),
+                          left: 5.0, top: dayHasTraining ? 5.0 : 0),
                       child: Row(
                         children: List.generate(planilhas.length, (index) {
                           return PlanilhaContainer(
@@ -225,72 +428,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                ],
+                if (userManager.loading || _isLoading) ...[
+                  Shimmer.fromColors(
+                    baseColor: AppColors.lightGrey,
+                    highlightColor: AppColors.lightGrey.withOpacity(0.6),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 12.0,
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Skeleton(
+                          height: 100,
+                          width: width * 0.9,
+                        ),
+                      ),
+                    ),
+                  )
+                ] else ...[
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0, vertical: 10.0),
-                    child: Column(
-                      children: [
-                        HomeButton(
-                          title: 'Biblioteca de Exercícios',
-                          description:
-                              'Uma lista com mais de 150 exercícios para você usar nos seus treinos e executá-los corretamente',
-                          isMainColor: true,
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, AppRoutes.listaExercicios);
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14.0),
-                          child: HomeButton(
-                            title: 'Pesquisar Amigos',
-                            description:
-                                'Siga seus amigos e tenha acesso a suas listas de treinos disponíveis',
-                            isMainColor: false,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.buscarAmigos);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14.0),
-                          child: HomeButton(
-                            title: userManager.user.isPersonal ?? false
-                                ? "Meus Alunos"
-                                : "Meu Personal\nTrainer",
-                            description: userManager.user.isPersonal
-                                ? 'Controle a planilha de seus alunos ou adicione um aluno novo na sua área de Personal Trainer'
-                                : 'Adicione seu Personal Trainer para que ter seus treinos montados remotamente',
-                            isMainColor: true,
-                            onTap: () {
-                              if (userManager.user.isPersonal) {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    AppRoutes.alunos, (route) => false);
-                              } else {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    AppRoutes.personal, (route) => false);
-                              }
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14.0, bottom: 8),
-                          child: HomeButton(
-                            title: 'Treinos Fáceis',
-                            description:
-                                'Lista de treinos prontos para você usar no seu dia a dia',
-                            isMainColor: false,
-                            onTap: () {},
-                          ),
-                        ),
-                      ],
+                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: HomeButton(
+                        width: width * 0.9,
+                        title: 'Ajudas',
+                        description: 'sdasdasdasdasdasd',
+                        fontSize: 28,
+                        icon: Icons.help,
+                        iconePath: AppImages.ajudas,
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, AppRoutes.listaExercicios);
+                        },
+                      ),
                     ),
                   ),
                 ],
-              ),
-            );
-          }
+              ],
+            ),
+          );
         },
       ),
     );

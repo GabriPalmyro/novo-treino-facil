@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
@@ -40,8 +39,12 @@ class ExerciciosPlanilhaScreen extends StatefulWidget {
 }
 
 class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  List listaExercicios = List.empty(growable: true);
+  List listaExerciciosTemp = List.empty(growable: true);
+
   int tamPlan = 0;
+  bool _isEditing = false;
+  bool isLoading = false;
 
   Future<List<ExerciciosPlanilha>> biSetExerciseList(
       String idSet, CollectionReference ref) async {
@@ -64,37 +67,55 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
   }
 
   Future<List<dynamic>> loadExerciciosPlanilha() async {
-    Map<String, dynamic> data = {};
-    List listaExercicios = List.empty(growable: true);
-    try {
-      CollectionReference ref = FirebaseFirestore.instance
-          .collection("users")
-          .doc(_auth.currentUser.uid)
-          .collection("planilha")
-          .doc(widget.arguments.idPlanilha)
-          .collection('exercícios');
-
-      var queryWorksheet = await ref.orderBy('pos').get();
-
-      queryWorksheet.docs.forEach((element) async {
-        data = element.data();
-        data['id'] = element.id;
-
-        if (data['set_type'] == "uniset") {
-          listaExercicios.add(ExerciciosPlanilha.fromMap(data));
-        } else if (data['set_type'] == "biset") {
-          Map<String, dynamic> dataTemp = data;
-          listaExercicios.add(BiSetExercise.fromMap(dataTemp));
-        }
-        data = {};
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        isLoading = true;
       });
-      tamPlan = listaExercicios.length;
-      return listaExercicios;
-    } catch (e) {
-      listaExercicios = [];
-      debugPrint('Erro: ' + e.toString());
-      return listaExercicios;
-    }
+      Map<String, dynamic> data = {};
+      listaExercicios = List.empty(growable: true);
+      try {
+        CollectionReference ref = FirebaseFirestore.instance
+            .collection("users")
+            .doc(widget.arguments.idUser)
+            .collection("planilha")
+            .doc(widget.arguments.idPlanilha)
+            .collection('exercícios');
+
+        var queryWorksheet = await ref.orderBy('pos').get();
+
+        queryWorksheet.docs.forEach((element) async {
+          data = element.data();
+          data['id'] = element.id;
+
+          if (data['set_type'] == "uniset") {
+            listaExercicios.add(ExerciciosPlanilha.fromMap(data));
+          } else if (data['set_type'] == "biset") {
+            Map<String, dynamic> dataTemp = data;
+            listaExercicios.add(BiSetExercise.fromMap(dataTemp));
+          }
+          data = {};
+        });
+        tamPlan = listaExercicios.length;
+        setState(() {
+          isLoading = false;
+        });
+        return listaExercicios;
+      } catch (e) {
+        listaExercicios = [];
+        setState(() {
+          isLoading = false;
+        });
+        debugPrint('Erro: ' + e.toString());
+        return listaExercicios;
+      }
+    });
+    return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadExerciciosPlanilha();
   }
 
   @override
@@ -108,23 +129,23 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
             return true;
           } else {
             Navigator.pushNamedAndRemoveUntil(
-                context, AppRoutes.planilhas, (route) => false);
+                context, AppRoutes.planilhas, (route) => false,
+                arguments: widget.arguments.idUser);
             return true;
           }
         },
         child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 70,
-            shadowColor: Colors.grey[850],
-            elevation: 25,
-            centerTitle: false,
-            actions: [
-              if (!widget.arguments.isFriendAcess) ...[
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: IconButton(
-                    icon: const Icon(
+            appBar: AppBar(
+              toolbarHeight: 70,
+              shadowColor: Colors.grey[850],
+              elevation: 25,
+              centerTitle: false,
+              actions: [
+                if (!widget.arguments.isFriendAcess && !_isEditing) ...[
+                  IconButton(
+                    icon: Icon(
                       Icons.add_circle_outline,
+                      color: AppColors.grey,
                       size: 28,
                     ),
                     tooltip: 'Adicionar Novo Exercício',
@@ -140,65 +161,175 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                               tamPlan: tamPlan));
                     },
                   ),
-                ),
-              ]
-            ],
-            title: Text(
-              widget.arguments.title,
-              style: TextStyle(
-                  color: AppColors.black,
-                  fontFamily: AppFonts.gothamBold,
-                  fontSize: 30),
-            ),
-            backgroundColor: AppColors.mainColor,
-          ),
-          backgroundColor: AppColors.grey,
-          body: FutureBuilder<List>(
-              future: loadExerciciosPlanilha(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ExerciciosPlanilhaShimmer();
-                } else {
-                  return SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 70.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: List.generate(snapshot.data.length, (index) {
-                          return snapshot.data[index].setType == "uniset"
-                              ? UniSetCard(
-                                  index: index,
-                                  isChanging: false,
-                                  exercicio: snapshot.data[index],
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                        backgroundColor: Colors.transparent,
-                                        isScrollControlled: true,
-                                        enableDrag: false,
-                                        context: context,
-                                        builder: (_) => ExercicioViewModal(
-                                              exercicio: snapshot.data[index],
-                                              isFriendAcess: widget
-                                                  .arguments.isFriendAcess,
-                                            ));
-                                  },
-                                )
-                              : BiSetCard(
-                                  index: index,
-                                  idPlanilha: widget.arguments.idPlanilha,
-                                  exercicio: snapshot.data[index],
-                                  isChanging: false,
-                                  isFriendAcess:
-                                      widget.arguments.isFriendAcess);
-                        }),
+                ],
+                if (!widget.arguments.isFriendAcess) ...[
+                  Padding(
+                    padding: EdgeInsets.only(right: _isEditing ? 0 : 8.0),
+                    child: IconButton(
+                      icon: Icon(
+                        _isEditing ? Icons.save_outlined : Icons.edit_outlined,
+                        color: AppColors.grey,
+                        size: 28,
                       ),
+                      tooltip:
+                          _isEditing ? 'Salvar edição' : 'Ordernar exercícios',
+                      onPressed: () async {
+                        if (_isEditing) {
+                          if (exercicios.validarStringsIds(
+                              planilhaId: widget.arguments.idPlanilha,
+                              idUser: widget.arguments.idUser)) {
+                            String response =
+                                await exercicios.reorganizarListaExercicios(
+                                    listaExercicios: listaExerciciosTemp,
+                                    planilhaId: widget.arguments.idPlanilha,
+                                    idUser: widget.arguments.idUser);
+
+                            if (response != null) {
+                              mostrarSnackBar(
+                                  'Ocorreu um erro. Tente novamente mais tarde.',
+                                  AppColors.red);
+                            } else {
+                              setState(() {
+                                listaExercicios = listaExerciciosTemp;
+                                listaExerciciosTemp =
+                                    List.empty(growable: true);
+                                _isEditing = false;
+                              });
+                            }
+                          } else {
+                            mostrarSnackBar(
+                                'Ocorreu um erro. Tente novamente mais tarde.',
+                                AppColors.red);
+                          }
+                        } else {
+                          setState(() {
+                            listaExerciciosTemp.addAll(listaExercicios);
+                            _isEditing = true;
+                          });
+                        }
+                      },
                     ),
-                  );
-                }
-              }),
-        ),
+                  ),
+                ],
+                if (!widget.arguments.isFriendAcess && _isEditing) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6.0),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.cancel_outlined,
+                        color: Colors.red,
+                        size: 28,
+                      ),
+                      tooltip: 'Cancelar',
+                      onPressed: () {
+                        setState(() {
+                          listaExerciciosTemp = List.empty(growable: true);
+                          _isEditing = false;
+                          // VOLTAR EXERCICIOS
+                        });
+                      },
+                    ),
+                  ),
+                ]
+              ],
+              title: Text(
+                widget.arguments.title,
+                style: TextStyle(
+                    color: AppColors.black,
+                    fontFamily: AppFonts.gothamBold,
+                    fontSize: 26),
+              ),
+              backgroundColor: AppColors.mainColor,
+            ),
+            backgroundColor: AppColors.grey,
+            body: exercicios.loading || isLoading
+                ? ExerciciosPlanilhaShimmer()
+                : _isEditing
+                    ? ReorderableListView.builder(
+                        shrinkWrap: true,
+                        itemCount: listaExerciciosTemp.length,
+                        physics: BouncingScrollPhysics(),
+                        onReorder: (oldIndex, newIndex) => setState(() {
+                          final index =
+                              newIndex > oldIndex ? newIndex - 1 : newIndex;
+
+                          final exercicio =
+                              listaExerciciosTemp.removeAt(oldIndex);
+                          listaExerciciosTemp.insert(index, exercicio);
+                        }),
+                        itemBuilder: (_, index) {
+                          return Container(
+                              key: ValueKey(listaExerciciosTemp[index]),
+                              decoration: BoxDecoration(color: AppColors.grey),
+                              child: listaExerciciosTemp[index].setType ==
+                                      "uniset"
+                                  ? UniSetCard(
+                                      index: index,
+                                      isChanging: false,
+                                      isEditing: _isEditing,
+                                      exercicio: listaExerciciosTemp[index],
+                                      onTap: () {},
+                                    )
+                                  : BiSetCard(
+                                      index: index,
+                                      idPlanilha: widget.arguments.idPlanilha,
+                                      exercicio: listaExerciciosTemp[index],
+                                      isChanging: false,
+                                      isEditing: _isEditing,
+                                      isFriendAcess:
+                                          widget.arguments.isFriendAcess));
+                        },
+                      )
+                    : SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 70.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children:
+                                List.generate(listaExercicios.length, (index) {
+                              return listaExercicios[index].setType == "uniset"
+                                  ? UniSetCard(
+                                      index: index,
+                                      isChanging: false,
+                                      exercicio: listaExercicios[index],
+                                      isEditing: _isEditing,
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            backgroundColor: Colors.transparent,
+                                            isScrollControlled: true,
+                                            enableDrag: false,
+                                            context: context,
+                                            builder: (_) => ExercicioViewModal(
+                                                  exercicio:
+                                                      listaExercicios[index],
+                                                  isFriendAcess: widget
+                                                      .arguments.isFriendAcess,
+                                                ));
+                                      },
+                                    )
+                                  : BiSetCard(
+                                      index: index,
+                                      idPlanilha: widget.arguments.idPlanilha,
+                                      exercicio: listaExercicios[index],
+                                      isChanging: false,
+                                      isFriendAcess:
+                                          widget.arguments.isFriendAcess);
+                            }),
+                          ),
+                        ),
+                      )),
       );
     });
+  }
+
+  void mostrarSnackBar(String message, Color color) {
+    SnackBar snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: color,
+    );
+
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

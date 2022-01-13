@@ -2,12 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/components/card_exercicio.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/components/info_exercicio_modal.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/adicionar_exercicio.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
+import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
 
-class MeusExerciciosScreen extends StatelessWidget {
+class MeusExerciciosScreen extends StatefulWidget {
+  @override
+  _MeusExerciciosScreenState createState() => _MeusExerciciosScreenState();
+}
+
+class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
+  bool loading = true;
+
+  Future<void> loadMyExercises() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String idUser = context.read<UserManager>().user.id;
+      await context
+          .read<ExercisesManager>()
+          .loadMyListExercises(idUser: idUser);
+      setState(() {
+        loading = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadMyExercises();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ExercisesManager>(builder: (_, exerciciosManager, __) {
@@ -48,28 +75,31 @@ class MeusExerciciosScreen extends StatelessWidget {
             backgroundColor: AppColors.mainColor,
           ),
           backgroundColor: AppColors.grey,
-          body: Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                itemCount: exerciciosManager.listaMeusExercicios.length,
-                itemBuilder: (_, index) {
-                  return CardExercicio(
-                    index: index,
-                    onTap: () {
-                      showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          enableDrag: false,
-                          context: context,
-                          builder: (_) => ExercicioInfoModal(
-                              exercicio: exerciciosManager
-                                  .listaMeusExercicios[index]));
-                    },
-                    exercise: exerciciosManager.listaMeusExercicios[index],
-                  );
-                }),
-          ));
+          body: loading
+              ? ExerciciosPlanilhaShimmer()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: exerciciosManager.listaMeusExercicios.length,
+                      itemBuilder: (_, index) {
+                        return CardExercicio(
+                          index: index,
+                          onTap: () {
+                            showModalBottomSheet(
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                                enableDrag: false,
+                                context: context,
+                                builder: (_) => ExercicioInfoModal(
+                                    exercicio: exerciciosManager
+                                        .listaMeusExercicios[index]));
+                          },
+                          exercise:
+                              exerciciosManager.listaMeusExercicios[index],
+                        );
+                      }),
+                ));
     });
   }
 }

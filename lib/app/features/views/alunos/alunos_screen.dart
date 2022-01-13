@@ -31,9 +31,11 @@ class _AlunosScreenState extends State<AlunosScreen>
   }
 
   Future<void> carregarAlunosList() async {
-    await context.read<UserManager>().carregarAlunos();
-    setState(() {
-      loading = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<UserManager>().carregarAlunos();
+      setState(() {
+        loading = false;
+      });
     });
   }
 

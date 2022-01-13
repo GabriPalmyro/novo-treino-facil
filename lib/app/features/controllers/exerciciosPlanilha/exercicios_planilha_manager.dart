@@ -8,6 +8,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
   Auth.User firebaseUser;
 
   List listaExercicios = [];
+  List listaExerciciosTemp = [];
 
   bool _isLoading = false;
 
@@ -34,6 +35,41 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       return null;
     } catch (e) {
       debugPrint(e.toString());
+      return e.toString();
+    }
+  }
+
+  bool validarStringsIds({String planilhaId, String idUser}) {
+    if ((idUser != null && idUser.isNotEmpty) &&
+        (planilhaId != null && planilhaId.isNotEmpty))
+      return true;
+    else
+      return false;
+  }
+
+  Future<String> reorganizarListaExercicios(
+      {List<dynamic> listaExercicios, String planilhaId, String idUser}) async {
+    loading = true;
+
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection("users")
+        .doc(idUser)
+        .collection("planilha")
+        .doc(planilhaId)
+        .collection("exercícios");
+
+    try {
+      for (var i = 0; i < listaExercicios.length; i++) {
+        if (listaExercicios[i].position != (i + 1)) {
+          await ref.doc(listaExercicios[i].id).update({'pos': (i + 1)});
+        }
+      }
+
+      loading = false;
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+      loading = false;
       return e.toString();
     }
   }

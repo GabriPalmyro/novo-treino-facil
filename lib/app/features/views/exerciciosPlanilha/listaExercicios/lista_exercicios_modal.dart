@@ -24,72 +24,9 @@ class ListaExerciciosModal extends StatefulWidget {
 }
 
 class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
-  bool _isSearching = false;
   final _searchController = TextEditingController();
 
   String _selTypeSearch = "title";
-
-  Widget _buildSearchField() {
-    return TextField(
-      keyboardType: TextInputType.text,
-      controller: _searchController,
-      style: TextStyle(
-        color: Colors.grey[900],
-        fontSize: 20,
-        height: 1.3,
-        fontFamily: AppFonts.gothamBook,
-      ),
-      enableInteractiveSelection: true,
-      decoration: InputDecoration(
-          hintText: _selTypeSearch == "mines"
-              ? "Meus Exercícios"
-              : _selTypeSearch == "title"
-                  ? "Procure um exercício"
-                  : _selTypeSearch == "home_exe"
-                      ? "Fazer em casa"
-                      : _selTypeSearch == "muscleId"
-                          ? "Procure um músculo"
-                          : "Procure em $_selTypeSearch",
-          border: InputBorder.none,
-          hintStyle: TextStyle(
-              fontSize: 18, color: Colors.grey[900].withOpacity(0.9))),
-    );
-  }
-
-  List<Widget> _buildActions() {
-    if (_isSearching) {
-      return <Widget>[
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            if (_searchController == null || _searchController.text.isEmpty) {
-              setState(() {
-                _isSearching = false;
-              });
-              return;
-            }
-            setState(() {
-              _searchController.clear();
-            });
-          },
-        ),
-      ];
-    }
-    return <Widget>[
-      IconButton(
-        padding: EdgeInsets.only(right: 30),
-        icon: const Icon(
-          Icons.search,
-          size: 30,
-        ),
-        onPressed: () {
-          setState(() {
-            _isSearching = true;
-          });
-        },
-      ),
-    ];
-  }
 
   List filters = [
     "mines",

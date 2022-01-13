@@ -5,6 +5,7 @@ import 'package:tabela_treino/app/core/app_routes.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 import 'package:tabela_treino/app/shared/shimmer/drawer/drawer_shimmer.dart';
 
 import 'components/header_drawer.dart';
@@ -61,6 +62,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.home,
@@ -84,13 +86,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           onTap: () {
                             if (widget.pageNow != 1) {
                               Navigator.pushNamedAndRemoveUntil(context,
-                                  AppRoutes.planilhas, (route) => false);
+                                  AppRoutes.planilhas, (route) => false,
+                                  arguments: userManager.user.id);
                             }
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.list_outlined,
@@ -99,7 +103,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 ),
                                 SizedBox(width: 32),
                                 Text(
-                                  "Minha Planilha\nde Treino",
+                                  "Treinos",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: AppFonts.gothamThin,
@@ -122,6 +126,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.line_weight,
@@ -130,7 +135,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 ),
                                 SizedBox(width: 32),
                                 Text(
-                                  "Biblioteca de\nExercícios",
+                                  "Exercícios",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: AppFonts.gothamThin,
@@ -150,6 +155,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.fitness_center,
@@ -186,6 +192,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   userManager.user.isPersonal ?? false
@@ -197,8 +204,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 SizedBox(width: 32),
                                 Text(
                                   userManager.user.isPersonal ?? false
-                                      ? "Meus Alunos"
-                                      : "Meu Personal\nTrainer",
+                                      ? "Alunos"
+                                      : "Personal\nTrainer",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: AppFonts.gothamThin,
@@ -221,6 +228,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.person,
@@ -229,7 +237,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 ),
                                 SizedBox(width: 32),
                                 Text(
-                                  "Meu Perfil",
+                                  "Perfil",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: AppFonts.gothamThin,
@@ -243,11 +251,73 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ),
                         InkWell(
                           onTap: () async {
-                            isLoading = true;
-                            await userManager.logout();
+                            await showCustomAlertDialog(
+                                title: Text(
+                                  'Aviso',
+                                  style: TextStyle(
+                                      fontFamily: AppFonts.gothamBold,
+                                      color: Colors.red),
+                                ),
+                                androidActions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Não',
+                                          style: TextStyle(
+                                              fontFamily: AppFonts.gotham,
+                                              color: Colors.white))),
+                                  TextButton(
+                                      onPressed: () async {
+                                        isLoading = true;
+                                        await userManager.logout();
 
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, AppRoutes.login, (route) => false);
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            AppRoutes.login,
+                                            (route) => false);
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  AppColors.red)),
+                                      child: Text('Sim',
+                                          style: TextStyle(
+                                              fontFamily: AppFonts.gotham,
+                                              color: AppColors.white)))
+                                ],
+                                iosActions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Não',
+                                          style: TextStyle(
+                                              fontFamily: AppFonts.gotham,
+                                              color: Colors.white))),
+                                  TextButton(
+                                      onPressed: () async {
+                                        isLoading = true;
+                                        await userManager.logout();
+
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            AppRoutes.login,
+                                            (route) => false);
+                                      },
+                                      child: Text('Sim',
+                                          style: TextStyle(
+                                              fontFamily: AppFonts.gotham,
+                                              color: AppColors.mainColor)))
+                                ],
+                                context: context,
+                                content: Text(
+                                  'Você deseja mesmo desconectar da sua conta?',
+                                  style: TextStyle(
+                                      height: 1.1,
+                                      fontFamily: AppFonts.gotham,
+                                      color: Colors.white),
+                                ));
                           },
                           child: Container(
                             padding:

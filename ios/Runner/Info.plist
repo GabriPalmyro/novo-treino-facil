@@ -51,8 +51,6 @@
 		<string>ca-app-pub-7831186229252322~9095625736</string>
 		<key>io.flutter.embedded_views_preview</key>
 		<true/>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Need to upload image</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Need to upload image</string>
 		<key>NSMicrophoneUsageDescription</key>

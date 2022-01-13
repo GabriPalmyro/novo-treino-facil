@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
@@ -203,9 +201,6 @@ class _CardExercicioState extends State<CardExercicio>
                             child: CustomButton(
                               color: AppColors.grey,
                               onTap: () {
-                                log(widget.idUser != _auth.currentUser.uid
-                                    ? true.toString()
-                                    : false.toString());
                                 showModalBottomSheet(
                                     backgroundColor: Colors.transparent,
                                     isScrollControlled: true,

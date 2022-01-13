@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomButton extends StatefulWidget {
   final String text;
   final Color color;
   final Color textColor;
@@ -26,19 +26,35 @@ class CustomButton extends StatelessWidget {
       this.width = 130});
 
   @override
+  _CustomButtonState createState() => _CustomButtonState();
+}
+
+class _CustomButtonState extends State<CustomButton> {
+  bool _onPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
-      child: Container(
+      onTap: widget.onTap,
+      enableFeedback: true,
+      onHighlightChanged: (onHover) {
+        setState(() {
+          _onPressed = onHover;
+        });
+      },
+      child: AnimatedContainer(
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
-            vertical: verticalPad, horizontal: horizontalPad),
-        decoration:
-            BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
+            vertical: widget.verticalPad, horizontal: widget.horizontalPad),
+        decoration: BoxDecoration(
+            color: _onPressed ? widget.color.withOpacity(0.8) : widget.color,
+            borderRadius: BorderRadius.circular(5)),
         child: Center(
           child: AutoSizeText(
-            text,
+            widget.text,
             style: TextStyle(
-              color: textColor,
+              color: widget.textColor,
               fontFamily: AppFonts.gotham,
             ),
           ),

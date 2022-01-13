@@ -3,28 +3,36 @@ import 'package:shimmer/shimmer.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
-import 'package:tabela_treino/app/features/models/aluno/aluno.dart';
+import 'package:tabela_treino/app/features/models/personal/personal.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
-class CardAluno extends StatelessWidget {
-  final Aluno aluno;
-  final Function excluirAluno;
-  final Function acessarPlanilhas;
+class CardRequest extends StatefulWidget {
+  final Personal personal;
+  final Function excluirPedido;
+  final Function aceitarPedido;
 
-  const CardAluno({this.aluno, this.excluirAluno, this.acessarPlanilhas});
+  const CardRequest({this.personal, this.excluirPedido, this.aceitarPedido});
 
+  @override
+  _CardRequestState createState() => _CardRequestState();
+}
+
+class _CardRequestState extends State<CardRequest> {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
       decoration: BoxDecoration(
           border: Border(
-              top: BorderSide(
-                  color: AppColors.black.withOpacity(0.3), width: 2))),
+        bottom: BorderSide(
+          color: AppColors.white.withOpacity(0.5),
+          width: 2,
+        ),
+      )),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(
-            padding: EdgeInsets.symmetric(vertical: 18.0),
+            padding: EdgeInsets.symmetric(vertical: 5.0),
             child: Container(
               child: Row(
                 children: [
@@ -33,9 +41,10 @@ class CardAluno extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       height: 60,
-                      child: Image.network(aluno.alunoPhoto, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent loadingProgress) {
+                      child: Image.network(widget.personal.personalPhoto,
+                          fit: BoxFit.cover, loadingBuilder:
+                              (BuildContext context, Widget child,
+                                  ImageChunkEvent loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
                         }
@@ -58,18 +67,18 @@ class CardAluno extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              aluno.alunoName,
+                              widget.personal.personalName,
                               style: TextStyle(
                                   fontFamily: AppFonts.gotham,
                                   fontSize: 24,
-                                  color: AppColors.black),
+                                  color: AppColors.white),
                             ),
                             Text(
-                              aluno.alunoEmail,
+                              widget.personal.personalEmail,
                               style: TextStyle(
                                   fontFamily: AppFonts.gothamLight,
                                   fontSize: 14,
-                                  color: AppColors.black),
+                                  color: AppColors.white),
                             ),
                           ],
                         ),
@@ -79,21 +88,24 @@ class CardAluno extends StatelessWidget {
                 ],
               ),
             )),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CustomButton(
-                text: 'Excluir Aluno',
-                color: Colors.red,
-                textColor: AppColors.white,
-                onTap: excluirAluno),
-            CustomButton(
-                width: 140,
-                text: 'Acessar Planilhas',
-                color: AppColors.grey,
-                textColor: AppColors.white,
-                onTap: acessarPlanilhas)
-          ],
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomButton(
+                  text: 'Excluir Pedido',
+                  color: Colors.red,
+                  textColor: AppColors.white,
+                  onTap: widget.excluirPedido),
+              CustomButton(
+                  width: 140,
+                  text: 'Aceitar Personal',
+                  color: Colors.green,
+                  textColor: AppColors.white,
+                  onTap: widget.aceitarPedido)
+            ],
+          ),
         )
       ]),
     );

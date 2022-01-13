@@ -100,7 +100,6 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Consumer<UserManager>(builder: (_, userManager, __) {
       return Padding(
