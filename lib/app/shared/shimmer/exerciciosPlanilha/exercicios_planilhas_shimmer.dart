@@ -21,35 +21,35 @@ class _HomeLoadingScreenState extends State<ExerciciosPlanilhaList> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Skeleton(
-              height: 100,
+              height: 120,
               width: width,
             ),
             SizedBox(
               height: 12,
             ),
             Skeleton(
-              height: 100,
+              height: 120,
               width: width,
             ),
             SizedBox(
               height: 12,
             ),
             Skeleton(
-              height: 100,
+              height: 120,
               width: width,
             ),
             SizedBox(
               height: 12,
             ),
             Skeleton(
-              height: 100,
+              height: 120,
               width: width,
             ),
             SizedBox(
               height: 12,
             ),
             Skeleton(
-              height: 100,
+              height: 120,
               width: width,
             ),
             SizedBox(

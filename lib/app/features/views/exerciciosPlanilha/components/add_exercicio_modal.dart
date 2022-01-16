@@ -17,6 +17,8 @@ class ExercicioAddModal extends StatefulWidget {
   final String titlePlanilha;
   final int tamPlan;
   final String idUser;
+  final bool isBiSet;
+  final bool isSecondExercise;
   final bool isPersonalManag;
 
   ExercicioAddModal(
@@ -25,6 +27,8 @@ class ExercicioAddModal extends StatefulWidget {
       @required this.titlePlanilha,
       @required this.tamPlan,
       @required this.idUser,
+      this.isBiSet = false,
+      this.isSecondExercise = false,
       @required this.isPersonalManag});
 
   @override
@@ -36,6 +40,12 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
   TextEditingController _repsController = TextEditingController();
   TextEditingController _cargaController = TextEditingController();
   TextEditingController _obsController = TextEditingController();
+
+  FocusNode _seriesFocus = FocusNode();
+  FocusNode _repsFocus = FocusNode();
+  FocusNode _cargaFocus = FocusNode();
+  FocusNode _obsFocus = FocusNode();
+
   final _formKey = GlobalKey<FormState>();
 
   void resetFields() {
@@ -210,8 +220,10 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                         initialValue: '',
                                         validator: (text) {
                                           if (_seriesController.text.isEmpty) {
-                                            errorMessage =
-                                                'Séries não pode ser vazia';
+                                            setState(() {
+                                              errorMessage =
+                                                  'Séries não pode ser vazia';
+                                            });
                                             return 'Séries não pode ser vazia';
                                           }
                                           return null;
@@ -253,6 +265,12 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                         AppColors.mainColor,
                                                     showCursor: true,
                                                     textAlign: TextAlign.center,
+                                                    focusNode: _seriesFocus,
+                                                    onFieldSubmitted: (text) {
+                                                      _repsFocus.requestFocus();
+                                                    },
+                                                    textInputAction:
+                                                        TextInputAction.next,
                                                     style: TextStyle(
                                                         fontFamily:
                                                             AppFonts.gothamBook,
@@ -278,8 +296,10 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                       initialValue: '',
                                       validator: (text) {
                                         if (_repsController.text.isEmpty) {
-                                          errorMessage =
-                                              'Repetições não pode ser vazia';
+                                          setState(() {
+                                            errorMessage =
+                                                'Repetições não pode ser vazia';
+                                          });
                                           return 'Repetições não pode ser vazia';
                                         }
                                         return null;
@@ -320,6 +340,13 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                       AppColors.mainColor,
                                                   showCursor: true,
                                                   textAlign: TextAlign.center,
+                                                  focusNode: _repsFocus,
+                                                  onFieldSubmitted: (text) {
+                                                    _repsFocus.unfocus();
+                                                    _cargaFocus.requestFocus();
+                                                  },
+                                                  textInputAction:
+                                                      TextInputAction.next,
                                                   style: TextStyle(
                                                       fontFamily:
                                                           AppFonts.gothamBook,
@@ -346,13 +373,17 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                         RegExp regExp =
                                             new RegExp(r'(^[0-9]*$)');
                                         if (_cargaController.text.isEmpty) {
-                                          errorMessage =
-                                              'Carga não pode ser vazia';
+                                          setState(() {
+                                            errorMessage =
+                                                'Carga não pode ser vazia';
+                                          });
                                           return 'Carga não pode ser vazia';
                                         } else if (!regExp
                                             .hasMatch(_cargaController.text)) {
-                                          errorMessage =
-                                              'Carga não pode contar letras ou símbolos';
+                                          setState(() {
+                                            errorMessage =
+                                                'Carga não pode contar letras ou símbolos';
+                                          });
                                           return 'Carga não pode contar letras ou símbolos';
                                         }
                                         return null;
@@ -393,6 +424,13 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                       AppColors.mainColor,
                                                   showCursor: true,
                                                   textAlign: TextAlign.center,
+                                                  focusNode: _cargaFocus,
+                                                  onFieldSubmitted: (text) {
+                                                    _cargaFocus.unfocus();
+                                                    _obsFocus.requestFocus();
+                                                  },
+                                                  textInputAction:
+                                                      TextInputAction.next,
                                                   style: TextStyle(
                                                       fontFamily:
                                                           AppFonts.gothamBook,
@@ -445,6 +483,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     keyboardType: TextInputType.text,
                                     cursorColor: AppColors.mainColor,
                                     showCursor: true,
+                                    focusNode: _obsFocus,
                                     style: TextStyle(
                                         fontFamily: AppFonts.gothamBook,
                                         color: AppColors.white),
@@ -471,36 +510,62 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     textColor: AppColors.black,
                                     onTap: () async {
                                       if (_formKey.currentState.validate()) {
-                                        ExerciciosPlanilha exercicio =
-                                            ExerciciosPlanilha(
-                                                title: widget.exercicio.title,
-                                                series: _seriesController.text,
-                                                reps: _repsController.text,
-                                                carga: int.tryParse(
-                                                    _cargaController.text),
-                                                setType: 'uniset',
-                                                comments: _obsController.text,
-                                                muscleId:
-                                                    widget.exercicio.muscleId,
-                                                video: widget.exercicio.video,
-                                                position: widget.tamPlan + 1);
+                                        if (widget.isBiSet) {
+                                          ExerciciosPlanilha exercicio =
+                                              ExerciciosPlanilha(
+                                                  title: widget.exercicio.title,
+                                                  series:
+                                                      _seriesController.text,
+                                                  reps: _repsController.text,
+                                                  carga: int.tryParse(
+                                                      _cargaController.text),
+                                                  setType: 'uniset',
+                                                  comments: _obsController.text,
+                                                  muscleId:
+                                                      widget.exercicio.muscleId,
+                                                  video: widget.exercicio.video,
+                                                  position: widget.tamPlan + 1);
 
-                                        String response = await exerciseManager
-                                            .addNewExerciseUniSet(
-                                                planilhaId: widget.idPlanilha,
-                                                exercicio: exercicio);
-                                        if (response == null) {
-                                          Navigator.pushReplacementNamed(
-                                              context,
-                                              AppRoutes.exerciciosPlanilha,
-                                              arguments:
-                                                  ExerciciosPlanilhaArguments(
-                                                title: widget.titlePlanilha,
-                                                idPlanilha: widget.idPlanilha,
-                                                idUser: widget.idUser,
-                                              ));
+                                          exerciseManager
+                                              .adicionarExercicioBiSetLista(
+                                                  exercise: exercicio);
+                                          Navigator.pop(context);
                                         } else {
-                                          debugPrint('Erro $response');
+                                          ExerciciosPlanilha exercicio =
+                                              ExerciciosPlanilha(
+                                                  title: widget.exercicio.title,
+                                                  series:
+                                                      _seriesController.text,
+                                                  reps: _repsController.text,
+                                                  carga: int.tryParse(
+                                                      _cargaController.text),
+                                                  setType: 'uniset',
+                                                  comments: _obsController.text,
+                                                  muscleId:
+                                                      widget.exercicio.muscleId,
+                                                  video: widget.exercicio.video,
+                                                  position: widget.tamPlan + 1);
+
+                                          String response =
+                                              await exerciseManager
+                                                  .addNewExerciseUniSet(
+                                                      planilhaId:
+                                                          widget.idPlanilha,
+                                                      exercicio: exercicio,
+                                                      idUser: widget.idUser);
+                                          if (response == null) {
+                                            Navigator.pushReplacementNamed(
+                                                context,
+                                                AppRoutes.exerciciosPlanilha,
+                                                arguments:
+                                                    ExerciciosPlanilhaArguments(
+                                                  title: widget.titlePlanilha,
+                                                  idPlanilha: widget.idPlanilha,
+                                                  idUser: widget.idUser,
+                                                ));
+                                          } else {
+                                            debugPrint('Erro $response');
+                                          }
                                         }
                                       }
                                     }),
@@ -519,7 +584,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                         if (errorMessage.isNotEmpty) ...[
                           Padding(
                             padding: EdgeInsets.only(
-                              top: 24.0,
+                              top: 12.0,
                             ),
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10),

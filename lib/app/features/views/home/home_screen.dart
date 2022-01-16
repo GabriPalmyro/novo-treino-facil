@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(right: 12.0),
             child: IconButton(
               icon: const Icon(
-                Icons.notifications,
+                Icons.notifications_none_outlined,
                 size: 28,
               ),
               tooltip: 'Notificações',
@@ -453,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.center,
                       child: HomeButton(
                         width: width * 0.9,
-                        title: 'Ajudas',
+                        title: 'Me Ajuda',
                         description: 'sdasdasdasdasdasd',
                         fontSize: 28,
                         icon: Icons.help,

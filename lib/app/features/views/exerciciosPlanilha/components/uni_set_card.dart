@@ -1,35 +1,89 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 
-class UniSetCard extends StatelessWidget {
+class UniSetCard extends StatefulWidget {
   final int index;
   final bool isChanging;
   final ExerciciosPlanilha exercicio;
+  final String idUser;
   final Function onTap;
   final bool isFriendAcess;
   final bool isEditing;
+  final Function onDelete;
 
   const UniSetCard(
-      {this.index,
-      this.isChanging,
-      this.exercicio,
-      this.onTap,
+      {@required this.index,
+      @required this.isChanging,
+      @required this.idUser,
+      @required this.exercicio,
+      @required this.onTap,
       this.isFriendAcess = false,
-      this.isEditing});
+      this.isEditing,
+      this.onDelete});
+
+  @override
+  _UniSetCardState createState() => _UniSetCardState();
+}
+
+class _UniSetCardState extends State<UniSetCard> {
+  Future<void> showCustomDialogOpt({Function function, String message}) async {
+    await showCustomAlertDialog(
+        title: Text(
+          'Deletar esse exercício?',
+          style:
+              TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.red),
+        ),
+        androidActions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancelar',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: Colors.white))),
+          TextButton(
+              onPressed: function,
+              child: Text('Ok',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
+        ],
+        iosActions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancelar',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: Colors.white))),
+          TextButton(
+              onPressed: function,
+              child: Text('Ok',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
+        ],
+        context: context,
+        content: Text(
+          message,
+          style: TextStyle(
+              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return InkWell(
-      onTap: !isEditing ? onTap : () {},
+      onTap: !widget.isEditing ? widget.onTap : () {},
       splashColor: Colors.grey[900],
       borderRadius: const BorderRadius.all(const Radius.circular(10.0)),
       child: Row(
         children: [
-          if (isEditing) ...[
+          if (widget.isEditing) ...[
             Expanded(
                 flex: 10,
                 child: Container(
@@ -43,10 +97,10 @@ class UniSetCard extends StatelessWidget {
                 )),
           ],
           Expanded(
-            flex: isEditing ? 90 : 100,
+            flex: widget.isEditing ? 90 : 100,
             child: Container(
-              margin:
-                  EdgeInsets.fromLTRB(isEditing ? 8.0 : 20.0, 12.0, 20.0, 12.0),
+              margin: EdgeInsets.fromLTRB(
+                  widget.isEditing ? 8.0 : 20.0, 12.0, 20.0, 12.0),
               height: 150,
               width: width * 0.8,
               decoration: BoxDecoration(
@@ -61,7 +115,7 @@ class UniSetCard extends StatelessWidget {
                   ),
                 ],
               ),
-              child: isChanging
+              child: widget.isChanging
                   ? Center(
                       child: CircularProgressIndicator(
                         valueColor:
@@ -70,7 +124,7 @@ class UniSetCard extends StatelessWidget {
                     )
                   : Stack(
                       children: [
-                        if (!isEditing) ...[
+                        if (!widget.isEditing) ...[
                           Positioned(
                               right: -5,
                               child: IconButton(
@@ -81,13 +135,30 @@ class UniSetCard extends StatelessWidget {
                                     // color: Colors.red.withOpacity(0.6),
                                   ),
                                   iconSize: 20,
-                                  onPressed: onTap)),
+                                  onPressed: widget.onTap)),
+                        ] else ...[
+                          Positioned(
+                            right: 5,
+                            top: -2,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.delete_forever_rounded,
+                                  color: Colors.red.withOpacity(0.9),
+                                ),
+                                iconSize: 20,
+                                onPressed: () async {
+                                  await showCustomDialogOpt(
+                                      message:
+                                          'Essa ação não poderá ser desfeita após concluida.',
+                                      function: widget.onDelete);
+                                }),
+                          )
                         ],
                         Positioned(
                             left: 15,
                             top: 15,
                             child: Text(
-                              (index + 1).toString() + 'º',
+                              (widget.index + 1).toString() + 'º',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontFamily: "GothamBold",
@@ -106,7 +177,7 @@ class UniSetCard extends StatelessWidget {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 30),
                                 child: AutoSizeText(
-                                  exercicio.title.toUpperCase(),
+                                  widget.exercicio.title.toUpperCase(),
                                   maxLines: 3,
                                   style: TextStyle(
                                       fontSize: 20,
@@ -133,7 +204,7 @@ class UniSetCard extends StatelessWidget {
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      Text(exercicio.series,
+                                      Text(widget.exercicio.series,
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontFamily: AppFonts.gothamBook)),
@@ -148,7 +219,7 @@ class UniSetCard extends StatelessWidget {
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      Text(exercicio.reps,
+                                      Text(widget.exercicio.reps,
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontFamily: AppFonts.gothamBook)),
@@ -163,7 +234,7 @@ class UniSetCard extends StatelessWidget {
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      Text("${exercicio.carga}kg",
+                                      Text("${widget.exercicio.carga}kg",
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontFamily: AppFonts.gothamBook)),

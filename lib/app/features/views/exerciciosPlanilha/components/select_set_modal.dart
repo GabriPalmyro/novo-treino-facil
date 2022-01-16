@@ -12,12 +12,14 @@ class SelectSetModal extends StatelessWidget {
   final String titlePlanilha;
   final int tamPlan;
   final String idUser;
+  final bool isPersonalAcess;
 
   SelectSetModal(
       {@required this.idPlanilha,
       @required this.titlePlanilha,
       @required this.tamPlan,
-      @required this.idUser});
+      @required this.idUser,
+      this.isPersonalAcess = false});
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +48,19 @@ class SelectSetModal extends StatelessWidget {
                           .loadMyListExercises(
                               idUser: context.read<UserManager>().user.id);
                       showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (_) => ListaExerciciosModal(
-                                titlePlanilha: titlePlanilha,
-                                idPlanilha: idPlanilha,
-                                tamPlan: tamPlan,
-                                idUser: idUser,
-                              ));
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        enableDrag: false,
+                        context: context,
+                        builder: (_) => ListaExerciciosModal(
+                          titlePlanilha: titlePlanilha,
+                          idPlanilha: idPlanilha,
+                          tamPlan: tamPlan,
+                          idUser: idUser,
+                          isBiSet: false,
+                          isPersonalAcess: isPersonalAcess,
+                        ),
+                      );
                     },
                     child: Container(
                       child: Row(
@@ -97,6 +103,19 @@ class SelectSetModal extends StatelessWidget {
                           .read<ExercisesManager>()
                           .loadMyListExercises(
                               idUser: context.read<UserManager>().user.id);
+                      showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          enableDrag: false,
+                          context: context,
+                          builder: (_) => ListaExerciciosModal(
+                                titlePlanilha: titlePlanilha,
+                                idPlanilha: idPlanilha,
+                                tamPlan: tamPlan,
+                                idUser: idUser,
+                                isBiSet: true,
+                                isPersonalAcess: isPersonalAcess,
+                              ));
                     },
                     child: Container(
                       child: Row(

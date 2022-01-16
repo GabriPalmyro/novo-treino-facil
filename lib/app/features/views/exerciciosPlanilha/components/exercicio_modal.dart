@@ -22,6 +22,10 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
   TextEditingController _cargaController = TextEditingController();
   TextEditingController _obsController = TextEditingController();
 
+  FocusNode _repsFocus = FocusNode();
+  FocusNode _cargaFocus = FocusNode();
+  FocusNode _obsFocus = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -207,6 +211,9 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                           keyboardType: TextInputType.text,
                                           cursorColor: AppColors.mainColor,
                                           showCursor: true,
+                                          onFieldSubmitted: (text) {
+                                            _repsFocus.requestFocus();
+                                          },
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontFamily: AppFonts.gothamBook,
@@ -250,6 +257,11 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                         keyboardType: TextInputType.text,
                                         cursorColor: AppColors.mainColor,
                                         showCursor: true,
+                                        focusNode: _repsFocus,
+                                        onFieldSubmitted: (text) {
+                                          _repsFocus.unfocus();
+                                          _cargaFocus.requestFocus();
+                                        },
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontFamily: AppFonts.gothamBook,
@@ -293,6 +305,10 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                         cursorColor: AppColors.mainColor,
                                         showCursor: true,
                                         textAlign: TextAlign.center,
+                                        onFieldSubmitted: (text) {
+                                          _cargaFocus.unfocus();
+                                          _obsFocus.requestFocus();
+                                        },
                                         style: TextStyle(
                                             fontFamily: AppFonts.gothamBook,
                                             color: AppColors.white),
