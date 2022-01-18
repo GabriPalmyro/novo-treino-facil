@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,12 +9,19 @@ import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/select_diasemana.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
 class EditPlanilhaModal extends StatefulWidget {
   final Planilha planilha;
   final int index;
+  final String userId;
+  final bool isPersonalAcess;
 
-  const EditPlanilhaModal({@required this.planilha, @required this.index});
+  const EditPlanilhaModal(
+      {@required this.planilha,
+      @required this.index,
+      @required this.userId,
+      @required this.isPersonalAcess});
 
   @override
   _EditPlanilhaModalState createState() => _EditPlanilhaModalState();
@@ -66,12 +74,51 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Editar Planiilha',
-                        style: TextStyle(
-                            fontFamily: AppFonts.gothamBold,
-                            color: AppColors.white,
-                            fontSize: 26.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            'Editar Planilha',
+                            style: TextStyle(
+                                fontFamily: AppFonts.gothamBold,
+                                color: AppColors.white,
+                                fontSize: 26.0),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              String response =
+                                  await planilhaManager.deletarPlanilhaCompleta(
+                                      planilhaId: widget.planilha.id,
+                                      userId: widget.userId,
+                                      index: widget.index,
+                                      isPersonalAcess: widget.isPersonalAcess);
+
+                              if (response != null) {
+                                Navigator.pop(context);
+                                mostrarSnackBar(
+                                    context: context,
+                                    message:
+                                        'Não possível excluir essa planilha.',
+                                    color: AppColors.red);
+                              } else {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.delete_forever,
+                                    size: 28,
+                                    color: AppColors.red.withOpacity(0.8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Divider(
                         color: AppColors.white,
@@ -262,7 +309,11 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                         diasDaSemana: _diasDaSemana,
                                         favorito: widget.planilha.favorito);
                                     await planilhaManager.editPlanilha(
-                                        planilha, widget.index);
+                                        idUser: widget.userId,
+                                        planilha: planilha,
+                                        index: widget.index,
+                                        isPersonalAcess:
+                                            widget.isPersonalAcess);
                                     Navigator.pop(context);
                                   }
                                 },

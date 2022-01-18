@@ -5,30 +5,27 @@ import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/edit_planilha_modal.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
 class CardPlanilha extends StatefulWidget {
   final Planilha planilha;
+  final String userId;
   final int index;
   final Function onTap;
+  final bool isPersonalAcess;
 
   const CardPlanilha(
-      {@required this.planilha, @required this.index, @required this.onTap});
+      {@required this.planilha,
+      @required this.userId,
+      @required this.index,
+      @required this.onTap,
+      this.isPersonalAcess = false});
 
   @override
   _CardPlanilhaState createState() => _CardPlanilhaState();
 }
 
 class _CardPlanilhaState extends State<CardPlanilha> {
-  void mostrarSnackBar(String message, Color color) {
-    SnackBar snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: color,
-    );
-
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -79,28 +76,32 @@ class _CardPlanilhaState extends State<CardPlanilha> {
                   ],
                 ),
               ),
-              Positioned(
-                  top: 0,
-                  left: 20,
-                  child: IconButton(
-                      onPressed: () async {
-                        var response =
-                            await planilhaManager.changePlanilhaToFavorite(
-                                widget.planilha, widget.index);
-                        if (response != null) {
-                          mostrarSnackBar(
-                              'Não foi possível favoritar esse treino.',
-                              Colors.red);
-                        }
-                      },
-                      icon: Icon(
-                        widget.planilha.favorito
-                            ? Icons.star
-                            : Icons.star_border,
-                        color: widget.planilha.favorito
-                            ? AppColors.black
-                            : AppColors.black,
-                      ))),
+              if (!widget.isPersonalAcess) ...[
+                Positioned(
+                    top: 0,
+                    left: 20,
+                    child: IconButton(
+                        onPressed: () async {
+                          var response =
+                              await planilhaManager.changePlanilhaToFavorite(
+                                  widget.planilha, widget.index);
+                          if (response != null) {
+                            mostrarSnackBar(
+                                context: context,
+                                message:
+                                    'Não foi possível favoritar esse treino.',
+                                color: AppColors.red);
+                          }
+                        },
+                        icon: Icon(
+                          widget.planilha.favorito
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: widget.planilha.favorito
+                              ? AppColors.black
+                              : AppColors.black,
+                        ))),
+              ],
               Positioned(
                   top: 0,
                   right: 20,
@@ -111,8 +112,11 @@ class _CardPlanilhaState extends State<CardPlanilha> {
                             isScrollControlled: true,
                             context: context,
                             builder: (_) => EditPlanilhaModal(
-                                planilha: widget.planilha,
-                                index: widget.index));
+                                  planilha: widget.planilha,
+                                  userId: widget.userId,
+                                  index: widget.index,
+                                  isPersonalAcess: widget.isPersonalAcess,
+                                ));
                       },
                       icon: Icon(
                         Icons.edit_outlined,

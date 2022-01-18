@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
+import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/components/exercicio_infos_card.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 
@@ -135,7 +137,6 @@ class _CardSelectedsExercicesState extends State<CardSelectedsExercices>
                                     color: Colors.green,
                                     textColor: AppColors.white,
                                     onTap: () async {
-                                      debugPrint('clicado');
                                       String response =
                                           await exerciciosPlanilhaManager
                                               .addNewExerciseBiSet(

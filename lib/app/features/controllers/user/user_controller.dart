@@ -13,6 +13,7 @@ class UserManager extends ChangeNotifier {
   Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
   Auth.User firebaseUser;
   User user = User();
+  String alunoNomeTemp = '';
   List<Aluno> alunos = [];
   List<User> friends = [];
   bool _loading = false;
@@ -230,7 +231,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> carregarAmigos({String nickname}) async {
+  Future<List<User>> carregarAmigos({String nickname}) async {
     Map<String, dynamic> data = {};
     friends = [];
     debugPrint('LOADING FRIENDS');
@@ -249,11 +250,11 @@ class UserManager extends ChangeNotifier {
 
       debugPrint('AMIGOS LOAD SUCESS');
       loading = false;
-      return null;
+      return friends;
     } catch (e) {
       loading = false;
       debugPrint(e.toString());
-      return e.toString();
+      return null;
     }
   }
 
@@ -498,5 +499,57 @@ class UserManager extends ChangeNotifier {
       debugPrint(e.toString());
       return e.toString();
     }
+  }
+
+  Future<String> deletePersonalAlunoConnection({
+    String personalId,
+    String userId,
+  }) async {
+    loading = true;
+    try {
+      var personalSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .collection("personal")
+          .where("personal_Id", isEqualTo: personalId)
+          .get();
+
+      for (var snapshot in personalSnapshot.docs) {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(userId)
+            .collection("personal")
+            .doc(snapshot.id)
+            .delete();
+      }
+
+      var alunoSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(personalId)
+          .collection("alunos")
+          .where("client_Id", isEqualTo: userId)
+          .get();
+
+      for (var snapshot in alunoSnapshot.docs) {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(personalId)
+            .collection("alunos")
+            .doc(snapshot.id)
+            .delete();
+      }
+
+      loading = false;
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+      loading = false;
+      return e.toString();
+    }
+  }
+
+  removerPersonalAluno({int index}) {
+    alunos.removeAt(index);
+    notifyListeners();
   }
 }

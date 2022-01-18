@@ -18,16 +18,20 @@ class BiSetCard extends StatefulWidget {
   final bool isFriendAcess;
   final bool isEditing;
   final Function onDelete;
+  final String titlePlanilha;
+  final int tamPlan;
 
   const BiSetCard(
-      {this.index,
+      {@required this.index,
       @required this.idPlanilha,
       @required this.idUser,
-      this.exercicio,
-      this.isChanging,
+      @required this.exercicio,
+      @required this.isChanging,
       this.isFriendAcess = false,
       this.onDelete,
-      this.isEditing});
+      @required this.isEditing,
+      @required this.tamPlan,
+      @required this.titlePlanilha});
 
   @override
   _BiSetCardState createState() => _BiSetCardState();
@@ -233,8 +237,22 @@ class _BiSetCardState extends State<BiSetCard> {
                                                     builder: (_) =>
                                                         ExercicioViewModal(
                                                           exercicio: exercicio,
+                                                          idPlanilha:
+                                                              widget.idPlanilha,
+                                                          idUser: widget.idUser,
+                                                          idExercicio:
+                                                              exercicio.id,
+                                                          isPersonalManag:
+                                                              false,
+                                                          tamPlan:
+                                                              widget.tamPlan,
+                                                          titlePlanilha: widget
+                                                              .titlePlanilha,
+                                                          isBiSet: true,
                                                           isFriendAcess: widget
                                                               .isFriendAcess,
+                                                          isSecondExercise:
+                                                              false,
                                                         ));
                                               } catch (e) {
                                                 debugPrint(e.toString());
@@ -245,14 +263,17 @@ class _BiSetCardState extends State<BiSetCard> {
                                   ]
                                 ],
                               ),
-                              AutoSizeText(
-                                '+',
-                                textAlign: TextAlign.center,
-                                maxLines: 3,
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.4),
-                                    fontFamily: "Gotham",
-                                    fontSize: 20),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: AutoSizeText(
+                                  '+',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.4),
+                                      fontFamily: "Gotham",
+                                      fontSize: 20),
+                                ),
                               ),
                               Row(
                                 children: [
@@ -317,9 +338,9 @@ class _BiSetCardState extends State<BiSetCard> {
                                                         .collection('sets')
                                                         .get();
 
-                                                data = snapshot.docs[0].data();
+                                                data = snapshot.docs[1].data();
                                                 data['id'] =
-                                                    snapshot.docs[0].id;
+                                                    snapshot.docs[1].id;
                                                 exercicio =
                                                     ExerciciosPlanilha.fromMap(
                                                         data);
@@ -332,8 +353,24 @@ class _BiSetCardState extends State<BiSetCard> {
                                                     context: context,
                                                     builder: (_) =>
                                                         ExercicioViewModal(
-                                                            exercicio:
-                                                                exercicio));
+                                                          exercicio: exercicio,
+                                                          idPlanilha:
+                                                              widget.idPlanilha,
+                                                          idUser: widget.idUser,
+                                                          idExercicio:
+                                                              exercicio.id,
+                                                          isPersonalManag:
+                                                              false,
+                                                          tamPlan:
+                                                              widget.tamPlan,
+                                                          titlePlanilha: widget
+                                                              .titlePlanilha,
+                                                          isBiSet: true,
+                                                          isFriendAcess: widget
+                                                              .isFriendAcess,
+                                                          isSecondExercise:
+                                                              false,
+                                                        ));
                                               } catch (e) {
                                                 debugPrint(e.toString());
                                               }

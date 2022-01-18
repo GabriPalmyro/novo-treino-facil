@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
+import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/card_friend.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/search_bar.dart';
 
@@ -14,6 +15,8 @@ class BuscarAmigosScreen extends StatefulWidget {
 class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
   TextEditingController nicknameController = TextEditingController();
   FocusNode nicknameNode = FocusNode();
+
+  List<User> friends = [];
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +51,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                       child: SearchBar(
                         onPressed: () async {
                           nicknameNode.unfocus();
-                          await userManager.carregarAmigos(
+                          friends = await userManager.carregarAmigos(
                               nickname: nicknameController.text);
                         },
                         node: nicknameNode,
@@ -69,22 +72,25 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                       padding: const EdgeInsets.only(top: 12.0),
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: userManager.friends.length,
+                          itemCount: friends.length,
                           itemBuilder: (_, index) {
                             return userManager
                                     .friends[index].mostrarPerfilPesquisa
                                 ? CardFriend(
-                                    nickname:
-                                        userManager.friends[index].nickname,
+                                    nickname: friends[index].nickname,
                                     name:
-                                        '${userManager.friends[index].name} ${userManager.friends[index].lastName}',
-                                    photoURL:
-                                        userManager.friends[index].photoURL,
+                                        '${friends[index].name} ${friends[index].lastName}',
+                                    photoURL: friends[index].photoURL,
                                     onTap: () {
-                                      Navigator.pushNamed(
-                                          context, AppRoutes.perfilAmigo,
-                                          arguments:
-                                              userManager.friends[index]);
+                                      if (friends[index].id !=
+                                          userManager.user.id) {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.perfilAmigo,
+                                            arguments: friends[index]);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.meuPerfil);
+                                      }
                                     },
                                   )
                                 : SizedBox();

@@ -7,6 +7,8 @@ import 'package:tabela_treino/app/features/controllers/user/user_controller.dart
 import 'package:tabela_treino/app/features/views/alunos/components/aluno_card.dart';
 import 'package:tabela_treino/app/features/views/alunos/components/novo_aluno_modal.dart';
 import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class AlunosScreen extends StatefulWidget {
@@ -15,11 +17,12 @@ class AlunosScreen extends StatefulWidget {
 }
 
 class _AlunosScreenState extends State<AlunosScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool isExpanded = true;
   bool loading = true;
 
   AnimationController expandController;
+  AnimationController animationController;
   Animation<double> animation;
 
   @override
@@ -43,6 +46,8 @@ class _AlunosScreenState extends State<AlunosScreen>
   void prepareAnimations() {
     expandController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     animation = CurvedAnimation(
       parent: expandController,
       curve: Curves.easeInOutCubic,
@@ -60,6 +65,7 @@ class _AlunosScreenState extends State<AlunosScreen>
   @override
   void dispose() {
     expandController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -177,24 +183,29 @@ class _AlunosScreenState extends State<AlunosScreen>
                                       flex: 20,
                                       child: Padding(
                                         padding:
-                                            const EdgeInsets.only(left: 8.0),
+                                            const EdgeInsets.only(left: 18.0),
                                         child: InkWell(
                                           onTap: () {
                                             setState(() {
                                               isExpanded = !isExpanded;
+                                              isExpanded
+                                                  ? animationController
+                                                      .forward()
+                                                  : animationController
+                                                      .reverse();
+
                                               _runExpandCheck();
                                             });
                                           },
                                           child: Tooltip(
-                                            message:
-                                                isExpanded ? 'Fechar' : 'Abrir',
-                                            child: Icon(
-                                              isExpanded
-                                                  ? Icons.arrow_upward
-                                                  : Icons.arrow_downward,
-                                              color: AppColors.black,
-                                            ),
-                                          ),
+                                              message: isExpanded
+                                                  ? 'Fechar'
+                                                  : 'Abrir',
+                                              child: AnimatedIcon(
+                                                  icon:
+                                                      AnimatedIcons.menu_close,
+                                                  progress:
+                                                      animationController)),
                                         ),
                                       ),
                                     )
@@ -214,6 +225,9 @@ class _AlunosScreenState extends State<AlunosScreen>
                                             userManager.alunos.length, (index) {
                                           return CardAluno(
                                               acessarPlanilhas: () {
+                                                userManager.alunoNomeTemp =
+                                                    userManager.alunos[index]
+                                                        .alunoName;
                                                 Navigator.pushNamed(context,
                                                     AppRoutes.planilhasAluno,
                                                     arguments:
@@ -227,7 +241,39 @@ class _AlunosScreenState extends State<AlunosScreen>
                                                                 .alunos[index]
                                                                 .alunoId));
                                               },
-                                              excluirAluno: () {},
+                                              excluirAluno: () async {
+                                                await showCustomDialogOpt(
+                                                    context: context,
+                                                    function: () async {
+                                                      String response = await userManager
+                                                          .deletePersonalAlunoConnection(
+                                                              personalId:
+                                                                  userManager
+                                                                      .user.id,
+                                                              userId:
+                                                                  userManager
+                                                                      .alunos[
+                                                                          index]
+                                                                      .alunoId);
+
+                                                      if (response != null) {
+                                                        Navigator.pop(context);
+                                                        mostrarSnackBar(
+                                                            context: context,
+                                                            message: response,
+                                                            color:
+                                                                AppColors.red);
+                                                      } else {
+                                                        userManager
+                                                            .removerPersonalAluno(
+                                                                index: index);
+
+                                                        Navigator.pop(context);
+                                                      }
+                                                    },
+                                                    message:
+                                                        'Essa ação irá excluir esse aluno permanentemente.');
+                                              },
                                               aluno: userManager.alunos[index]);
                                         }),
                                       ),

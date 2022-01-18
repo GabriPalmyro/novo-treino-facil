@@ -131,7 +131,6 @@ class ExercisesManager extends ChangeNotifier {
         listaMeusExercicios.add(Exercise.fromMap(data));
       });
 
-      debugPrint(listaMeusExercicios.toString());
       debugPrint('MY LIST EXERCISE LOAD SUCESS');
     } catch (e) {
       listaMeusExercicios = [];

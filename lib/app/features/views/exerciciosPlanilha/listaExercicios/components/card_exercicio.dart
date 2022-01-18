@@ -17,6 +17,7 @@ class CardExercicio extends StatefulWidget {
   final int tamPlan;
   final String idUser;
   final bool isBiSet;
+  final bool showAddButton;
 
   const CardExercicio(
       {this.index,
@@ -25,7 +26,8 @@ class CardExercicio extends StatefulWidget {
       @required this.titlePlanilha,
       @required this.idPlanilha,
       this.isBiSet = false,
-      @required this.tamPlan});
+      @required this.tamPlan,
+      this.showAddButton = true});
 
   @override
   _CardExercicioState createState() => _CardExercicioState();
@@ -196,52 +198,54 @@ class _CardExercicioState extends State<CardExercicio>
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12.0),
-                            child: CustomButton(
-                              color: AppColors.grey,
-                              onTap: () {
-                                if (widget.isBiSet) {
-                                  showModalBottomSheet(
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      enableDrag: false,
-                                      context: context,
-                                      builder: (_) => ExercicioAddModal(
-                                          idUser: widget.idUser,
-                                          isPersonalManag: widget.idUser !=
-                                                  _auth.currentUser.uid
-                                              ? true
-                                              : false,
-                                          isBiSet: true,
-                                          isSecondExercise: true,
-                                          titlePlanilha: widget.titlePlanilha,
-                                          idPlanilha: widget.idPlanilha,
-                                          tamPlan: widget.tamPlan,
-                                          exercicio: widget.exercise));
-                                } else {
-                                  showModalBottomSheet(
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      enableDrag: false,
-                                      context: context,
-                                      builder: (_) => ExercicioAddModal(
-                                          idUser: widget.idUser,
-                                          isPersonalManag: widget.idUser !=
-                                                  _auth.currentUser.uid
-                                              ? true
-                                              : false,
-                                          titlePlanilha: widget.titlePlanilha,
-                                          idPlanilha: widget.idPlanilha,
-                                          tamPlan: widget.tamPlan,
-                                          exercicio: widget.exercise));
-                                }
-                              },
-                              text: 'Selecionar exercício',
-                              textColor: AppColors.white,
-                              width: width * 0.5,
-                            ),
-                          )
+                          if (widget.showAddButton) ...[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: CustomButton(
+                                color: AppColors.grey,
+                                onTap: () {
+                                  if (widget.isBiSet) {
+                                    showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        enableDrag: false,
+                                        context: context,
+                                        builder: (_) => ExercicioAddModal(
+                                            idUser: widget.idUser,
+                                            isPersonalManag: widget.idUser !=
+                                                    _auth.currentUser.uid
+                                                ? true
+                                                : false,
+                                            isBiSet: true,
+                                            isSecondExercise: true,
+                                            titlePlanilha: widget.titlePlanilha,
+                                            idPlanilha: widget.idPlanilha,
+                                            tamPlan: widget.tamPlan,
+                                            exercicio: widget.exercise));
+                                  } else {
+                                    showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        enableDrag: false,
+                                        context: context,
+                                        builder: (_) => ExercicioAddModal(
+                                            idUser: widget.idUser,
+                                            isPersonalManag: widget.idUser !=
+                                                    _auth.currentUser.uid
+                                                ? true
+                                                : false,
+                                            titlePlanilha: widget.titlePlanilha,
+                                            idPlanilha: widget.idPlanilha,
+                                            tamPlan: widget.tamPlan,
+                                            exercicio: widget.exercise));
+                                  }
+                                },
+                                text: 'Selecionar exercício',
+                                textColor: AppColors.white,
+                                width: width * 0.5,
+                              ),
+                            )
+                          ]
                         ],
                       )),
                 ),

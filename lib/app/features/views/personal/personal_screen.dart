@@ -46,7 +46,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
           length: 2,
           child: Scaffold(
               drawer: CustomDrawer(
-                pageNow: 5,
+                pageNow: 4,
               ),
               appBar: AppBar(
                 title: Text(

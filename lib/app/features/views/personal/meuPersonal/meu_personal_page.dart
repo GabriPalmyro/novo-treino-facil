@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/helpers/numer_format.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MeuPersonalPage extends StatefulWidget {
@@ -34,6 +36,49 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
 
   int _calcTime(dateTime) {
     return DateTime.now().difference(dateTime).inDays;
+  }
+
+  Future<void> showCustomDialogOpt({Function function, String message}) async {
+    await showCustomAlertDialog(
+        title: Text(
+          'Deseja se desconectar?',
+          style: TextStyle(
+              fontFamily: AppFonts.gothamBold, color: AppColors.mainColor),
+        ),
+        androidActions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancelar',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: Colors.white))),
+          TextButton(
+              onPressed: function,
+              child: Text('Ok',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
+        ],
+        iosActions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancelar',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: Colors.white))),
+          TextButton(
+              onPressed: function,
+              child: Text('Ok',
+                  style: TextStyle(
+                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
+        ],
+        context: context,
+        content: Text(
+          message,
+          style: TextStyle(
+              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
+        ));
   }
 
   @override
@@ -235,7 +280,28 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    await showCustomDialogOpt(
+                      message:
+                          'Desconectar de ${personalManager.personal.personalName.split(' ')[0]} irá resultar na perda do controle sobre suas planilhas e treinos.',
+                      function: () async {
+                        String response = await context
+                            .read<UserManager>()
+                            .deletePersonalAlunoConnection(
+                                personalId: context.read<UserManager>().user.id,
+                                userId: personalManager.personal.personalId);
+
+                        if (response != null) {
+                          Navigator.pop(context);
+                          mostrarSnackBar(
+                              message: response, color: AppColors.red);
+                        } else {
+                          personalManager.disconectPersonal();
+                          Navigator.pop(context);
+                        }
+                      },
+                    );
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.4,
                     height: 40,
@@ -267,5 +333,15 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
         ),
       );
     });
+  }
+
+  void mostrarSnackBar({String message, Color color}) {
+    SnackBar snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: color,
+    );
+
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

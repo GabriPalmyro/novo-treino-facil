@@ -6,7 +6,7 @@ import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exerci
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/components/card_selecteds_exercices.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/components/filter_button.dart';
-import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 
 import 'components/card_exercicio.dart';
 
@@ -63,49 +63,6 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
     "Tríceps",
   ];
 
-  Future<void> showCustomDialogOpt({Function function, String message}) async {
-    await showCustomAlertDialog(
-        title: Text(
-          'Cancelar a adição desse(s) exercício(s)?',
-          style: TextStyle(
-              fontFamily: AppFonts.gothamBold, color: AppColors.mainColor),
-        ),
-        androidActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        iosActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        context: context,
-        content: Text(
-          message,
-          style: TextStyle(
-              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -115,6 +72,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
       return WillPopScope(
         onWillPop: () async {
           showCustomDialogOpt(
+              context: context,
               function: () {
                 exerciciosPlanilha.limparExercicioBiSetLista();
                 Navigator.pop(context);
@@ -153,6 +111,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                               child: InkWell(
                                 onTap: () {
                                   showCustomDialogOpt(
+                                      context: context,
                                       function: () {
                                         exerciciosPlanilha
                                             .limparExercicioBiSetLista();
@@ -240,6 +199,11 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                   tamPlan: widget.tamPlan,
                                   exercise: exercicios.resultList[index],
                                   isBiSet: widget.isBiSet,
+                                  showAddButton: exerciciosPlanilha
+                                              .listaExerciciosBiSet.length >=
+                                          2
+                                      ? false
+                                      : true,
                                 );
                               }),
                         ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
+
 import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
 import '/app/features/controllers/planilha/planilha_manager.dart';
@@ -9,6 +12,11 @@ import '/app/features/views/planilhas/components/custom_button.dart';
 import '/app/features/views/planilhas/components/select_diasemana.dart';
 
 class NovaPlanilhaModal extends StatefulWidget {
+  final String idUser;
+  final bool isPersonalAcess;
+  const NovaPlanilhaModal(
+      {Key key, @required this.idUser, @required this.isPersonalAcess})
+      : super(key: key);
   @override
   _NovaPlanilhaModalState createState() => _NovaPlanilhaModalState();
 }
@@ -18,6 +26,8 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
   TextEditingController _descriptionController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  bool isCreating = false;
 
   List<DiaDaSemana> diasDaSemana = [
     DiaDaSemana(dia: 'Segunda-Feira', isSelected: false),
@@ -46,9 +56,9 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
         child: Padding(
           padding: MediaQuery.of(context).viewInsets * 0.5,
           child: Container(
-            height: height * 0.75,
+            height: height * 0.65,
             child: Container(
-                height: height * 0.75,
+                height: height * 0.65,
                 decoration: new BoxDecoration(
                     color: AppColors.grey,
                     borderRadius: new BorderRadius.only(
@@ -248,15 +258,34 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                 textColor: AppColors.black,
                                 onTap: () async {
                                   if (_formKey.currentState.validate()) {
+                                    Navigator.pop(context);
                                     Planilha planilha = Planilha(
                                         title: _titleController.text,
                                         description:
                                             _descriptionController.text,
                                         diasDaSemana: diasDaSemana,
                                         favorito: false);
-                                    await planilhaManager
-                                        .createNovaPlanilha(planilha);
-                                    Navigator.pop(context);
+                                    String response = await planilhaManager
+                                        .createNovaPlanilha(
+                                            idUser: widget.idUser,
+                                            planilha: planilha,
+                                            isPersonalAcess:
+                                                widget.isPersonalAcess);
+
+                                    if (response == 'MAX') {
+                                      mostrarSnackBar(
+                                          message: widget.isPersonalAcess
+                                              ? 'Seu aluno atingiu o limite máximo de planilhas.'
+                                              : 'Você atingiu o limite máximo de planilhas.',
+                                          color: AppColors.red,
+                                          context: context);
+                                    } else if (response != null) {
+                                      mostrarSnackBar(
+                                          message:
+                                              'Ocorreu um erro ao criar a planilha. Tente novamente mais tarde.',
+                                          color: AppColors.red,
+                                          context: context);
+                                    }
                                   }
                                 },
                               )

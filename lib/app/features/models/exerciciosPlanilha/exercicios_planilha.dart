@@ -54,6 +54,6 @@ class ExerciciosPlanilha {
 
   @override
   String toString() {
-    return 'TrainingWorksheet(position: $position, title: $title, muscleId: $muscleId, series: $series, reps: $reps, carga: $carga, comments: $comments, setType: $setType)';
+    return 'TrainingWorksheet(id: $id, position: $position, title: $title, muscleId: $muscleId, series: $series, reps: $reps, carga: $carga, comments: $comments, setType: $setType)';
   }
 }

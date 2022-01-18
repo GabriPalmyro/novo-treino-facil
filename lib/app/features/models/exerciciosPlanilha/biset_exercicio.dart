@@ -39,6 +39,6 @@ class BiSetExercise {
 
   @override
   String toString() {
-    return 'BiSetExercise(position: $position, setType: $setType, firstExercise: $firstExercise, secondExercise: $secondExercise, exercicios: $exercicios)';
+    return 'BiSetExercise(id: $id, position: $position, setType: $setType, firstExercise: $firstExercise, secondExercise: $secondExercise)';
   }
 }

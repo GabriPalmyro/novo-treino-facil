@@ -160,4 +160,9 @@ class PersonalManager extends ChangeNotifier {
       return e.toString();
     }
   }
+
+  disconectPersonal() {
+    personal = Personal();
+    notifyListeners();
+  }
 }

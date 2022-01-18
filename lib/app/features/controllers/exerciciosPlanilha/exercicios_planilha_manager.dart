@@ -97,6 +97,36 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String> editExerciseUniSet(
+      {@required String planilhaId,
+      @required String idUser,
+      @required String idExercicio,
+      @required ExerciciosPlanilha exercicio}) async {
+    loading = true;
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(idUser)
+          .collection("planilha")
+          .doc(planilhaId)
+          .collection("exercícios")
+          .doc(idExercicio)
+          .update({
+        "obs": exercicio.comments,
+        "peso": exercicio.carga,
+        "reps": exercicio.reps,
+        "series": exercicio.series
+      });
+      loading = false;
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+
+      loading = false;
+      return e.toString();
+    }
+  }
+
   Future<String> addNewExerciseBiSet(
       {@required String planilhaId,
       @required String idUser,

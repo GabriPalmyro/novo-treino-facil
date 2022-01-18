@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
-import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 
 import 'components/card_request.dart';
 
@@ -14,49 +14,6 @@ class RequestListPage extends StatefulWidget {
 }
 
 class _RequestListPageState extends State<RequestListPage> {
-  Future<void> showCustomDialogOpt({Function function, String message}) async {
-    await showCustomAlertDialog(
-        title: Text(
-          'Tem certeza?',
-          style: TextStyle(
-              fontFamily: AppFonts.gothamBold, color: AppColors.mainColor),
-        ),
-        androidActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        iosActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        context: context,
-        content: Text(
-          message,
-          style: TextStyle(
-              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -107,7 +64,9 @@ class _RequestListPageState extends State<RequestListPage> {
                         personal: personalManager.personalRequestList[index],
                         aceitarPedido: () async {
                           await showCustomDialogOpt(
+                              context: context,
                               function: () async {
+                                Navigator.pop(context);
                                 String response =
                                     await personalManager.acceptPersonalRequest(
                                         personal: personalManager
@@ -119,7 +78,6 @@ class _RequestListPageState extends State<RequestListPage> {
                                 } else {
                                   await personalManager.loadMyPersonal(
                                       idUser: userManager.user.id);
-                                  Navigator.pop(context);
                                 }
                               },
                               message:
@@ -127,6 +85,7 @@ class _RequestListPageState extends State<RequestListPage> {
                         },
                         excluirPedido: () async {
                           await showCustomDialogOpt(
+                              context: context,
                               function: () async {
                                 String response =
                                     await personalManager.deletePersonalRequest(

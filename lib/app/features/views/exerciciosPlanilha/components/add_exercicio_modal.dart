@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
+import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 
 import '../exercicios_planilha_screen.dart';
@@ -339,6 +341,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                   cursorColor:
                                                       AppColors.mainColor,
                                                   showCursor: true,
+                                                  maxLines: null,
                                                   textAlign: TextAlign.center,
                                                   focusNode: _repsFocus,
                                                   onFieldSubmitted: (text) {
@@ -423,6 +426,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                   cursorColor:
                                                       AppColors.mainColor,
                                                   showCursor: true,
+                                                  maxLines: null,
                                                   textAlign: TextAlign.center,
                                                   focusNode: _cargaFocus,
                                                   onFieldSubmitted: (text) {
@@ -483,6 +487,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     keyboardType: TextInputType.text,
                                     cursorColor: AppColors.mainColor,
                                     showCursor: true,
+                                    maxLines: null,
                                     focusNode: _obsFocus,
                                     style: TextStyle(
                                         fontFamily: AppFonts.gothamBook,
@@ -554,12 +559,19 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                                       exercicio: exercicio,
                                                       idUser: widget.idUser);
                                           if (response == null) {
+                                            String userName = context
+                                                .read<UserManager>()
+                                                .alunoNomeTemp;
                                             Navigator.pushReplacementNamed(
                                                 context,
                                                 AppRoutes.exerciciosPlanilha,
                                                 arguments:
                                                     ExerciciosPlanilhaArguments(
                                                   title: widget.titlePlanilha,
+                                                  isPersonalAcess:
+                                                      widget.isPersonalManag,
+                                                  isFriendAcess: false,
+                                                  nomeAluno: userName,
                                                   idPlanilha: widget.idPlanilha,
                                                   idUser: widget.idUser,
                                                 ));

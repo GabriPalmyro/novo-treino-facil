@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
@@ -64,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int dayOfTheWeek(String day) {
     switch (day) {
-      case 'Sunday':
+      case 'Monday':
         return 0;
         break;
       case 'Tuesday':
@@ -82,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Saturday':
         return 5;
         break;
-      case 'Monday':
+      case 'Sunday':
         return 6;
         break;
       default:
@@ -200,10 +199,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 !dayHasTraining
                                     ? homeMessage()
-                                    : 'Seu treino de hoje é:',
+                                    : 'Como você está hoje?',
                                 style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
-                                    fontSize: 20,
+                                    fontFamily: AppFonts.gothamLight,
+                                    fontSize: 18,
                                     color: AppColors.white),
                               ),
                             ],
@@ -384,14 +383,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ] else ...[
-                  if (!dayHasTraining) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, left: 22.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, AppRoutes.planilhas,
-                              arguments: userManager.user.id);
-                        },
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, left: 18.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.planilhas,
+                            arguments: userManager.user.id);
+                      },
+                      highlightColor: AppColors.mainColor.withOpacity(0.3),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
                         child: Text(
                           'Acessar meus treinos',
                           style: TextStyle(
@@ -401,6 +402,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                  ),
+                  if (dayHasTraining) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 22.0),
+                      child: Text(
+                        'Seu treino de hoje é:',
+                        style: TextStyle(
+                            fontFamily: AppFonts.gothamLight,
+                            fontSize: 18,
+                            color: AppColors.white),
+                      ),
+                    ),
                   ],
                   SingleChildScrollView(
                     controller: scrollController,
@@ -408,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Padding(
                       padding: EdgeInsets.only(
-                          left: 5.0, top: dayHasTraining ? 5.0 : 0),
+                          left: 8.0, top: dayHasTraining ? 5.0 : 0),
                       child: Row(
                         children: List.generate(planilhas.length, (index) {
                           return PlanilhaContainer(
@@ -448,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ] else ...[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 60),
                     child: Align(
                       alignment: Alignment.center,
                       child: HomeButton(

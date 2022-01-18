@@ -5,13 +5,16 @@ import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/card_planilha.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
+import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
 
 import 'components/info_dialog.dart';
+import 'components/lista_planilha_vazia.dart';
 import 'components/nova_planilha_modal.dart';
 
 class PlanilhaScreen extends StatefulWidget {
   final String idUser;
-  PlanilhaScreen({@required this.idUser});
+  final bool isPersonalAcess;
+  PlanilhaScreen({@required this.idUser, this.isPersonalAcess = false});
   @override
   _PlanilhaScreenState createState() => _PlanilhaScreenState();
 }
@@ -61,7 +64,10 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                         backgroundColor: Colors.transparent,
                         isScrollControlled: true,
                         context: context,
-                        builder: (_) => NovaPlanilhaModal());
+                        builder: (_) => NovaPlanilhaModal(
+                              idUser: widget.idUser,
+                              isPersonalAcess: widget.isPersonalAcess,
+                            ));
                   },
                 ),
               ),
@@ -76,30 +82,40 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
             backgroundColor: AppColors.mainColor,
           ),
           backgroundColor: AppColors.grey,
-          body: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 70.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children:
-                    List.generate(planilhas.listaPlanilhas.length, (index) {
-                  return CardPlanilha(
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.exerciciosPlanilha,
-                          arguments: ExerciciosPlanilhaArguments(
-                            title: planilhas.listaPlanilhas[index].title,
-                            idPlanilha: planilhas.listaPlanilhas[index].id,
-                            idUser: widget.idUser,
-                          ));
-                    },
-                    planilha: planilhas.listaPlanilhas[index],
-                    index: index,
-                  );
-                }),
-              ),
-            ),
-          ),
+          body: planilhas.loading
+              ? ExerciciosPlanilhaShimmer()
+              : planilhas.listaPlanilhas.isEmpty
+                  ? PlanilhasVazia()
+                  : SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 70.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: List.generate(
+                              planilhas.listaPlanilhas.length, (index) {
+                            return CardPlanilha(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.exerciciosPlanilha,
+                                    arguments: ExerciciosPlanilhaArguments(
+                                        title: planilhas
+                                            .listaPlanilhas[index].title,
+                                        idPlanilha:
+                                            planilhas.listaPlanilhas[index].id,
+                                        idUser: widget.idUser,
+                                        isFriendAcess: false,
+                                        isPersonalAcess:
+                                            widget.isPersonalAcess));
+                              },
+                              userId: widget.idUser,
+                              planilha: planilhas.listaPlanilhas[index],
+                              index: index,
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
         ),
       );
     });

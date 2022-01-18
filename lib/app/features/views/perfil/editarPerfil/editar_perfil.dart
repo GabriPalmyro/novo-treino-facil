@@ -208,8 +208,10 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                                     if (_emailController.text.isEmpty)
                                       return "E-mail não pode ser vazio!";
                                     else if (!emailValid(
-                                        _numberController.text))
+                                        _emailController.text)) {
+                                      debugPrint('email invalido');
                                       return 'E-mail Inválido!';
+                                    }
 
                                     return null;
                                   },
