@@ -65,6 +65,7 @@ class _RequestListPageState extends State<RequestListPage> {
                         aceitarPedido: () async {
                           await showCustomDialogOpt(
                               context: context,
+                              title: 'Aceitar Pedido?',
                               function: () async {
                                 Navigator.pop(context);
                                 String response =
@@ -86,6 +87,8 @@ class _RequestListPageState extends State<RequestListPage> {
                         excluirPedido: () async {
                           await showCustomDialogOpt(
                               context: context,
+                              title: 'Excluir Pedido?',
+                              isDeleteMessage: true,
                               function: () async {
                                 String response =
                                     await personalManager.deletePersonalRequest(

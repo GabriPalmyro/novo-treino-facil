@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/biset_exercicio.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
-import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 
 import 'exercicio_modal.dart';
 
@@ -38,47 +38,41 @@ class BiSetCard extends StatefulWidget {
 }
 
 class _BiSetCardState extends State<BiSetCard> {
-  Future<void> showCustomDialogOpt({Function function, String message}) async {
-    await showCustomAlertDialog(
-        title: Text(
-          'Deletar esse exercício?',
-          style:
-              TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.red),
-        ),
-        androidActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        iosActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        context: context,
-        content: Text(
-          message,
-          style: TextStyle(
-              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
-        ));
+  bool isLoading = false;
+  List<ExerciciosPlanilha> exerciciosBiset = [];
+
+  Future<void> loadBiSetExercicios() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        isLoading = true;
+      });
+      Map<String, dynamic> data = {};
+      var snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.idUser)
+          .collection("planilha")
+          .doc(widget.idPlanilha)
+          .collection('exercícios')
+          .doc(widget.exercicio.id)
+          .collection('sets')
+          .orderBy('pos')
+          .get();
+
+      snapshot.docs.forEach((element) {
+        data = element.data();
+        data['id'] = element.id;
+        exerciciosBiset.add(ExerciciosPlanilha.fromMap(data));
+      });
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadBiSetExercicios();
   }
 
   @override
@@ -137,6 +131,9 @@ class _BiSetCardState extends State<BiSetCard> {
                               iconSize: 20,
                               onPressed: () async {
                                 await showCustomDialogOpt(
+                                    context: context,
+                                    title: 'Deletar esse exercício?',
+                                    isDeleteMessage: true,
                                     message:
                                         'Essa ação não poderá ser desfeita após concluida.',
                                     function: () async {
@@ -179,7 +176,8 @@ class _BiSetCardState extends State<BiSetCard> {
                                           ),
                                         ),
                                         AutoSizeText(
-                                          widget.exercicio.firstExercise
+                                          exerciciosBiset[0]
+                                              .title
                                               .toString()
                                               .toUpperCase(),
                                           textAlign: TextAlign.start,
@@ -204,30 +202,7 @@ class _BiSetCardState extends State<BiSetCard> {
                                           iconSize: 20,
                                           onPressed: () async {
                                             if (!widget.isEditing) {
-                                              ExerciciosPlanilha exercicio;
-                                              Map<String, dynamic> data = {};
                                               try {
-                                                var snapshot =
-                                                    await FirebaseFirestore
-                                                        .instance
-                                                        .collection("users")
-                                                        .doc(widget.idUser)
-                                                        .collection("planilha")
-                                                        .doc(widget.idPlanilha)
-                                                        .collection(
-                                                            'exercícios')
-                                                        .doc(
-                                                            widget.exercicio.id)
-                                                        .collection('sets')
-                                                        .get();
-
-                                                data = snapshot.docs[0].data();
-                                                data['id'] =
-                                                    snapshot.docs[0].id;
-                                                exercicio =
-                                                    ExerciciosPlanilha.fromMap(
-                                                        data);
-
                                                 showModalBottomSheet(
                                                     backgroundColor:
                                                         Colors.transparent,
@@ -236,12 +211,15 @@ class _BiSetCardState extends State<BiSetCard> {
                                                     context: context,
                                                     builder: (_) =>
                                                         ExercicioViewModal(
-                                                          exercicio: exercicio,
+                                                          exercicio:
+                                                              exerciciosBiset[
+                                                                  0],
                                                           idPlanilha:
                                                               widget.idPlanilha,
                                                           idUser: widget.idUser,
                                                           idExercicio:
-                                                              exercicio.id,
+                                                              exerciciosBiset[0]
+                                                                  .id,
                                                           isPersonalManag:
                                                               false,
                                                           tamPlan:
@@ -251,6 +229,8 @@ class _BiSetCardState extends State<BiSetCard> {
                                                           isBiSet: true,
                                                           isFriendAcess: widget
                                                               .isFriendAcess,
+                                                          idBiSet: widget
+                                                              .exercicio.id,
                                                           isSecondExercise:
                                                               false,
                                                         ));
@@ -296,7 +276,8 @@ class _BiSetCardState extends State<BiSetCard> {
                                           ),
                                         ),
                                         AutoSizeText(
-                                          widget.exercicio.secondExercise
+                                          exerciciosBiset[1]
+                                              .title
                                               .toString()
                                               .toUpperCase(),
                                           textAlign: TextAlign.start,
@@ -321,30 +302,7 @@ class _BiSetCardState extends State<BiSetCard> {
                                           iconSize: 20,
                                           onPressed: () async {
                                             if (!widget.isEditing) {
-                                              ExerciciosPlanilha exercicio;
-                                              Map<String, dynamic> data = {};
                                               try {
-                                                var snapshot =
-                                                    await FirebaseFirestore
-                                                        .instance
-                                                        .collection("users")
-                                                        .doc(widget.idUser)
-                                                        .collection("planilha")
-                                                        .doc(widget.idPlanilha)
-                                                        .collection(
-                                                            'exercícios')
-                                                        .doc(
-                                                            widget.exercicio.id)
-                                                        .collection('sets')
-                                                        .get();
-
-                                                data = snapshot.docs[1].data();
-                                                data['id'] =
-                                                    snapshot.docs[1].id;
-                                                exercicio =
-                                                    ExerciciosPlanilha.fromMap(
-                                                        data);
-
                                                 showModalBottomSheet(
                                                     backgroundColor:
                                                         Colors.transparent,
@@ -353,12 +311,15 @@ class _BiSetCardState extends State<BiSetCard> {
                                                     context: context,
                                                     builder: (_) =>
                                                         ExercicioViewModal(
-                                                          exercicio: exercicio,
+                                                          exercicio:
+                                                              exerciciosBiset[
+                                                                  1],
                                                           idPlanilha:
                                                               widget.idPlanilha,
                                                           idUser: widget.idUser,
                                                           idExercicio:
-                                                              exercicio.id,
+                                                              exerciciosBiset[1]
+                                                                  .id,
                                                           isPersonalManag:
                                                               false,
                                                           tamPlan:
@@ -368,6 +329,8 @@ class _BiSetCardState extends State<BiSetCard> {
                                                           isBiSet: true,
                                                           isFriendAcess: widget
                                                               .isFriendAcess,
+                                                          idBiSet: widget
+                                                              .exercicio.id,
                                                           isSecondExercise:
                                                               false,
                                                         ));

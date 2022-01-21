@@ -271,6 +271,8 @@ class _AlunosScreenState extends State<AlunosScreen>
                                                         Navigator.pop(context);
                                                       }
                                                     },
+                                                    isDeleteMessage: true,
+                                                    title: 'Excluir Aluno?',
                                                     message:
                                                         'Essa ação irá excluir esse aluno permanentemente.');
                                               },

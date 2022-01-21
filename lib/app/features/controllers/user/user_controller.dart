@@ -45,7 +45,7 @@ class UserManager extends ChangeNotifier {
           email: user.email, password: pass);
       firebaseUser = authUser.user;
       onSucess();
-      await saveUserData(user.toMap());
+      await saveUserData(user.toJson());
       loading = false;
     } catch (e) {
       debugPrint(e.toString());
@@ -308,12 +308,12 @@ class UserManager extends ChangeNotifier {
       await FirebaseFirestore.instance
           .collection("users")
           .doc(friend.id)
-          .update(friend.toMap());
+          .update(friend.toJson());
 
       await FirebaseFirestore.instance
           .collection("users")
           .doc(firebaseUser.uid)
-          .update(user.toMap());
+          .update(user.toJson());
 
       notifyListeners();
 
@@ -360,12 +360,12 @@ class UserManager extends ChangeNotifier {
       await FirebaseFirestore.instance
           .collection("users")
           .doc(friend.id)
-          .update(friend.toMap());
+          .update(friend.toJson());
 
       await FirebaseFirestore.instance
           .collection("users")
           .doc(firebaseUser.uid)
-          .update(user.toMap());
+          .update(user.toJson());
 
       notifyListeners();
 

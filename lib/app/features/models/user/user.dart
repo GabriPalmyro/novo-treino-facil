@@ -37,7 +37,7 @@ class User {
       this.mostrarPerfilPesquisa,
       this.mostrarPlanilhasPerfil});
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'nickname': nickname,
       'name': name,
@@ -78,6 +78,6 @@ class User {
 
   @override
   String toString() {
-    return 'User(nickname: $nickname, name: $name, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, sex: $sex, photoURL: $photoURL, isPersonal: $isPersonal, isPayApp: $isPayApp, seguidores: $seguidores, seguindo: $seguindo)';
+    return 'User(nickname: $nickname, name: $name, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, isPersonal: $isPersonal, seguidores: $seguidores, seguindo: $seguindo)';
   }
 }

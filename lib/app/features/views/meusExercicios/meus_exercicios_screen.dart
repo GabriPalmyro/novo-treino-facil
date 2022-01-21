@@ -3,11 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
-import 'package:tabela_treino/app/features/views/listaExercicios/components/card_exercicio.dart';
+import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/planilha_vazia.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/components/info_exercicio_modal.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/adicionar_exercicio.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
+
+import 'components/card_meu_exercicio.dart';
 
 class MeusExerciciosScreen extends StatefulWidget {
   @override
@@ -77,29 +80,55 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
           backgroundColor: AppColors.grey,
           body: loading
               ? ExerciciosPlanilhaShimmer()
-              : Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      itemCount: exerciciosManager.listaMeusExercicios.length,
-                      itemBuilder: (_, index) {
-                        return CardExercicio(
-                          index: index,
-                          onTap: () {
-                            showModalBottomSheet(
-                                backgroundColor: Colors.transparent,
-                                isScrollControlled: true,
-                                enableDrag: false,
-                                context: context,
-                                builder: (_) => ExercicioInfoModal(
-                                    exercicio: exerciciosManager
-                                        .listaMeusExercicios[index]));
-                          },
-                          exercise:
-                              exerciciosManager.listaMeusExercicios[index],
-                        );
-                      }),
-                ));
+              : exerciciosManager.listaMeusExercicios.isEmpty
+                  ? ExerciciosPlanilhaVazia()
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 12.0),
+                      child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          itemCount:
+                              exerciciosManager.listaMeusExercicios.length,
+                          itemBuilder: (_, index) {
+                            return CardMeuExercicio(
+                              index: index,
+                              deleteExercise: () async {
+                                String userId =
+                                    context.read<UserManager>().user.id;
+                                String response =
+                                    await exerciciosManager.deleteMyExercise(
+                                        index: index, userId: userId);
+
+                                if (response != null) {
+                                  Navigator.pop(context);
+                                  mostrarSnackBar(
+                                      message:
+                                          'Não foi possível excluir esse exercício.',
+                                      color: AppColors.red,
+                                      context: context);
+                                } else {
+                                  Navigator.pop(context);
+                                  mostrarSnackBar(
+                                      message:
+                                          'Exercício excluído com sucesso.',
+                                      color: Colors.green,
+                                      context: context);
+                                }
+                              },
+                              onTap: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    enableDrag: false,
+                                    context: context,
+                                    builder: (_) => ExercicioInfoModal(
+                                        exercicio: exerciciosManager
+                                            .listaMeusExercicios[index]));
+                              },
+                              exercise:
+                                  exerciciosManager.listaMeusExercicios[index],
+                            );
+                          }),
+                    ));
     });
   }
 }

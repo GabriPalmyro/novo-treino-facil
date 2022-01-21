@@ -73,6 +73,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
         onWillPop: () async {
           showCustomDialogOpt(
               context: context,
+              title: 'Cancelar a adição desse(s) exercício(s)?',
               function: () {
                 exerciciosPlanilha.limparExercicioBiSetLista();
                 Navigator.pop(context);
@@ -80,7 +81,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                 Navigator.pop(context);
               },
               message:
-                  'Essa ação irá resultar na perda dos exercício(s) adicionado(s) até agora.');
+                  'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.');
           return true;
         },
         child: Container(
@@ -112,6 +113,8 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                 onTap: () {
                                   showCustomDialogOpt(
                                       context: context,
+                                      title:
+                                          'Cancelar a adição desse(s) exercício(s)?',
                                       function: () {
                                         exerciciosPlanilha
                                             .limparExercicioBiSetLista();
@@ -120,7 +123,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                         Navigator.pop(context);
                                       },
                                       message:
-                                          'Essa ação irá resultar na perda dos exercício(s) adicionado(s) até agora.');
+                                          'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.');
                                 },
                                 child: Icon(
                                   Icons.cancel_rounded,

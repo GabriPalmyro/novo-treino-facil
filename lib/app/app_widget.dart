@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/friend/friend_controller.dart';
@@ -103,6 +104,10 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (_) => PersonalManager(),
+          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AmigosProcuradosManager(),
           lazy: true,
         ),
       ],

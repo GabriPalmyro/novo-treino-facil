@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class SearchBar extends StatelessWidget {
   final Function onPressed;
+  final Function onSubmitted;
   final TextEditingController controller;
   final FocusNode node;
 
   const SearchBar(
       {@required this.onPressed,
+      @required this.onSubmitted,
       @required this.controller,
       @required this.node});
 
@@ -48,6 +49,7 @@ class SearchBar extends StatelessWidget {
                   //   color: AppColors.mainColor,
                   // ),
                 ),
+                onSubmitted: onSubmitted,
               ),
             ),
             IconButton(

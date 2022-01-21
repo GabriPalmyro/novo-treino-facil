@@ -345,7 +345,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                                 'apagando biset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
                                             Navigator.pop(context);
                                             String response = await exercicios
-                                                .deleteExerciseUniSet(
+                                                .deleteExerciseBiSet(
                                                     planilhaId: widget
                                                         .arguments.idPlanilha,
                                                     idExercise:

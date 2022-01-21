@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
-import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 
 class UniSetCard extends StatefulWidget {
   final int index;
@@ -30,49 +30,6 @@ class UniSetCard extends StatefulWidget {
 }
 
 class _UniSetCardState extends State<UniSetCard> {
-  Future<void> showCustomDialogOpt({Function function, String message}) async {
-    await showCustomAlertDialog(
-        title: Text(
-          'Deletar esse exercício?',
-          style:
-              TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.red),
-        ),
-        androidActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        iosActions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
-        ],
-        context: context,
-        content: Text(
-          message,
-          style: TextStyle(
-              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -147,6 +104,9 @@ class _UniSetCardState extends State<UniSetCard> {
                                 iconSize: 20,
                                 onPressed: () async {
                                   await showCustomDialogOpt(
+                                      context: context,
+                                      title: 'Excluir exercício?',
+                                      isDeleteMessage: true,
                                       message:
                                           'Essa ação não poderá ser desfeita após concluida.',
                                       function: widget.onDelete);

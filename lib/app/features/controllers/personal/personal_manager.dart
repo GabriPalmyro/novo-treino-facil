@@ -90,6 +90,17 @@ class PersonalManager extends ChangeNotifier {
         loading = false;
         return 'Você já possui um Personal atualmente. Cancele a conexão para realizar essa ação.';
       } else {
+        var alunosPersonal = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(personal.id)
+            .collection("alunos")
+            .get();
+
+        if (alunosPersonal.docs.length >= 15) {
+          loading = false;
+          return 'Esse Personal atingiu o número máximo de alunos.';
+        }
+
         await FirebaseFirestore.instance
             .collection("users")
             .doc(user.id)

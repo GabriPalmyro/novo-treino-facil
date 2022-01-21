@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
+import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/components/edit_biset_add.dart';
 
 class ExercicioInfoCard extends StatelessWidget {
   final int index;
@@ -137,7 +138,16 @@ class ExercicioInfoCard extends StatelessWidget {
                     size: 28,
                   ),
                   tooltip: 'Editar',
-                  onPressed: () {},
+                  onPressed: () {
+                    showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        enableDrag: false,
+                        context: context,
+                        builder: (_) => EditBiSetAdd(
+                            exerciciosPlanilha: exerciciosPlanilha,
+                            index: index));
+                  },
                 ),
                 IconButton(
                   icon: Icon(

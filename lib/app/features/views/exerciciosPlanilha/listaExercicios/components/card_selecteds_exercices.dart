@@ -4,10 +4,9 @@ import 'package:provider/provider.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
-import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
-import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/components/exercicio_infos_card.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
 import '../../exercicios_planilha_screen.dart';
 
@@ -121,10 +120,10 @@ class _CardSelectedsExercicesState extends State<CardSelectedsExercices>
                                   exerciciosPlanilhaManager
                                       .listaExerciciosBiSet.length, (index) {
                                 return ExercicioInfoCard(
-                                    index: index,
-                                    exerciciosPlanilha:
-                                        exerciciosPlanilhaManager
-                                            .listaExerciciosBiSet[index]);
+                                  index: index,
+                                  exerciciosPlanilha: exerciciosPlanilhaManager
+                                      .listaExerciciosBiSet[index],
+                                );
                               }),
                             ),
                             if (exerciciosPlanilhaManager
@@ -144,7 +143,10 @@ class _CardSelectedsExercicesState extends State<CardSelectedsExercices>
                                                   idUser: widget.idUser,
                                                   pos: widget.tamPlanilha + 1);
                                       if (response != null) {
-                                        //! ERROR
+                                        mostrarSnackBar(
+                                            message: response,
+                                            color: AppColors.red,
+                                            context: context);
                                       } else {
                                         Navigator.pushReplacementNamed(context,
                                             AppRoutes.exerciciosPlanilha,
@@ -203,11 +205,20 @@ class _CardSelectedsExercicesState extends State<CardSelectedsExercices>
                             });
                           },
                           icon: Icon(
-                            isExpanded
-                                ? Icons.arrow_downward_rounded
-                                : Icons.arrow_upward_rounded,
-                            color:
-                                isExpanded ? AppColors.grey300 : AppColors.grey,
+                            exerciciosPlanilhaManager
+                                        .listaExerciciosBiSet.length ==
+                                    2
+                                ? Icons.play_arrow_rounded
+                                : isExpanded
+                                    ? Icons.arrow_downward_rounded
+                                    : Icons.arrow_upward_rounded,
+                            color: exerciciosPlanilhaManager
+                                        .listaExerciciosBiSet.length ==
+                                    2
+                                ? Colors.green
+                                : isExpanded
+                                    ? AppColors.grey300
+                                    : AppColors.grey,
                           ))
                     ],
                   ),

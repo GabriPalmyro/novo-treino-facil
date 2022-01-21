@@ -2,41 +2,28 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
-import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
-import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 
-import '../exercicios_planilha_screen.dart';
+class EditBiSetAdd extends StatefulWidget {
+  final int index;
+  final ExerciciosPlanilha exerciciosPlanilha;
 
-class ExercicioAddModal extends StatefulWidget {
-  final Exercise exercicio;
-  final String idPlanilha;
-  final String titlePlanilha;
-  final int tamPlan;
-  final String idUser;
-  final bool isBiSet;
-  final bool isSecondExercise;
-  final bool isPersonalManag;
-
-  ExercicioAddModal(
-      {@required this.exercicio,
-      @required this.idPlanilha,
-      @required this.titlePlanilha,
-      @required this.tamPlan,
-      @required this.idUser,
-      this.isBiSet = false,
-      this.isSecondExercise = false,
-      @required this.isPersonalManag});
+  const EditBiSetAdd({
+    Key key,
+    @required this.exerciciosPlanilha,
+    @required this.index,
+  }) : super(key: key);
 
   @override
-  _ExercicioAddModalState createState() => _ExercicioAddModalState();
+  _EditBiSetAddState createState() => _EditBiSetAddState();
 }
 
-class _ExercicioAddModalState extends State<ExercicioAddModal> {
+class _EditBiSetAddState extends State<EditBiSetAdd> {
   TextEditingController _seriesController = TextEditingController();
   TextEditingController _repsController = TextEditingController();
   TextEditingController _cargaController = TextEditingController();
@@ -48,6 +35,15 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
   FocusNode _obsFocus = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _seriesController.text = widget.exerciciosPlanilha.series;
+    _repsController.text = widget.exerciciosPlanilha.reps;
+    _cargaController.text = widget.exerciciosPlanilha.carga.toString();
+    _obsController.text = widget.exerciciosPlanilha.comments;
+  }
 
   void resetFields() {
     setState(() {
@@ -110,7 +106,9 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                             Expanded(
                               flex: 80,
                               child: AutoSizeText(
-                                widget.exercicio.title.toUpperCase(),
+                                exerciseManager
+                                    .listaExerciciosBiSet[widget.index].title
+                                    .toUpperCase(),
                                 maxLines: 2,
                                 style: TextStyle(
                                     fontFamily: AppFonts.gothamBold,
@@ -200,8 +198,8 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     ),
                                   ],
                                 )),
-                                imageProvider:
-                                    NetworkImage(widget.exercicio.video),
+                                imageProvider: NetworkImage(exerciseManager
+                                    .listaExerciciosBiSet[widget.index].video),
                                 initialScale: PhotoViewComputedScale.contained,
                                 minScale: PhotoViewComputedScale.covered * 0.5,
                               ),
@@ -514,70 +512,32 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     textColor: AppColors.black,
                                     onTap: () async {
                                       if (_formKey.currentState.validate()) {
-                                        if (widget.isBiSet) {
-                                          ExerciciosPlanilha exercicio =
-                                              ExerciciosPlanilha(
-                                                  title: widget.exercicio.title,
-                                                  series:
-                                                      _seriesController.text,
-                                                  reps: _repsController.text,
-                                                  carga: int.tryParse(
-                                                      _cargaController.text),
-                                                  setType: 'uniset',
-                                                  comments: _obsController.text,
-                                                  muscleId:
-                                                      widget.exercicio.muscleId,
-                                                  video: widget.exercicio.video,
-                                                  position: widget.tamPlan + 1);
+                                        ExerciciosPlanilha exercicio =
+                                            ExerciciosPlanilha(
+                                                title: exerciseManager
+                                                    .listaExerciciosBiSet[
+                                                        widget.index]
+                                                    .title,
+                                                series: _seriesController.text,
+                                                reps: _repsController.text,
+                                                carga: int.tryParse(
+                                                    _cargaController.text),
+                                                setType: 'uniset',
+                                                comments: _obsController.text,
+                                                muscleId: exerciseManager
+                                                    .listaExerciciosBiSet[
+                                                        widget.index]
+                                                    .muscleId,
+                                                video: exerciseManager
+                                                    .listaExerciciosBiSet[
+                                                        widget.index]
+                                                    .video,
+                                                position: 0);
 
-                                          exerciseManager
-                                              .adicionarExercicioBiSetLista(
-                                                  exercise: exercicio);
-                                          Navigator.pop(context);
-                                        } else {
-                                          ExerciciosPlanilha exercicio =
-                                              ExerciciosPlanilha(
-                                                  title: widget.exercicio.title,
-                                                  series:
-                                                      _seriesController.text,
-                                                  reps: _repsController.text,
-                                                  carga: int.tryParse(
-                                                      _cargaController.text),
-                                                  setType: 'uniset',
-                                                  comments: _obsController.text,
-                                                  muscleId:
-                                                      widget.exercicio.muscleId,
-                                                  video: widget.exercicio.video,
-                                                  position: widget.tamPlan + 1);
-
-                                          String response =
-                                              await exerciseManager
-                                                  .addNewExerciseUniSet(
-                                                      planilhaId:
-                                                          widget.idPlanilha,
-                                                      exercicio: exercicio,
-                                                      idUser: widget.idUser);
-                                          if (response == null) {
-                                            String userName = context
-                                                .read<UserManager>()
-                                                .alunoNomeTemp;
-                                            Navigator.pushReplacementNamed(
-                                                context,
-                                                AppRoutes.exerciciosPlanilha,
-                                                arguments:
-                                                    ExerciciosPlanilhaArguments(
-                                                  title: widget.titlePlanilha,
-                                                  isPersonalAcess:
-                                                      widget.isPersonalManag,
-                                                  isFriendAcess: false,
-                                                  nomeAluno: userName,
-                                                  idPlanilha: widget.idPlanilha,
-                                                  idUser: widget.idUser,
-                                                ));
-                                          } else {
-                                            debugPrint('Erro $response');
-                                          }
-                                        }
+                                        exerciseManager.substituirExercicio(
+                                            index: widget.index,
+                                            exerciciosPlanilha: exercicio);
+                                        Navigator.pop(context);
                                       }
                                     }),
                                 CustomButton(

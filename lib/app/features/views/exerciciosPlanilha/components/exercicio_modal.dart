@@ -19,6 +19,7 @@ class ExercicioViewModal extends StatefulWidget {
   final int tamPlan;
   final String idUser;
   final bool isBiSet;
+  final String idBiSet;
   final bool isSecondExercise;
   final bool isPersonalManag;
 
@@ -30,6 +31,7 @@ class ExercicioViewModal extends StatefulWidget {
       @required this.titlePlanilha,
       @required this.tamPlan,
       @required this.idUser,
+      this.idBiSet,
       this.isBiSet = false,
       this.isSecondExercise = false,
       @required this.isPersonalManag});
@@ -430,24 +432,42 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                           if (widget.isBiSet) {
                                             ExerciciosPlanilha exercicio =
                                                 ExerciciosPlanilha(
-                                                    title:
-                                                        widget.exercicio.title,
-                                                    series:
-                                                        _seriesController.text,
-                                                    reps: _repsController.text,
-                                                    carga: int.tryParse(
-                                                        _cargaController.text),
-                                                    setType: 'uniset',
-                                                    comments:
-                                                        _obsController.text,
-                                                    muscleId: widget
-                                                        .exercicio.muscleId,
-                                                    video:
-                                                        widget.exercicio.video,
-                                                    position:
-                                                        widget.tamPlan + 1);
-                                            //TODO EDITAR EXERCICIO BISET
-                                            Navigator.pop(context);
+                                              series: _seriesController.text,
+                                              reps: _repsController.text,
+                                              carga: int.tryParse(
+                                                  _cargaController.text),
+                                              comments: _obsController.text,
+                                            );
+
+                                            String response = await context
+                                                .read<
+                                                    ExerciciosPlanilhaManager>()
+                                                .editExerciseBiSet(
+                                                    planilhaId:
+                                                        widget.idPlanilha,
+                                                    idUser: widget.idUser,
+                                                    idExercicio:
+                                                        widget.idExercicio,
+                                                    idBiSet: widget.idBiSet,
+                                                    exercicio: exercicio);
+                                            if (response == null) {
+                                              Navigator.pushReplacementNamed(
+                                                  context,
+                                                  AppRoutes.exerciciosPlanilha,
+                                                  arguments:
+                                                      ExerciciosPlanilhaArguments(
+                                                    title: widget.titlePlanilha,
+                                                    idPlanilha:
+                                                        widget.idPlanilha,
+                                                    idUser: widget.idUser,
+                                                    isFriendAcess:
+                                                        widget.isFriendAcess,
+                                                    isPersonalAcess:
+                                                        widget.isPersonalManag,
+                                                  ));
+                                            } else {
+                                              debugPrint('Erro $response');
+                                            }
                                           } else {
                                             ExerciciosPlanilha exercicio =
                                                 ExerciciosPlanilha(

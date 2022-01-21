@@ -234,6 +234,7 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                     onTap: () {
                       Navigator.pushNamed(context, AppRoutes.preferencias);
                     }),
+                CardOption(title: 'Alterar Foto de Perfil', onTap: () {}),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: CardOption(

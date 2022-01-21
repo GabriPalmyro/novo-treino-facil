@@ -138,4 +138,22 @@ class ExercisesManager extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<String> deleteMyExercise(
+      {@required int index, @required String userId}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .collection("exercicios")
+          .doc(listaMeusExercicios[index].id)
+          .delete();
+      listaMeusExercicios.removeAt(index);
+      notifyListeners();
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+      return e.toString();
+    }
+  }
 }
