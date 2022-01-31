@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
+import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/friend/friend_controller.dart';
@@ -22,12 +25,15 @@ import 'package:tabela_treino/app/features/views/personal/personal_screen.dart';
 import 'package:tabela_treino/app/features/views/planilhas/planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/preferencias/preferencias_screen.dart';
 import 'package:tabela_treino/app/features/views/register/register_screen.dart';
+import 'package:tabela_treino/app/shared/splash/splash.dart';
 import '/app/core/core.dart';
 import '/app/features/controllers/user/user_controller.dart';
 
 import 'features/controllers/planilha/planilha_manager.dart';
 import 'features/views/login/login_screen.dart';
 import 'shared/services/pushNotifications/push_notification_service.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'ads/ads_model.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -36,50 +42,50 @@ class MyApp extends StatefulWidget {
 
 FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+// bool _payApp;
+double padding = 0;
 
 class _MyAppState extends State<MyApp> {
-  // void displayBanner() {
-  //   myBanner
-  //     ..load()
-  //     ..show(
-  //       anchorOffset: -2,
-  //       anchorType: AnchorType.bottom,
-  //     ).then((value) {
-  //       print("anuncio mostrado");
-  //       padding = 0;
-  //       print(padding);
-  //     }).catchError((_) {
-  //       print("ERRO $_");
-  //       padding = 0;
-  //       print(padding);
-  //     });
-  // }
+  void displayBanner() {
+    myBanner
+      ..load()
+      ..show(
+        anchorOffset: -2,
+        anchorType: AnchorType.bottom,
+      ).then((value) {
+        print("anuncio mostrado");
+        print(padding);
+      }).catchError((_) {
+        print("ERRO $_");
+      });
+  }
 
   @override
   void dispose() {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    //   DeviceOrientation.landscapeLeft,
-    //   DeviceOrientation.landscapeRight,
-    // ]);
-    // myBanner?.dispose();
-    // myInterstitial?.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    myBanner?.dispose();
+    myInterstitial?.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    // FirebaseAdMob.instance
-    //     .initialize(appId: "ca-app-pub-7831186229252322~9095625736");
+    FirebaseAdMob.instance
+        .initialize(appId: "ca-app-pub-7831186229252322~9095625736");
+    startBanner();
+    displayBanner();
   }
 
   @override
   Widget build(BuildContext context) {
     final pushNotificationService = PushNotificationService(_firebaseMessaging);
     pushNotificationService.initialise();
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -110,6 +116,14 @@ class _MyAppState extends State<MyApp> {
           create: (_) => AmigosProcuradosManager(),
           lazy: true,
         ),
+        ChangeNotifierProvider(
+          create: (_) => AdsManager(),
+          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CoreAppController(),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         title: 'Treino Fácil',
@@ -128,12 +142,12 @@ class _MyAppState extends State<MyApp> {
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           );
         },
-        //home: LoginScreen(),
-        initialRoute:
-            _auth.currentUser == null ? AppRoutes.login : AppRoutes.home,
+        initialRoute: AppRoutes.splash,
         onGenerateRoute: (settings) {
           final arguments = settings.arguments;
           switch (settings.name) {
+            case AppRoutes.splash:
+              return MaterialPageRoute(builder: (_) => SplashScreen());
             case AppRoutes.login:
               return MaterialPageRoute(builder: (_) => LoginScreen());
             case AppRoutes.register:

@@ -15,9 +15,11 @@ class AmigosProcuradosManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteFiles() async {
+  Future<void> deleteHistorico() async {
+    amigosProcurados = [];
     final File fileId = await getFileId();
     fileId.delete();
+    notifyListeners();
   }
 
   Future<File> getFileId() async {

@@ -1,5 +1,8 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -43,21 +46,24 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
 
   bool _isSearching = false;
   final _searchController = TextEditingController();
-
   String _selTypeSearch = "title";
+
+  //*ADS
+  final _controller = NativeAdmobController();
 
   Widget _buildSearchField() {
     return TextField(
       keyboardType: TextInputType.text,
       controller: _searchController,
       style: TextStyle(
-        color: Colors.grey[900],
+        color: AppColors.mainColor.withOpacity(0.8),
         fontSize: 20,
         height: 1.3,
         fontFamily: AppFonts.gothamBook,
       ),
       enableInteractiveSelection: true,
       decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(bottom: 5),
           hintText: _selTypeSearch == "mines"
               ? "Meus Exercícios"
               : _selTypeSearch == "title"
@@ -69,7 +75,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                           : "Procure em $_selTypeSearch",
           border: InputBorder.none,
           hintStyle: TextStyle(
-              fontSize: 18, color: Colors.grey[900].withOpacity(0.9))),
+              fontSize: 18, color: AppColors.mainColor.withOpacity(0.8))),
     );
   }
 
@@ -145,12 +151,19 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
         child: Scaffold(
           drawer: CustomDrawer(pageNow: 2),
           appBar: AppBar(
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
+            ),
+            elevation: 0,
+            backgroundColor: AppColors.grey,
             title: _isSearching
                 ? _buildSearchField()
                 : Text(
                     "Exercícios",
                     style: TextStyle(
-                        fontFamily: AppFonts.gothamBold, fontSize: 30),
+                        fontFamily: AppFonts.gothamBold,
+                        color: AppColors.mainColor,
+                        fontSize: 30),
                     maxLines: 2,
                   ),
             actions: _buildActions(),
@@ -189,21 +202,41 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                   )),
               Expanded(
                 child: ListView.builder(
+                    shrinkWrap: true,
                     physics: BouncingScrollPhysics(),
                     itemCount: exercicios.resultList.length,
                     itemBuilder: (_, index) {
-                      return CardExercicio(
-                        index: index,
-                        onTap: () {
-                          showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
-                              enableDrag: false,
-                              context: context,
-                              builder: (_) => ExercicioInfoModal(
-                                  exercicio: exercicios.resultList[index]));
-                        },
-                        exercise: exercicios.resultList[index],
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            bottom: (index + 1) == exercicios.resultList.length
+                                ? 60.0
+                                : 0),
+                        child: Column(
+                          children: [
+                            if (index % 8 == 0 && index != 0) ...[
+                              Container(
+                                  height: 80,
+                                  child: AdmobBanner(
+                                      adUnitId: nativeAdUnitId(),
+                                      adSize: AdmobBannerSize.SMART_BANNER(
+                                          context)))
+                            ],
+                            CardExercicio(
+                              index: index,
+                              onTap: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    enableDrag: false,
+                                    context: context,
+                                    builder: (_) => ExercicioInfoModal(
+                                        exercicio:
+                                            exercicios.resultList[index]));
+                              },
+                              exercise: exercicios.resultList[index],
+                            ),
+                          ],
+                        ),
                       );
                     }),
               )

@@ -27,9 +27,9 @@ class SelectSetModal extends StatelessWidget {
     return Padding(
       padding: MediaQuery.of(context).viewInsets * 0.5,
       child: Container(
-        height: height * 0.3,
+        height: height * 0.25,
         child: Container(
-            height: height * 0.3,
+            height: height * 0.25,
             decoration: new BoxDecoration(
                 color: AppColors.grey,
                 borderRadius: new BorderRadius.only(

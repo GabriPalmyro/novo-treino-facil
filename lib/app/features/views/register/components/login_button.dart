@@ -14,8 +14,8 @@ class LoginButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: Duration(milliseconds: 350),
         curve: Curves.ease,
-        width: isLoading ? width * 0.3 : width * 0.85,
-        height: 60,
+        width: width * 0.85,
+        height: 50,
         child: Center(
           child: isLoading
               ? CircularProgressIndicator(

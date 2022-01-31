@@ -45,7 +45,7 @@ class UserManager extends ChangeNotifier {
           email: user.email, password: pass);
       firebaseUser = authUser.user;
       onSucess();
-      await saveUserData(user.toJson());
+      await saveUserData(user.toMap());
       loading = false;
     } catch (e) {
       debugPrint(e.toString());
@@ -98,11 +98,6 @@ class UserManager extends ChangeNotifier {
           .collection("users")
           .doc(firebaseUser.uid)
           .set(userData);
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser.uid)
-          .collection("planilha")
-          .add({"title": "Treino Demo", "description": "Descrição Demo"});
 
       debugPrint('Usuário criado com sucesso!');
     } catch (e) {
@@ -308,12 +303,12 @@ class UserManager extends ChangeNotifier {
       await FirebaseFirestore.instance
           .collection("users")
           .doc(friend.id)
-          .update(friend.toJson());
+          .update(friend.toMap());
 
       await FirebaseFirestore.instance
           .collection("users")
           .doc(firebaseUser.uid)
-          .update(user.toJson());
+          .update(user.toMap());
 
       notifyListeners();
 
@@ -360,12 +355,12 @@ class UserManager extends ChangeNotifier {
       await FirebaseFirestore.instance
           .collection("users")
           .doc(friend.id)
-          .update(friend.toJson());
+          .update(friend.toMap());
 
       await FirebaseFirestore.instance
           .collection("users")
           .doc(firebaseUser.uid)
-          .update(user.toJson());
+          .update(user.toMap());
 
       notifyListeners();
 
@@ -383,7 +378,7 @@ class UserManager extends ChangeNotifier {
       int level,
       bool homeExe,
       Function onSucess}) async {
-    log('Enviando!');
+    loading = true;
     await FirebaseStorage.instance
         .refFromURL(
             "gs://treino-facil-22856.appspot.com/exercicios_compartilhados/${user.id}/exercicios/$muscleText")
@@ -410,15 +405,20 @@ class UserManager extends ChangeNotifier {
               .then((value) {
             print("Succesfuly Uploaded");
             onSucess();
+            loading = false;
             return null;
           }).catchError((error) {
             print(error);
+            loading = false;
             return error.toString();
           });
         });
       }
+
+      loading = false;
     }).catchError((error) {
       print(error);
+      loading = false;
       return error.toString();
     });
   }

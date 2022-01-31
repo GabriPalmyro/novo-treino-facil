@@ -9,6 +9,7 @@ import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/perfil/perfil_screen.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'components/card_planilha_friend.dart';
 
@@ -95,6 +96,7 @@ class _PerfilAmigoScreenState extends State<PerfilAmigoScreen> {
                   ],
                 )
               : SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   child: Column(
                     children: [
                       Container(
@@ -278,7 +280,26 @@ class _PerfilAmigoScreenState extends State<PerfilAmigoScreen> {
                                       horizontalPad: 40.0,
                                       color: AppColors.grey300,
                                       textColor: AppColors.white,
-                                      onTap: () {}),
+                                      onTap: () {
+                                        String encodeQueryParameters(
+                                            Map<String, String> params) {
+                                          return params.entries
+                                              .map((e) =>
+                                                  '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                                              .join('&');
+                                        }
+
+                                        final Uri emailLaunchUri = Uri(
+                                          scheme: 'mailto',
+                                          path: widget.friend.email,
+                                          query: encodeQueryParameters(<String,
+                                              String>{
+                                            'subject': 'Olá, tudo bem com você?'
+                                          }),
+                                        );
+
+                                        launch(emailLaunchUri.toString());
+                                      }),
                                 ],
                               ),
                             )

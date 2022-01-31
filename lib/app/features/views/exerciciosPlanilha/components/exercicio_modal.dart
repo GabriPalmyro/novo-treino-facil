@@ -2,12 +2,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
-
+import 'package:firebase_admob/firebase_admob.dart';
 import '../exercicios_planilha_screen.dart';
 
 class ExercicioViewModal extends StatefulWidget {
@@ -41,11 +43,33 @@ class ExercicioViewModal extends StatefulWidget {
 }
 
 class _ExercicioViewModalState extends State<ExercicioViewModal> {
+  //* ADS
+  InterstitialAd interstitialAdMuscle;
+
+  void _loadInterstitialAd() {
+    interstitialAdMuscle.load();
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        break;
+      case MobileAdEvent.failedToLoad:
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        break;
+      default:
+      // do nothing
+    }
+  }
+
   TextEditingController _seriesController = TextEditingController();
   TextEditingController _repsController = TextEditingController();
   TextEditingController _cargaController = TextEditingController();
   TextEditingController _obsController = TextEditingController();
 
+  FocusNode _seriesFocus = FocusNode();
   FocusNode _repsFocus = FocusNode();
   FocusNode _cargaFocus = FocusNode();
   FocusNode _obsFocus = FocusNode();
@@ -59,7 +83,12 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
     _repsController.text = widget.exercicio.reps;
     _cargaController.text = widget.exercicio.carga.toString();
     _obsController.text = widget.exercicio.comments;
-    debugPrint(widget.exercicio.id + ' ' + widget.idExercicio);
+
+    interstitialAdMuscle = InterstitialAd(
+      adUnitId: interstitialAdUnitId(),
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
   }
 
   void resetFields() {
@@ -78,6 +107,8 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
   }
 
   bool _isEnable = false;
+  String errorMessage = '';
+  String responseMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -216,151 +247,240 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text('Séries',
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gothamBook,
-                                              color: AppColors.white,
-                                              fontSize: 18)),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColors.lightGrey,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10.0),
-                                          child: TextFormField(
-                                            enabled: _isEnable,
-                                            controller: _seriesController,
-                                            keyboardType: TextInputType.text,
-                                            cursorColor: AppColors.mainColor,
-                                            showCursor: true,
-                                            maxLines: null,
-                                            onFieldSubmitted: (text) {
-                                              _repsFocus.requestFocus();
-                                            },
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontFamily: AppFonts.gothamBook,
-                                                color: AppColors.white),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )),
+                                  child: FormField<String>(
+                                      initialValue: '',
+                                      validator: (text) {
+                                        if (_seriesController.text.isEmpty) {
+                                          setState(() {
+                                            errorMessage =
+                                                'Séries não pode ser vazia';
+                                          });
+                                          return 'Séries não pode ser vazia';
+                                        }
+                                        return null;
+                                      },
+                                      builder: (state) {
+                                        return Container(
+                                            child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text('Séries',
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        AppFonts.gothamBook,
+                                                    color: state.hasError
+                                                        ? Colors.red
+                                                        : AppColors.white,
+                                                    fontSize: 18)),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.lightGrey,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10.0),
+                                                child: TextFormField(
+                                                  enabled: _isEnable,
+                                                  controller: _seriesController,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  cursorColor:
+                                                      AppColors.mainColor,
+                                                  showCursor: true,
+                                                  textAlign: TextAlign.center,
+                                                  focusNode: _seriesFocus,
+                                                  onFieldSubmitted: (text) {
+                                                    _repsFocus.requestFocus();
+                                                  },
+                                                  textInputAction:
+                                                      TextInputAction.next,
+                                                  style: TextStyle(
+                                                      fontFamily:
+                                                          AppFonts.gothamBook,
+                                                      color: state.hasError
+                                                          ? Colors.red
+                                                          : AppColors.white),
+                                                  decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ));
+                                      }),
                                 ),
                               ),
                               Expanded(
                                   child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    AutoSizeText('Repetições',
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontFamily: AppFonts.gothamBook,
-                                            color: AppColors.white,
-                                            fontSize: 18)),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightGrey,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10.0),
-                                        child: TextFormField(
-                                          enabled: _isEnable,
-                                          controller: _repsController,
-                                          keyboardType: TextInputType.text,
-                                          cursorColor: AppColors.mainColor,
-                                          showCursor: true,
-                                          maxLines: null,
-                                          focusNode: _repsFocus,
-                                          onFieldSubmitted: (text) {
-                                            _repsFocus.unfocus();
-                                            _cargaFocus.requestFocus();
-                                          },
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gothamBook,
-                                              color: AppColors.white),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )),
+                                child: FormField<String>(
+                                    initialValue: '',
+                                    validator: (text) {
+                                      if (_repsController.text.isEmpty) {
+                                        setState(() {
+                                          errorMessage =
+                                              'Repetições não pode ser vazia';
+                                        });
+                                        return 'Repetições não pode ser vazia';
+                                      }
+                                      return null;
+                                    },
+                                    builder: (state) {
+                                      return Container(
+                                          child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          AutoSizeText('Repetições',
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  fontFamily:
+                                                      AppFonts.gothamBook,
+                                                  color: state.hasError
+                                                      ? Colors.red
+                                                      : AppColors.white,
+                                                  fontSize: 18)),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.lightGrey,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0),
+                                              child: TextFormField(
+                                                enabled: _isEnable,
+                                                controller: _repsController,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                cursorColor:
+                                                    AppColors.mainColor,
+                                                showCursor: true,
+                                                maxLines: null,
+                                                textAlign: TextAlign.center,
+                                                focusNode: _repsFocus,
+                                                onFieldSubmitted: (text) {
+                                                  _repsFocus.unfocus();
+                                                  _cargaFocus.requestFocus();
+                                                },
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        AppFonts.gothamBook,
+                                                    color: state.hasError
+                                                        ? Colors.red
+                                                        : AppColors.white),
+                                                decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ));
+                                    }),
                               )),
                               Expanded(
                                   child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    AutoSizeText('Carga',
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontFamily: AppFonts.gothamBook,
-                                            color: AppColors.white,
-                                            fontSize: 18)),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightGrey,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10.0),
-                                        child: TextFormField(
-                                          enabled: _isEnable,
-                                          controller: _cargaController,
-                                          keyboardType: TextInputType.text,
-                                          cursorColor: AppColors.mainColor,
-                                          showCursor: true,
-                                          maxLines: null,
-                                          textAlign: TextAlign.center,
-                                          onFieldSubmitted: (text) {
-                                            _cargaFocus.unfocus();
-                                            _obsFocus.requestFocus();
-                                          },
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gothamBook,
-                                              color: AppColors.white),
-                                          decoration: InputDecoration(
-                                            suffixText: 'kg',
-                                            suffixStyle: TextStyle(
-                                                fontFamily: AppFonts.gothamBook,
-                                                color: AppColors.white),
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )),
+                                child: FormField<String>(
+                                    initialValue: '',
+                                    validator: (text) {
+                                      RegExp regExp = new RegExp(r'(^[0-9]*$)');
+                                      if (_cargaController.text.isEmpty) {
+                                        setState(() {
+                                          errorMessage =
+                                              'Carga não pode ser vazia';
+                                        });
+                                        return 'Carga não pode ser vazia';
+                                      } else if (!regExp
+                                          .hasMatch(_cargaController.text)) {
+                                        setState(() {
+                                          errorMessage =
+                                              'Carga não pode contar letras ou símbolos';
+                                        });
+                                        return 'Carga não pode contar letras ou símbolos';
+                                      }
+                                      return null;
+                                    },
+                                    builder: (state) {
+                                      return Container(
+                                          child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          AutoSizeText('Carga',
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  fontFamily:
+                                                      AppFonts.gothamBook,
+                                                  color: state.hasError
+                                                      ? Colors.red
+                                                      : AppColors.white,
+                                                  fontSize: 18)),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.lightGrey,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0),
+                                              child: TextFormField(
+                                                enabled: _isEnable,
+                                                controller: _cargaController,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                cursorColor:
+                                                    AppColors.mainColor,
+                                                showCursor: true,
+                                                maxLines: null,
+                                                textAlign: TextAlign.center,
+                                                focusNode: _cargaFocus,
+                                                onFieldSubmitted: (text) {
+                                                  _cargaFocus.unfocus();
+                                                  _obsFocus.requestFocus();
+                                                },
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        AppFonts.gothamBook,
+                                                    color: state.hasError
+                                                        ? Colors.red
+                                                        : AppColors.white),
+                                                decoration: InputDecoration(
+                                                  suffixText: 'kg',
+                                                  suffixStyle: TextStyle(
+                                                      fontFamily:
+                                                          AppFonts.gothamBook,
+                                                      color: AppColors.white),
+                                                  border: InputBorder.none,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ));
+                                    }),
                               ))
                             ],
                           ),
@@ -394,6 +514,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                   cursorColor: AppColors.mainColor,
                                   showCursor: true,
                                   maxLines: null,
+                                  focusNode: _obsFocus,
                                   style: TextStyle(
                                       fontFamily: AppFonts.gothamBook,
                                       color: AppColors.white),
@@ -427,8 +548,22 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                           _isEnable = true;
                                         });
                                       } else {
-                                        // confirmar edição
+                                        var adsManager =
+                                            context.read<AdsManager>();
+
                                         if (_formKey.currentState.validate()) {
+                                          //* VALIDAR ANÚNCIO INTERCALADO
+                                          if (await adsManager
+                                              .getIsAvaliableToShowAdEditExercise()) {
+                                            await interstitialAdMuscle.show();
+                                            await adsManager
+                                                .setIsAvaliableToShowAdEditExercise(
+                                                    false);
+                                          } else
+                                            await adsManager
+                                                .setIsAvaliableToShowAdEditExercise(
+                                                    true);
+
                                           if (widget.isBiSet) {
                                             ExerciciosPlanilha exercicio =
                                                 ExerciciosPlanilha(
@@ -530,7 +665,37 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                               ],
                             ),
                           ),
-                        )
+                        ),
+                        if (errorMessage.isNotEmpty) ...[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 12.0,
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: AppColors.lightGrey,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                  ),
+                                  Text(
+                                    errorMessage,
+                                    style: TextStyle(
+                                        fontFamily: AppFonts.gothamBook,
+                                        color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ]
                       ]
                     ],
                   ),

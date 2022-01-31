@@ -7,10 +7,12 @@ Future<void> showCustomDialogOpt(
     String actionText = 'Ok',
     bool isOnlyOption = false,
     bool isDeleteMessage = false,
+    bool barrierDismissible = false,
     @required Function function,
     @required String message,
     @required BuildContext context}) async {
   await showCustomAlertDialog(
+      barrierDismissible: barrierDismissible,
       title: Text(
         title,
         style: TextStyle(

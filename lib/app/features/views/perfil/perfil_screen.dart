@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
-import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/perfil/components/card_option.dart';
@@ -17,18 +16,6 @@ class MeuPerfiLScreen extends StatefulWidget {
 
 class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
   @override
-  void initState() {
-    super.initState();
-    carregarMeusExercicios();
-  }
-
-  Future<void> carregarMeusExercicios() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String id = context.read<UserManager>().user.id;
-      await context.read<ExercisesManager>().loadMyListExercises(idUser: id);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -44,9 +31,12 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
           drawer: CustomDrawer(pageNow: 5),
           appBar: AppBar(
             toolbarHeight: 60,
-            shadowColor: Colors.grey[850],
-            elevation: 25,
+            // shadowColor: Colors.grey[850],
+            elevation: 0,
             centerTitle: true,
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
+            ),
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 12.0),
@@ -65,13 +55,13 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
             title: Text(
               "Perfil",
               style: TextStyle(
-                  color: Colors.grey[850],
+                  color: AppColors.mainColor,
                   fontFamily: AppFonts.gothamBold,
                   fontSize: 30),
             ),
-            backgroundColor: AppColors.mainColor,
+            backgroundColor: AppColors.grey,
           ),
-          backgroundColor: const Color(0xff313131),
+          backgroundColor: AppColors.grey,
           body: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Column(
@@ -95,7 +85,7 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                               userManager.user.lastName,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: AppFonts.gothamBook,
+                              fontFamily: AppFonts.gotham,
                               color: AppColors.white,
                               fontSize: 20,
                               letterSpacing: 1.2),
@@ -103,12 +93,12 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                       ),
                       if (userManager.user.isPersonal) ...[
                         Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
+                          padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
                             'Personal Trainer',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontFamily: AppFonts.gothamThin,
+                                fontFamily: AppFonts.gothamLight,
                                 color: AppColors.white,
                                 fontSize: 14,
                                 letterSpacing: 1.2),
@@ -224,17 +214,20 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                   ),
                 ),
                 //CardOption(title: 'Minha Conta', onTap: () {}),
-                CardOption(
-                    title: 'Meus Exercícios',
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.meusExercicios);
-                    }),
-                CardOption(
-                    title: 'Alterar Senha',
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.preferencias);
-                    }),
-                CardOption(title: 'Alterar Foto de Perfil', onTap: () {}),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: CardOption(
+                      title: 'Meus Exercícios',
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.meusExercicios);
+                      }),
+                ),
+                // CardOption(
+                //     title: 'Alterar Senha',
+                //     onTap: () {
+                //       Navigator.pushNamed(context, AppRoutes.preferencias);
+                //     }),
+                // CardOption(title: 'Alterar Foto de Perfil', onTap: () {}),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: CardOption(

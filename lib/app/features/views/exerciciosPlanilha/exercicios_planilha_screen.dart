@@ -149,15 +149,17 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
         child: Scaffold(
             appBar: AppBar(
               toolbarHeight: 70,
-              shadowColor: Colors.grey[850],
-              elevation: 25,
+              // shadowColor: Colors.grey[850],
+              elevation: 0,
+              iconTheme: IconThemeData(
+                color: AppColors.mainColor,
+              ),
               centerTitle: false,
               actions: [
                 if (!widget.arguments.isFriendAcess && !_isEditing) ...[
                   IconButton(
                     icon: Icon(
                       Icons.add_circle_outline,
-                      color: AppColors.grey,
                       size: 28,
                     ),
                     tooltip: 'Adicionar Novo Exercício',
@@ -183,7 +185,6 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                     child: IconButton(
                       icon: Icon(
                         _isEditing ? Icons.save_outlined : Icons.edit_outlined,
-                        color: AppColors.grey,
                         size: 28,
                       ),
                       tooltip:
@@ -253,11 +254,11 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
               title: Text(
                 widget.arguments.title,
                 style: TextStyle(
-                    color: AppColors.black,
+                    color: AppColors.mainColor,
                     fontFamily: AppFonts.gothamBold,
                     fontSize: 26),
               ),
-              backgroundColor: AppColors.mainColor,
+              backgroundColor: AppColors.grey,
             ),
             backgroundColor: AppColors.grey,
             body: exercicios.loading || isLoading

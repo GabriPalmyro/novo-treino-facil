@@ -39,6 +39,26 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
+      'nickname': nickname,
+      'name': name,
+      'last_name': lastName,
+      'email': email,
+      'phone_number': phoneNumber,
+      'photoURL': photoURL,
+      'sex': sex,
+      'personal_type': isPersonal,
+      'payApp': isPayApp,
+      'seguidores': seguidores,
+      'seguindo': seguindo,
+      'mostrar_planilhas_perfil': mostrarPlanilhasPerfil,
+      'mostrar_exercicios_perfil': mostrarExerciciosPerfil,
+      'mostrar_perfil_pesquisa': mostrarPerfilPesquisa,
+    };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
       'nickname': nickname,
       'name': name,
       'last_name': lastName,
@@ -78,6 +98,6 @@ class User {
 
   @override
   String toString() {
-    return 'User(nickname: $nickname, name: $name, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, isPersonal: $isPersonal, seguidores: $seguidores, seguindo: $seguindo)';
+    return 'User(id: $id, nickname: $nickname, name: $name, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, isPersonal: $isPersonal, seguidores: $seguidores, seguindo: $seguindo)';
   }
 }

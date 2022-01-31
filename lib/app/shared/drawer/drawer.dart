@@ -4,6 +4,7 @@ import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/app_routes.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 import 'package:tabela_treino/app/shared/shimmer/drawer/drawer_shimmer.dart';
@@ -73,7 +74,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 Text(
                                   "Página inicial",
                                   style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
+                                    fontFamily: AppFonts.gothamLight,
                                     fontSize: 20,
                                     color: AppColors.mainColor,
                                   ),
@@ -103,10 +104,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 ),
                                 SizedBox(width: 32),
                                 Text(
-                                  "Treinos",
+                                  "Planilhas",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
+                                    fontFamily: AppFonts.gothamLight,
                                     fontSize: 20,
                                     color: AppColors.mainColor,
                                   ),
@@ -138,7 +139,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                   "Exercícios",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
+                                    fontFamily: AppFonts.gothamLight,
                                     fontSize: 20,
                                     color: AppColors.mainColor,
                                   ),
@@ -167,7 +168,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                   "Treinos Fáceis",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
+                                    fontFamily: AppFonts.gothamLight,
                                     fontSize: 20,
                                     color: AppColors.mainColor,
                                   ),
@@ -208,7 +209,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                       : "Personal\nTrainer",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
+                                    fontFamily: AppFonts.gothamLight,
                                     fontSize: 20,
                                     color: AppColors.mainColor,
                                   ),
@@ -240,7 +241,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                   "Perfil",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                    fontFamily: AppFonts.gothamThin,
+                                    fontFamily: AppFonts.gothamLight,
                                     fontSize: 20,
                                     color: AppColors.mainColor,
                                   ),
@@ -299,6 +300,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                       onPressed: () async {
                                         isLoading = true;
                                         await userManager.logout();
+                                        await context
+                                            .read<AmigosProcuradosManager>()
+                                            .deleteHistorico();
 
                                         Navigator.pushNamedAndRemoveUntil(
                                             context,

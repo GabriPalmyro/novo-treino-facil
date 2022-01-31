@@ -23,7 +23,7 @@ class CardMeuExercicio extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.all(10),
           width: width * 0.9,
-          height: 120,
+          height: 130,
           decoration: BoxDecoration(
             borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
             color: AppColors.mainColor,
@@ -40,17 +40,17 @@ class CardMeuExercicio extends StatelessWidget {
             children: [
               Positioned(
                 right: 5,
-                top: 0,
+                bottom: 0,
                 child: IconButton(
                     icon: Icon(
                       Icons.delete_forever_rounded,
                       color: Colors.red.withOpacity(0.9),
                     ),
-                    iconSize: 29,
+                    iconSize: 24,
                     onPressed: () async {
                       await showCustomDialogOpt(
                           context: context,
-                          title: 'Deletar esses exercício?',
+                          title: 'Excluir esses exercício?',
                           isDeleteMessage: true,
                           message:
                               'Essa ação não poderá ser desfeita após concluida.',

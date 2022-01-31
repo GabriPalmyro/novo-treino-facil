@@ -5,7 +5,10 @@ void mostrarSnackBar(
     @required Color color,
     @required BuildContext context}) {
   SnackBar snackBar = SnackBar(
-    content: Text(message),
+    content: Padding(
+      padding: const EdgeInsets.only(bottom: 60.0),
+      child: Text(message),
+    ),
     backgroundColor: color,
   );
 

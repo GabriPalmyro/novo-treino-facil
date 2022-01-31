@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
 import '/app/features/controllers/planilha/planilha_manager.dart';
@@ -22,6 +25,27 @@ class NovaPlanilhaModal extends StatefulWidget {
 }
 
 class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
+  //* ADS
+  InterstitialAd interstitialAdMuscle;
+
+  void _loadInterstitialAd() {
+    interstitialAdMuscle.load();
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        break;
+      case MobileAdEvent.failedToLoad:
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        break;
+      default:
+      // do nothing
+    }
+  }
+
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
 
@@ -44,6 +68,16 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
       _titleController.clear();
       _descriptionController.clear();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    interstitialAdMuscle = InterstitialAd(
+      adUnitId: interstitialAdUnitId(),
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
   }
 
   @override
@@ -257,7 +291,19 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                 color: AppColors.mainColor,
                                 textColor: AppColors.black,
                                 onTap: () async {
+                                  var adsManager = context.read<AdsManager>();
+
                                   if (_formKey.currentState.validate()) {
+                                    //* VALIDAR ANÚNCIO INTERCALADO
+                                    if (await adsManager
+                                        .getIsAvaliableNewPlanilha()) {
+                                      await interstitialAdMuscle.show();
+                                      await adsManager
+                                          .setIsAvaliableNewPlanilha(false);
+                                    } else
+                                      await adsManager
+                                          .setIsAvaliableNewPlanilha(true);
+
                                     Navigator.pop(context);
                                     Planilha planilha = Planilha(
                                         title: _titleController.text,

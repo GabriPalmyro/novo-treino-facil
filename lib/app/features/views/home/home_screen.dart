@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
@@ -116,33 +117,36 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: CustomDrawer(pageNow: 0),
       appBar: AppBar(
-        toolbarHeight: 70,
-        shadowColor: Colors.grey[850],
-        elevation: 25,
+        toolbarHeight: 60,
+        //shadowColor: Colors.grey[850],
+        elevation: 0,
         centerTitle: true,
+        iconTheme: IconThemeData(
+          color: AppColors.mainColor,
+        ),
         title: Text(
           "Início",
           style: TextStyle(
-              color: Colors.grey[850],
+              color: AppColors.mainColor,
               fontFamily: AppFonts.gothamBold,
               fontSize: 30),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: IconButton(
-              icon: const Icon(
-                Icons.notifications_none_outlined,
-                size: 28,
-              ),
-              tooltip: 'Notificações',
-              onPressed: () {},
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(right: 12.0),
+          //   child: IconButton(
+          //     icon: const Icon(
+          //       Icons.notifications_none_outlined,
+          //       size: 28,
+          //     ),
+          //     tooltip: 'Notificações',
+          //     onPressed: () {},
+          //   ),
+          // ),
         ],
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppColors.grey,
       ),
-      backgroundColor: const Color(0xff313131),
+      backgroundColor: AppColors.grey,
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
           return SingleChildScrollView(
@@ -253,10 +257,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 80,
                                 width: (width / 3) * 0.82,
                               ),
-                              Skeleton(
-                                height: 80,
-                                width: (width / 3) * 0.82,
-                              ),
+                              if (context
+                                  .read<CoreAppController>()
+                                  .coreInfos
+                                  .mostrarTreinosFaceis) ...[
+                                Skeleton(
+                                  height: 80,
+                                  width: (width / 3) * 0.82,
+                                )
+                              ],
                             ],
                           ),
                         ),
@@ -332,13 +341,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                               },
                             ),
-                            HomeButtonMin(
-                              width: (width / 3) * 0.8,
-                              title: 'Treinos Fáceis',
-                              icon: Icons.fitness_center,
-                              iconePath: AppImages.treinosFaceis,
-                              onTap: () {},
-                            ),
+                            if (context
+                                .read<CoreAppController>()
+                                .coreInfos
+                                .mostrarTreinosFaceis) ...[
+                              HomeButtonMin(
+                                width: (width / 3) * 0.8,
+                                title: 'Treinos Fáceis',
+                                icon: Icons.fitness_center,
+                                iconePath: AppImages.treinosFaceis,
+                                onTap: () {},
+                              )
+                            ],
                           ],
                         ),
                       ],
@@ -384,7 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ] else ...[
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0, left: 18.0),
+                    padding: const EdgeInsets.only(
+                        top: 8.0, left: 18.0, right: 18.0),
                     child: InkWell(
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.planilhas,
@@ -394,7 +409,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Text(
-                          'Acessar meus treinos',
+                          planilhas.isNotEmpty
+                              ? 'Acessar meus treinos'
+                              : 'Clique aqui para criar o seu primeiro treino',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 20,
                               fontFamily: AppFonts.gothamBold,
@@ -442,42 +460,47 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ],
-                if (userManager.loading || _isLoading) ...[
-                  Shimmer.fromColors(
-                    baseColor: AppColors.lightGrey,
-                    highlightColor: AppColors.lightGrey.withOpacity(0.6),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 12.0,
+                if (context
+                    .read<CoreAppController>()
+                    .coreInfos
+                    .mostrarAjudas) ...[
+                  if (userManager.loading || _isLoading) ...[
+                    Shimmer.fromColors(
+                      baseColor: AppColors.lightGrey,
+                      highlightColor: AppColors.lightGrey.withOpacity(0.6),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 12.0,
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Skeleton(
+                            height: 100,
+                            width: width * 0.9,
+                          ),
+                        ),
                       ),
+                    )
+                  ] else ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 65),
                       child: Align(
                         alignment: Alignment.center,
-                        child: Skeleton(
-                          height: 100,
+                        child: HomeButton(
                           width: width * 0.9,
+                          title: 'Me Ajuda',
+                          description: 'sdasdasdasdasdasd',
+                          fontSize: 28,
+                          icon: Icons.help,
+                          iconePath: AppImages.ajudas,
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, AppRoutes.listaExercicios);
+                          },
                         ),
                       ),
                     ),
-                  )
-                ] else ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 60),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: HomeButton(
-                        width: width * 0.9,
-                        title: 'Me Ajuda',
-                        description: 'sdasdasdasdasdasd',
-                        fontSize: 28,
-                        icon: Icons.help,
-                        iconePath: AppImages.ajudas,
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, AppRoutes.listaExercicios);
-                        },
-                      ),
-                    ),
-                  ),
+                  ]
                 ],
               ],
             ),

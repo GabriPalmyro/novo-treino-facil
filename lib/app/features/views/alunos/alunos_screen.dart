@@ -82,9 +82,12 @@ class _AlunosScreenState extends State<AlunosScreen>
           drawer: CustomDrawer(pageNow: 4),
           appBar: AppBar(
             toolbarHeight: 70,
-            shadowColor: Colors.grey[850],
-            elevation: 25,
+            // shadowColor: Colors.grey[850],
+            elevation: 0,
             centerTitle: false,
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
+            ),
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 12.0),
@@ -107,11 +110,11 @@ class _AlunosScreenState extends State<AlunosScreen>
             title: Text(
               "Meus Alunos",
               style: TextStyle(
-                  color: AppColors.black,
+                  color: AppColors.mainColor,
                   fontFamily: AppFonts.gothamBold,
                   fontSize: 30),
             ),
-            backgroundColor: AppColors.mainColor,
+            backgroundColor: AppColors.grey,
           ),
           backgroundColor: AppColors.grey,
           body: loading
@@ -139,113 +142,101 @@ class _AlunosScreenState extends State<AlunosScreen>
                 )
               : SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
-                  child: Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Container(
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12.0, horizontal: 10.0),
-                            decoration: BoxDecoration(
-                                color: AppColors.mainColor,
-                                borderRadius: BorderRadius.circular(10.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: AppColors.black.withOpacity(0.3),
-                                      blurRadius: 5,
-                                      offset: Offset(0, 5))
-                                ]),
-                            child: Column(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12.0, horizontal: 10.0),
+                        decoration: BoxDecoration(
+                            color: AppColors.mainColor,
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: AppColors.black.withOpacity(0.3),
+                                  blurRadius: 5,
+                                  offset: Offset(0, 5))
+                            ]),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 80,
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10.0),
-                                        child: AutoSizeText(
-                                            'Ver Lista de Alunos',
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                fontFamily: AppFonts.gothamBold,
-                                                color: AppColors.black)),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 20,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 18.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              isExpanded = !isExpanded;
-                                              isExpanded
-                                                  ? animationController
-                                                      .forward()
-                                                  : animationController
-                                                      .reverse();
-
-                                              _runExpandCheck();
-                                            });
-                                          },
-                                          child: Tooltip(
-                                              message: isExpanded
-                                                  ? 'Fechar'
-                                                  : 'Abrir',
-                                              child: AnimatedIcon(
-                                                  icon:
-                                                      AnimatedIcons.menu_close,
-                                                  progress:
-                                                      animationController)),
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                                Expanded(
+                                  flex: 80,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10.0),
+                                    child: AutoSizeText('Ver Lista de Alunos',
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontFamily: AppFonts.gothamBold,
+                                            color: AppColors.black)),
+                                  ),
                                 ),
-                                SizeTransition(
-                                  axisAlignment: 1.0,
-                                  sizeFactor: animation,
+                                Expanded(
+                                  flex: 20,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10.0, left: 5.0),
-                                    child: Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: List.generate(
-                                            userManager.alunos.length, (index) {
-                                          return CardAluno(
-                                              acessarPlanilhas: () {
-                                                userManager.alunoNomeTemp =
-                                                    userManager.alunos[index]
-                                                        .alunoName;
-                                                Navigator.pushNamed(context,
-                                                    AppRoutes.planilhasAluno,
-                                                    arguments:
-                                                        PlanilhaAlunoArguments(
-                                                            nomeUser:
-                                                                userManager
-                                                                    .alunos[
-                                                                        index]
-                                                                    .alunoName,
-                                                            idUser: userManager
-                                                                .alunos[index]
-                                                                .alunoId));
-                                              },
-                                              excluirAluno: () async {
-                                                await showCustomDialogOpt(
-                                                    context: context,
-                                                    function: () async {
-                                                      String response = await userManager
+                                    padding: const EdgeInsets.only(left: 18.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          isExpanded = !isExpanded;
+                                          isExpanded
+                                              ? animationController.forward()
+                                              : animationController.reverse();
+
+                                          _runExpandCheck();
+                                        });
+                                      },
+                                      child: Tooltip(
+                                          message:
+                                              isExpanded ? 'Fechar' : 'Abrir',
+                                          child: AnimatedIcon(
+                                              icon: AnimatedIcons.menu_close,
+                                              progress: animationController)),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizeTransition(
+                              axisAlignment: 1.0,
+                              sizeFactor: animation,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10.0, left: 5.0),
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: List.generate(
+                                        userManager.alunos.length, (index) {
+                                      return CardAluno(
+                                          acessarPlanilhas: () {
+                                            userManager.alunoNomeTemp =
+                                                userManager
+                                                    .alunos[index].alunoName;
+                                            Navigator.pushNamed(context,
+                                                AppRoutes.planilhasAluno,
+                                                arguments:
+                                                    PlanilhaAlunoArguments(
+                                                        nomeUser: userManager
+                                                            .alunos[index]
+                                                            .alunoName,
+                                                        idUser: userManager
+                                                            .alunos[index]
+                                                            .alunoId));
+                                          },
+                                          excluirAluno: () async {
+                                            await showCustomDialogOpt(
+                                                context: context,
+                                                function: () async {
+                                                  String response =
+                                                      await userManager
                                                           .deletePersonalAlunoConnection(
                                                               personalId:
                                                                   userManager
@@ -256,40 +247,39 @@ class _AlunosScreenState extends State<AlunosScreen>
                                                                           index]
                                                                       .alunoId);
 
-                                                      if (response != null) {
-                                                        Navigator.pop(context);
-                                                        mostrarSnackBar(
-                                                            context: context,
-                                                            message: response,
-                                                            color:
-                                                                AppColors.red);
-                                                      } else {
-                                                        userManager
-                                                            .removerPersonalAluno(
-                                                                index: index);
+                                                  if (response != null) {
+                                                    Navigator.pop(context);
+                                                    mostrarSnackBar(
+                                                        context: context,
+                                                        message: response,
+                                                        color: AppColors.red);
+                                                  } else {
+                                                    userManager
+                                                        .removerPersonalAluno(
+                                                            index: index);
 
-                                                        Navigator.pop(context);
-                                                      }
-                                                    },
-                                                    isDeleteMessage: true,
-                                                    title: 'Excluir Aluno?',
-                                                    message:
-                                                        'Essa ação irá excluir esse aluno permanentemente.');
-                                              },
-                                              aluno: userManager.alunos[index]);
-                                        }),
-                                      ),
-                                    ),
+                                                    Navigator.pop(context);
+                                                  }
+                                                },
+                                                isDeleteMessage: true,
+                                                title: 'Excluir Aluno?',
+                                                message:
+                                                    'Essa ação irá excluir esse aluno permanentemente.');
+                                          },
+                                          aluno: userManager.alunos[index]);
+                                    }),
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 80.0,
-                          )
-                        ],
-                      )),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 80.0,
+                      )
+                    ],
+                  ),
                 ),
         );
       }),

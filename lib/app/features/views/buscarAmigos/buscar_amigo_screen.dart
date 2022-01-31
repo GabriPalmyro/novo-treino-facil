@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
@@ -7,6 +9,8 @@ import 'package:tabela_treino/app/features/controllers/user/user_controller.dart
 import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/card_friend.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/search_bar.dart';
+import 'package:tabela_treino/app/shared/drawer/drawer.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 class BuscarAmigosScreen extends StatefulWidget {
   @override
@@ -21,10 +25,37 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
 
   List<User> friends = [];
 
+  //* ADS
+  InterstitialAd interstitialAdMuscle;
+
+  void _loadInterstitialAd() {
+    interstitialAdMuscle.load();
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        break;
+      case MobileAdEvent.failedToLoad:
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        break;
+      default:
+      // do nothing
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     carregarProcurados();
+
+    interstitialAdMuscle = InterstitialAd(
+      adUnitId: interstitialAdUnitId(),
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
   }
 
   Future<void> carregarProcurados() async {
@@ -36,64 +67,84 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 60,
-        shadowColor: Colors.grey[850],
-        elevation: 25,
-        centerTitle: true,
-        title: Text(
-          nicknameController.text.isEmpty ? "Procurados" : "Encontrados",
-          style: TextStyle(
-              color: Colors.grey[850],
-              fontFamily: AppFonts.gothamBold,
-              fontSize: 24),
-        ),
-        backgroundColor: AppColors.mainColor,
-      ),
-      backgroundColor: const Color(0xff313131),
-      body: Consumer2<UserManager, AmigosProcuradosManager>(
-          builder: (_, userManager, amigosProcurados, __) {
-        return Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 24.0, right: 12.0, left: 12.0),
-                      child: SearchBar(
-                        onPressed: () async {
-                          nicknameNode.unfocus();
-                          friends = await userManager.carregarAmigos(
-                              nickname: nicknameController.text);
-                        },
-                        onSubmitted: (text) async {
-                          nicknameNode.unfocus();
-                          friends = await userManager.carregarAmigos(
-                              nickname: nicknameController.text);
-                        },
-                        node: nicknameNode,
-                        controller: nicknameController,
-                      ),
+    return Consumer2<UserManager, AmigosProcuradosManager>(
+        builder: (_, userManager, amigosProcurados, __) {
+      return Scaffold(
+          drawer: CustomDrawer(
+            pageNow: 8,
+          ),
+          appBar: AppBar(
+            toolbarHeight: 60,
+            // shadowColor: Colors.grey[850],
+            elevation: 0,
+            centerTitle: true,
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
+            ),
+            title: SearchBar(
+              onPressed: () {
+                nicknameController.clear();
+              },
+              onSubmitted: (text) async {
+                nicknameNode.unfocus();
+                friends = await userManager.carregarAmigos(
+                    nickname: nicknameController.text);
+              },
+              node: nicknameNode,
+              controller: nicknameController,
+            ),
+            backgroundColor: AppColors.grey,
+          ),
+          backgroundColor: AppColors.grey,
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: width * 0.04, top: 18.0),
+                  child: Text(
+                    nicknameController.text.isEmpty
+                        ? amigosProcurados.amigosProcurados.isEmpty
+                            ? ""
+                            : "Recentes"
+                        : friends.isEmpty
+                            ? userManager.loading || amigosProcurados.loading
+                                ? ""
+                                : "Nenhum resultado encontrado"
+                            : "",
+                    style: TextStyle(
+                        fontFamily: AppFonts.gotham,
+                        color: AppColors.white,
+                        fontSize: 22.0),
+                  ),
+                ),
+                if (userManager.loading || amigosProcurados.loading) ...[
+                  Container(
+                    height: 100,
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                        Text(
+                          'Procurando "${nicknameController.text}"',
+                          style: TextStyle(
+                              fontFamily: AppFonts.gotham,
+                              color: AppColors.white,
+                              fontSize: 14.0),
+                        )
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: width * 0.05, top: 18.0),
-                      child: Text(
-                        'Procurar',
-                        style: TextStyle(
-                            fontFamily: AppFonts.gothamBold,
-                            color: AppColors.white,
-                            fontSize: 26.0),
-                      ),
-                    ),
-                    if (nicknameController.text.isEmpty) ...[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12.0),
-                        child: ListView.builder(
+                  )
+                ] else if (nicknameController.text.isEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Column(
+                      children: [
+                        ListView.builder(
                             physics: BouncingScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: amigosProcurados.amigosProcurados.length,
@@ -106,6 +157,19 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                                 photoURL: amigosProcurados
                                     .amigosProcurados[index].photoURL,
                                 onTap: () async {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  //* VALIDAR ANÚNCIO INTERCALADO 3
+                                  int adSeenTimes =
+                                      prefs.getInt('amigos_perfil_add');
+                                  if (adSeenTimes < 2) {
+                                    await prefs.setInt(
+                                        'amigos_perfil_add', adSeenTimes + 1);
+                                  } else {
+                                    await interstitialAdMuscle.show();
+                                    await prefs.setInt('amigos_perfil_add', 0);
+                                  }
                                   Navigator.pushNamed(
                                       context, AppRoutes.perfilAmigo,
                                       arguments: amigosProcurados
@@ -113,53 +177,59 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                                 },
                               );
                             }),
-                      )
-                    ] else ...[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12.0),
-                        child: ListView.builder(
-                            physics: BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: friends.length,
-                            itemBuilder: (_, index) {
-                              return userManager
-                                      .friends[index].mostrarPerfilPesquisa
-                                  ? CardFriend(
-                                      nickname: friends[index].nickname,
-                                      name:
-                                          '${friends[index].name} ${friends[index].lastName}',
-                                      photoURL: friends[index].photoURL,
-                                      onTap: () async {
-                                        await amigosProcurados
-                                            .inserirAmigoNaLista(
-                                                user: friends[index]);
-                                        if (friends[index].id !=
-                                            userManager.user.id) {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.perfilAmigo,
-                                              arguments: friends[index]);
-                                        } else {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.meuPerfil);
-                                        }
-                                      },
-                                    )
-                                  : SizedBox();
-                            }),
-                      )
-                    ]
-                  ],
-                ),
-              ),
+                        if (amigosProcurados.amigosProcurados.isNotEmpty) ...[
+                          TextButton(
+                            onPressed: () async {
+                              await amigosProcurados.deleteHistorico();
+                            },
+                            child: Text(
+                              "Apagar Histórico",
+                              style: TextStyle(
+                                  fontFamily: AppFonts.gothamLight,
+                                  color: AppColors.white,
+                                  fontSize: 14.0),
+                            ),
+                          )
+                        ]
+                      ],
+                    ),
+                  )
+                ] else if (friends.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: friends.length,
+                        itemBuilder: (_, index) {
+                          return friends[index].mostrarPerfilPesquisa
+                              ? CardFriend(
+                                  nickname: friends[index].nickname,
+                                  name:
+                                      '${friends[index].name} ${friends[index].lastName}',
+                                  photoURL: friends[index].photoURL,
+                                  onTap: () async {
+                                    if (friends[index].id !=
+                                        userManager.user.id) {
+                                      await amigosProcurados
+                                          .inserirAmigoNaLista(
+                                              user: friends[index]);
+                                      Navigator.pushNamed(
+                                          context, AppRoutes.perfilAmigo,
+                                          arguments: friends[index]);
+                                    } else {
+                                      Navigator.pushNamed(
+                                          context, AppRoutes.meuPerfil);
+                                    }
+                                  },
+                                )
+                              : SizedBox();
+                        }),
+                  )
+                ]
+              ],
             ),
-            if (userManager.loading || amigosProcurados.loading) ...[
-              LinearProgressIndicator(
-                color: AppColors.mainColor,
-              )
-            ]
-          ],
-        );
-      }),
-    );
+          ));
+    });
   }
 }

@@ -194,19 +194,28 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                               physics: BouncingScrollPhysics(),
                               itemCount: exercicios.resultList.length,
                               itemBuilder: (_, index) {
-                                return CardExercicio(
-                                  index: index,
-                                  idUser: widget.idUser,
-                                  titlePlanilha: widget.titlePlanilha,
-                                  idPlanilha: widget.idPlanilha,
-                                  tamPlan: widget.tamPlan,
-                                  exercise: exercicios.resultList[index],
-                                  isBiSet: widget.isBiSet,
-                                  showAddButton: exerciciosPlanilha
-                                              .listaExerciciosBiSet.length >=
-                                          2
-                                      ? false
-                                      : true,
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: index + 1 ==
+                                              exercicios.resultList.length
+                                          ? widget.isBiSet
+                                              ? 120.0
+                                              : 65.0
+                                          : 0),
+                                  child: CardExercicio(
+                                    index: index,
+                                    idUser: widget.idUser,
+                                    titlePlanilha: widget.titlePlanilha,
+                                    idPlanilha: widget.idPlanilha,
+                                    tamPlan: widget.tamPlan,
+                                    exercise: exercicios.resultList[index],
+                                    isBiSet: widget.isBiSet,
+                                    showAddButton: exerciciosPlanilha
+                                                .listaExerciciosBiSet.length >=
+                                            2
+                                        ? false
+                                        : true,
+                                  ),
                                 );
                               }),
                         ),

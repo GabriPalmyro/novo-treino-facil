@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/helpers/email_valid.dart';
-import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
+import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
 import '/app/features/views/planilhas/components/custom_button.dart';
+
+import 'package:firebase_admob/firebase_admob.dart';
 
 class NovoAlunoModal extends StatefulWidget {
   @override
@@ -22,6 +25,50 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
     setState(() {
       _emailController.clear();
     });
+  }
+
+  //*ADS
+  RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
+
+  Future<void> loadRewardedVideoAd() async {
+    rewardedVideoAd.load(
+        adUnitId: rewardAdUnitId(), targetingInfo: targetingInfo);
+  }
+
+  void listenerRewardedEvent() async {
+    rewardedVideoAd.listener = (RewardedVideoAdEvent event,
+        {String rewardType, int rewardAmount}) async {
+      if (event == RewardedVideoAdEvent.rewarded) {
+        showCustomDialogOpt(
+            title: 'Sucesso!',
+            function: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            isOnlyOption: true,
+            message:
+                'Convite enviado com sucesso! Agora só falta seu aluno aceitar para completar o processo.',
+            context: context);
+      } else if (event == RewardedVideoAdEvent.closed) {
+        showCustomDialogOpt(
+            title: 'Sucesso!',
+            function: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            isOnlyOption: true,
+            message:
+                'Convite enviado com sucesso! Agora só falta seu aluno aceitar para completar o processo.',
+            context: context);
+      }
+    };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadRewardedVideoAd();
+    listenerRewardedEvent();
   }
 
   @override
@@ -137,88 +184,22 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
                                   if (_formKey.currentState.validate()) {
                                     emailFocus.unfocus();
 
-                                    String response =
-                                        await userManager.sendAlunoRequest(
+                                    String response = await context
+                                        .read<UserManager>()
+                                        .sendAlunoRequest(
                                             emailAluno: _emailController.text);
 
                                     if (response != null) {
-                                      // mostrarSnackBar(response, AppColors.red);
-                                      await showCustomAlertDialog(
-                                          title: Text(
-                                            'Ocorreu um erro!',
-                                            style: TextStyle(
-                                                fontFamily: AppFonts.gothamBold,
-                                                color: Colors.red),
-                                          ),
-                                          androidActions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Ok',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            AppFonts.gotham,
-                                                        color: Colors.white)))
-                                          ],
-                                          iosActions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Ok',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            AppFonts.gotham,
-                                                        color: Colors.white)))
-                                          ],
-                                          context: context,
-                                          content: Text(
-                                            response,
-                                            style: TextStyle(
-                                                height: 1.1,
-                                                fontFamily: AppFonts.gotham,
-                                                color: Colors.white),
-                                          ));
+                                      showCustomDialogOpt(
+                                          title: 'Ocorreu um erro!',
+                                          function: () {
+                                            Navigator.pop(context);
+                                          },
+                                          isDeleteMessage: true,
+                                          message: response,
+                                          context: context);
                                     } else {
-                                      await showCustomAlertDialog(
-                                          title: Text(
-                                            'Sucesso!',
-                                            style: TextStyle(
-                                                fontFamily: AppFonts.gothamBold,
-                                                color: AppColors.mainColor),
-                                          ),
-                                          androidActions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Ok',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            AppFonts.gotham,
-                                                        color: Colors.white)))
-                                          ],
-                                          iosActions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Ok',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            AppFonts.gotham,
-                                                        color: Colors.white)))
-                                          ],
-                                          context: context,
-                                          content: Text(
-                                            'Convite enviado com sucesso! Agora só falta seu aluno aceitar para completar o processo.',
-                                            style: TextStyle(
-                                                height: 1.1,
-                                                fontFamily: AppFonts.gotham,
-                                                color: Colors.white),
-                                          ));
-                                      Navigator.pop(context);
+                                      rewardedVideoAd.show();
                                     }
                                   }
                                 },
@@ -234,15 +215,5 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
         ),
       );
     });
-  }
-
-  void mostrarSnackBar(String message, Color color) {
-    SnackBar snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: color,
-    );
-
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

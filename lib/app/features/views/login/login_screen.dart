@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
 import 'components/app_bar_login.dart';
 import 'components/text_form_field.dart';
@@ -174,13 +176,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             onTap: () {
                               if (_emailController.text.isEmpty) {
                                 mostrarSnackBar(
-                                    'Insira seu e-mail para recuperação!',
-                                    Colors.redAccent);
+                                    context: context,
+                                    message:
+                                        'Insira seu e-mail para recuperação!',
+                                    color: Colors.redAccent);
                               } else if (_emailController.text.isNotEmpty ||
                                   _emailController.text.contains("@")) {
                                 {
-                                  mostrarSnackBar('Confira seu e-mail!',
-                                      AppColors.mainColor);
+                                  mostrarSnackBar(
+                                      context: context,
+                                      message: 'Confira seu e-mail!',
+                                      color: AppColors.mainColor);
                                 }
                               }
                             },
@@ -201,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                   width: width,
                   padding:
-                      const EdgeInsets.only(bottom: 24.0, right: 10, left: 10),
+                      const EdgeInsets.only(bottom: 70.0, right: 10, left: 10),
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: GestureDetector(
@@ -237,24 +243,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void mostrarSnackBar(String message, Color color) {
-    SnackBar snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: color,
-    );
-
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   void _onSucess() {
+    // await context.read<AdsManager>().resetAdsPreferences();
     Navigator.pushNamedAndRemoveUntil(
         context, AppRoutes.home, (route) => false);
   }
 
   void _onFailed() {
     mostrarSnackBar(
-        'Erro ao entrar, verifique seu email ou sua senha novamente',
-        Colors.red);
+        context: context,
+        message: 'Erro ao entrar, verifique seu email ou sua senha novamente',
+        color: Colors.red);
   }
 }

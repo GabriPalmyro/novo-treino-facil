@@ -11,8 +11,10 @@ class CustomTextFormField extends StatefulWidget {
   final Color labelColor;
   final String labelText;
   final Function(String) validator;
+  final Function(String) onSubmitted;
   final List<TextInputFormatter> inputFormatters;
   final Widget suffixIcon;
+  final FocusNode focusNode;
   final bool isObscure;
   final bool enable;
   final double width;
@@ -26,6 +28,8 @@ class CustomTextFormField extends StatefulWidget {
       this.isObscure = false,
       this.suffixIcon,
       this.validator,
+      this.onSubmitted,
+      this.focusNode,
       this.enable,
       this.inputFormatters,
       this.width});
@@ -46,11 +50,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       child: TextFormField(
           keyboardType: widget.textInputType,
           controller: widget.textController,
+          focusNode: widget.focusNode,
           enabled: widget.enable,
+          onFieldSubmitted: widget.onSubmitted,
           style:
               TextStyle(fontFamily: AppFonts.gotham, color: widget.textColor),
           showCursor: true,
           enableInteractiveSelection: true,
+          obscureText: widget.isObscure,
           decoration: InputDecoration(
             labelText: widget.labelText,
             labelStyle: TextStyle(

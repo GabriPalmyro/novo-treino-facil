@@ -2,6 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
@@ -9,7 +11,7 @@ import 'package:tabela_treino/app/features/controllers/user/user_controller.dart
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
-
+import 'package:firebase_admob/firebase_admob.dart';
 import '../exercicios_planilha_screen.dart';
 
 class ExercicioAddModal extends StatefulWidget {
@@ -37,6 +39,27 @@ class ExercicioAddModal extends StatefulWidget {
 }
 
 class _ExercicioAddModalState extends State<ExercicioAddModal> {
+  //* ADS
+  InterstitialAd interstitialAdMuscle;
+
+  void _loadInterstitialAd() {
+    interstitialAdMuscle.load();
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        break;
+      case MobileAdEvent.failedToLoad:
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        break;
+      default:
+      // do nothing
+    }
+  }
+
   TextEditingController _seriesController = TextEditingController();
   TextEditingController _repsController = TextEditingController();
   TextEditingController _cargaController = TextEditingController();
@@ -68,14 +91,15 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
   String errorMessage = '';
   String responseMessage = '';
 
-  void mostrarSnackBar(String message, Color color) {
-    SnackBar snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: color,
-    );
+  @override
+  void initState() {
+    super.initState();
 
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    interstitialAdMuscle = InterstitialAd(
+      adUnitId: interstitialAdUnitId(),
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
   }
 
   @override
@@ -513,7 +537,24 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     color: AppColors.mainColor,
                                     textColor: AppColors.black,
                                     onTap: () async {
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+
                                       if (_formKey.currentState.validate()) {
+                                        //* VALIDAR ANÚNCIO INTERCALADO 2
+                                        int adSeenTimes =
+                                            prefs.getInt('add_exercicio_ad');
+                                        if (adSeenTimes < 2) {
+                                          await prefs.setInt('add_exercicio_ad',
+                                              adSeenTimes + 1);
+                                          debugPrint(adSeenTimes.toString());
+                                        } else {
+                                          await interstitialAdMuscle.show();
+                                          await prefs.setInt(
+                                              'add_exercicio_ad', 0);
+                                          debugPrint(adSeenTimes.toString());
+                                        }
+
                                         if (widget.isBiSet) {
                                           ExerciciosPlanilha exercicio =
                                               ExerciciosPlanilha(
@@ -594,9 +635,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                         ),
                         if (errorMessage.isNotEmpty) ...[
                           Padding(
-                            padding: EdgeInsets.only(
-                              top: 12.0,
-                            ),
+                            padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(

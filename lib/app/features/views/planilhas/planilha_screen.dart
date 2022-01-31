@@ -1,11 +1,14 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/card_planilha.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 
 import 'components/info_dialog.dart';
 import 'components/lista_planilha_vazia.dart';
@@ -20,6 +23,9 @@ class PlanilhaScreen extends StatefulWidget {
 }
 
 class _PlanilhaScreenState extends State<PlanilhaScreen> {
+  //*ADS
+  final _controller = NativeAdmobController();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<PlanilhaManager>(builder: (_, planilhas, __) {
@@ -33,8 +39,11 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
           drawer: CustomDrawer(pageNow: 1),
           appBar: AppBar(
             toolbarHeight: 70,
-            shadowColor: Colors.grey[850],
-            elevation: 25,
+            // shadowColor: Colors.grey[850],
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
+            ),
+            elevation: 0,
             centerTitle: false,
             actions: [
               IconButton(
@@ -75,11 +84,11 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
             title: Text(
               "Planilhas",
               style: TextStyle(
-                  color: AppColors.black,
+                  color: AppColors.mainColor,
                   fontFamily: AppFonts.gothamBold,
                   fontSize: 30),
             ),
-            backgroundColor: AppColors.mainColor,
+            backgroundColor: AppColors.grey,
           ),
           backgroundColor: AppColors.grey,
           body: planilhas.loading
@@ -94,23 +103,42 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: List.generate(
                               planilhas.listaPlanilhas.length, (index) {
-                            return CardPlanilha(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, AppRoutes.exerciciosPlanilha,
-                                    arguments: ExerciciosPlanilhaArguments(
-                                        title: planilhas
-                                            .listaPlanilhas[index].title,
-                                        idPlanilha:
-                                            planilhas.listaPlanilhas[index].id,
-                                        idUser: widget.idUser,
-                                        isFriendAcess: false,
-                                        isPersonalAcess:
-                                            widget.isPersonalAcess));
-                              },
-                              userId: widget.idUser,
-                              planilha: planilhas.listaPlanilhas[index],
-                              index: index,
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  top: (index % 3 != 0 && index != 0) ? 24 : 0),
+                              child: Column(
+                                children: [
+                                  if (index % 3 == 0 && index != 0) ...[
+                                    Container(
+                                        height: 80,
+                                        child: AdmobBanner(
+                                            adUnitId: nativeAdUnitId(),
+                                            adSize:
+                                                AdmobBannerSize.SMART_BANNER(
+                                                    context)))
+                                  ],
+                                  CardPlanilha(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, AppRoutes.exerciciosPlanilha,
+                                          arguments:
+                                              ExerciciosPlanilhaArguments(
+                                                  title: planilhas
+                                                      .listaPlanilhas[index]
+                                                      .title,
+                                                  idPlanilha: planilhas
+                                                      .listaPlanilhas[index].id,
+                                                  idUser: widget.idUser,
+                                                  isFriendAcess: false,
+                                                  isPersonalAcess:
+                                                      widget.isPersonalAcess));
+                                    },
+                                    userId: widget.idUser,
+                                    planilha: planilhas.listaPlanilhas[index],
+                                    index: index,
+                                  ),
+                                ],
+                              ),
                             );
                           }),
                         ),

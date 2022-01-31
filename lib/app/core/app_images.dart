@@ -7,4 +7,5 @@ class AppImages {
   static const listaExercicios = "images/lista_exercicios.png";
   static const amigos = "images/amigos.png";
   static const ajudas = "images/ajudas.png";
+  static const logo = "images/logo.png";
 }

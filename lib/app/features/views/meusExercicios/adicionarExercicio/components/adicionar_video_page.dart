@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 
 class ExercicioVideoPage extends StatefulWidget {
@@ -135,7 +137,10 @@ class _ExercicioVideoPageState extends State<ExercicioVideoPage> {
                   onTap: widget.enviarExercicio,
                 ),
               ),
-            )
+            ),
+            if (context.read<UserManager>().loading) ...[
+              LinearProgressIndicator()
+            ],
           ],
         ),
       ),

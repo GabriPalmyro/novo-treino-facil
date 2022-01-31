@@ -9,10 +9,10 @@ import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/register/components/app_bar_register.dart';
-import 'package:tabela_treino/app/features/views/register/components/gender_widget.dart';
 import 'package:tabela_treino/app/features/views/register/components/login_button.dart';
 import 'package:tabela_treino/app/features/views/register/components/personal_widget.dart';
 import 'package:tabela_treino/app/features/views/register/components/text_form_field.dart';
+import 'package:tabela_treino/app/helpers/email_valid.dart';
 import 'package:tabela_treino/app/shared/dialogs/custom_alert_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -27,6 +27,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _numberController = TextEditingController();
   final _passController = TextEditingController();
   final _passConfirmController = TextEditingController();
+
+  final _nameFocus = FocusNode();
+  final _lastNameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _numberFocus = FocusNode();
+  final _passFocus = FocusNode();
+  final _passConfirmFocus = FocusNode();
 
   final MaskTextInputFormatter celFormatter = MaskTextInputFormatter(
     mask: '+## (##) #####-####',
@@ -58,57 +65,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void showDialogMessage() async {
-    await Future.delayed(const Duration(seconds: 1));
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) {
-          return CustomAlertDialogs(
-            title: Text(
-              "Aviso!",
-              style: TextStyle(
-                color: AppColors.mainColor,
-                fontFamily: AppFonts.gotham,
-              ),
-            ),
-            content: Text(
-              "Agora você somente pode adicionar sua foto de perfil após completar todo o cadastro!",
-              style: TextStyle(
-                height: 1.1,
-                color: AppColors.mainColor,
-                fontFamily: AppFonts.gothamBook,
-              ),
-            ),
-            androidActions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'Ok',
-                  style: TextStyle(
-                      color: AppColors.mainColor,
-                      fontFamily: AppFonts.gothamBold,
-                      fontSize: 20.0),
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) {
+            return CustomAlertDialogs(
+              title: Text(
+                "Aviso!",
+                style: TextStyle(
+                  color: AppColors.mainColor,
+                  fontFamily: AppFonts.gotham,
                 ),
               ),
-            ],
-            iosActions: [
-              CupertinoDialogAction(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'Ok',
-                  style: TextStyle(
-                    color: AppColors.mainColor,
-                    fontFamily: AppFonts.gothamBold,
+              content: Text(
+                "Agora você somente pode adicionar sua foto de perfil após completar todo o cadastro!",
+                style: TextStyle(
+                  height: 1.1,
+                  color: AppColors.mainColor,
+                  fontFamily: AppFonts.gothamBook,
+                ),
+              ),
+              androidActions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Ok',
+                    style: TextStyle(
+                        color: AppColors.mainColor,
+                        fontFamily: AppFonts.gothamBold,
+                        fontSize: 20.0),
                   ),
                 ),
-              ),
-            ],
-          );
-        });
+              ],
+              iosActions: [
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Ok',
+                    style: TextStyle(
+                      color: AppColors.mainColor,
+                      fontFamily: AppFonts.gothamBold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+    });
   }
 
   @override
@@ -118,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return Scaffold(
         key: _scaffoldKey,
         appBar: PreferredSize(
-            preferredSize: Size.fromHeight(120), child: AppBarRegister()),
+            preferredSize: Size.fromHeight(80), child: AppBarRegister()),
         backgroundColor: AppColors.grey,
         body: Form(
             key: _formKey,
@@ -131,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.05, vertical: 12.0),
+                          horizontal: width * 0.05, vertical: 8.0),
                       child: AutoSizeText(
                         AppTexts.registerWelcomeText,
                         textAlign: TextAlign.center,
@@ -154,29 +162,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
-                            child: CustomTextFormField(
-                              width: width * 0.4,
-                              textController: _nameController,
-                              textInputType: TextInputType.text,
-                              textColor: AppColors.mainColor,
-                              labelColor: AppColors.mainColor,
-                              labelText: 'Nome',
-                              enable: _isEnable,
-                              validator: (text) {},
-                            ),
+                            child: FormField<String>(
+                                initialValue: '',
+                                validator: (text) {
+                                  if (_nameController.text.isEmpty)
+                                    return 'Nome não pode ser vazio';
+                                  return null;
+                                },
+                                builder: (state) {
+                                  return CustomTextFormField(
+                                    width: width * 0.4,
+                                    textController: _nameController,
+                                    textInputType: TextInputType.text,
+                                    textColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelText: 'Nome',
+                                    enable: _isEnable,
+                                    focusNode: _nameFocus,
+                                    onSubmitted: (text) {
+                                      _lastNameFocus.requestFocus();
+                                    },
+                                    validator: (text) {},
+                                  );
+                                }),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
-                            child: CustomTextFormField(
-                              width: width * 0.4,
-                              textController: _lastNameController,
-                              enable: _isEnable,
-                              textInputType: TextInputType.text,
-                              textColor: AppColors.mainColor,
-                              labelColor: AppColors.mainColor,
-                              labelText: 'Sobrenome',
-                              validator: (text) {},
-                            ),
+                            child: FormField<String>(
+                                initialValue: '',
+                                validator: (text) {
+                                  if (_lastNameController.text.isEmpty)
+                                    return 'Sobrenome não pode ser vazio';
+                                  return null;
+                                },
+                                builder: (state) {
+                                  return CustomTextFormField(
+                                    width: width * 0.4,
+                                    textController: _lastNameController,
+                                    enable: _isEnable,
+                                    textInputType: TextInputType.text,
+                                    textColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelText: 'Sobrenome',
+                                    focusNode: _lastNameFocus,
+                                    onSubmitted: (text) {
+                                      _emailFocus.requestFocus();
+                                    },
+                                    validator: (text) {},
+                                  );
+                                }),
                           )
                         ],
                       ),
@@ -193,16 +235,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
-                            child: CustomTextFormField(
-                              width: width * 0.8,
-                              textController: _emailController,
-                              enable: _isEnable,
-                              textInputType: TextInputType.text,
-                              textColor: AppColors.mainColor,
-                              labelColor: AppColors.mainColor,
-                              labelText: 'E-mail',
-                              validator: (text) {},
-                            ),
+                            child: FormField<String>(
+                                initialValue: '',
+                                validator: (text) {
+                                  if (_emailController.text.isEmpty) {
+                                    _emailFocus.requestFocus();
+                                    return "E-mail não pode ser vazio!";
+                                  } else if (!emailValid(
+                                      _emailController.text)) {
+                                    _emailFocus.requestFocus();
+                                    {
+                                      return 'E-mail Inválido!';
+                                    }
+                                  }
+
+                                  return null;
+                                },
+                                builder: (state) {
+                                  return CustomTextFormField(
+                                    width: width * 0.8,
+                                    textController: _emailController,
+                                    enable: _isEnable,
+                                    textInputType: TextInputType.text,
+                                    textColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelText: 'E-mail',
+                                    focusNode: _emailFocus,
+                                    onSubmitted: (text) {
+                                      _numberFocus.requestFocus();
+                                    },
+                                    validator: (text) {},
+                                  );
+                                }),
                           ),
                         ],
                       ),
@@ -219,19 +287,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
-                            child: CustomTextFormField(
-                              width: width * 0.8,
-                              textController: _numberController,
-                              enable: _isEnable,
-                              textInputType: TextInputType.number,
-                              textColor: AppColors.mainColor,
-                              labelColor: AppColors.mainColor,
-                              labelText: 'Telefone',
-                              inputFormatters: [
-                                celFormatter,
-                              ],
-                              validator: (text) {},
-                            ),
+                            child: FormField<String>(
+                                initialValue: '',
+                                validator: (text) {
+                                  if (_numberController.text.isEmpty) {
+                                    _numberFocus.requestFocus();
+                                    return 'Número não pode ser vazia';
+                                  } else if (_numberController.text.length !=
+                                      19) {
+                                    _numberFocus.requestFocus();
+                                    return 'Número Inválido';
+                                  }
+                                  return null;
+                                },
+                                builder: (state) {
+                                  return CustomTextFormField(
+                                    width: width * 0.8,
+                                    textController: _numberController,
+                                    enable: _isEnable,
+                                    textInputType: TextInputType.number,
+                                    textColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelText: 'Telefone',
+                                    focusNode: _numberFocus,
+                                    onSubmitted: (text) {
+                                      _passFocus.requestFocus();
+                                    },
+                                    inputFormatters: [
+                                      celFormatter,
+                                    ],
+                                    validator: (text) {},
+                                  );
+                                }),
                           ),
                         ],
                       ),
@@ -248,30 +339,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
-                            child: CustomTextFormField(
-                              width: width * 0.8,
-                              textController: _passController,
-                              enable: _isEnable,
-                              textInputType: TextInputType.text,
-                              textColor: AppColors.mainColor,
-                              labelColor: AppColors.mainColor,
-                              isObscure: _obscureTextPass,
-                              labelText: 'Senha',
-                              suffixIcon: Padding(
-                                padding: EdgeInsets.only(right: 10.0),
-                                child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureTextPass = !_obscureTextPass;
-                                    });
-                                  },
-                                  icon: Icon(_obscureTextPass
-                                      ? Icons.visibility_off
-                                      : Icons.visibility),
-                                ),
-                              ),
-                              validator: (text) {},
-                            ),
+                            child: FormField<String>(
+                                initialValue: '',
+                                validator: (text) {
+                                  if (_passController.text.isEmpty) {
+                                    _passFocus.requestFocus();
+                                    return 'Senha não pode ser vazia';
+                                  }
+                                  return null;
+                                },
+                                builder: (state) {
+                                  return CustomTextFormField(
+                                    width: width * 0.8,
+                                    textController: _passController,
+                                    enable: _isEnable,
+                                    textInputType: TextInputType.text,
+                                    textColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    isObscure: _obscureTextPass,
+                                    labelText: 'Senha',
+                                    focusNode: _passFocus,
+                                    onSubmitted: (text) {
+                                      _passConfirmFocus.requestFocus();
+                                    },
+                                    suffixIcon: Padding(
+                                      padding: EdgeInsets.only(right: 10.0),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscureTextPass =
+                                                !_obscureTextPass;
+                                          });
+                                        },
+                                        icon: Icon(_obscureTextPass
+                                            ? Icons.visibility_off
+                                            : Icons.visibility),
+                                      ),
+                                    ),
+                                    validator: (text) {},
+                                  );
+                                }),
                           ),
                         ],
                       ),
@@ -288,42 +399,104 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 12.0),
-                            child: CustomTextFormField(
-                              width: width * 0.8,
-                              textController: _passConfirmController,
-                              enable: _isEnable,
-                              textInputType: TextInputType.text,
-                              textColor: AppColors.mainColor,
-                              labelColor: AppColors.mainColor,
-                              isObscure: _obscureTextPass,
-                              labelText: 'Confirmar Senha',
-                              suffixIcon: Padding(
-                                padding: EdgeInsets.only(right: 10.0),
-                                child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureTextPassConf =
-                                          !_obscureTextPassConf;
-                                    });
-                                  },
-                                  icon: Icon(_obscureTextPassConf
-                                      ? Icons.visibility_off
-                                      : Icons.visibility),
-                                ),
-                              ),
-                              validator: (text) {},
-                            ),
+                            child: FormField<String>(
+                                initialValue: '',
+                                validator: (text) {
+                                  if (_passConfirmController.text.isEmpty) {
+                                    _passConfirmFocus.requestFocus();
+                                    return 'Confirmar Senha não pode ser vazio';
+                                  } else if (_passConfirmController.text !=
+                                      _passController.text) {
+                                    _passConfirmFocus.requestFocus();
+                                    return 'Senhas não coincidem';
+                                  }
+                                  return null;
+                                },
+                                builder: (state) {
+                                  return CustomTextFormField(
+                                    width: width * 0.8,
+                                    textController: _passConfirmController,
+                                    enable: _isEnable,
+                                    textInputType: TextInputType.text,
+                                    textColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    labelColor: state.hasError
+                                        ? Colors.red
+                                        : AppColors.mainColor,
+                                    isObscure: _obscureTextPass,
+                                    labelText: 'Confirmar Senha',
+                                    focusNode: _passConfirmFocus,
+                                    onSubmitted: (text) {},
+                                    suffixIcon: Padding(
+                                      padding: EdgeInsets.only(right: 10.0),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscureTextPassConf =
+                                                !_obscureTextPassConf;
+                                          });
+                                        },
+                                        icon: Icon(_obscureTextPassConf
+                                            ? Icons.visibility_off
+                                            : Icons.visibility),
+                                      ),
+                                    ),
+                                    validator: (text) {},
+                                  );
+                                }),
                           ),
                         ],
                       ),
                     ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 24.0),
+                    //   child: Container(
+                    //     height: 120,
+                    //     child: Column(
+                    //       children: [
+                    //         Text("Gênero",
+                    //             style: TextStyle(
+                    //               color: Colors.grey[400],
+                    //               fontSize: 25,
+                    //               fontFamily: AppFonts.gothamLight,
+                    //             )),
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             GenderContainer(
+                    //               label: "Masculino",
+                    //               sexo: sexo,
+                    //               type: 0,
+                    //               onTap: () {
+                    //                 setState(() {
+                    //                   sexo = 0;
+                    //                 });
+                    //               },
+                    //             ),
+                    //             GenderContainer(
+                    //               label: "Feminino",
+                    //               sexo: sexo,
+                    //               type: 1,
+                    //               onTap: () {
+                    //                 setState(() {
+                    //                   sexo = 1;
+                    //                 });
+                    //               },
+                    //             ),
+                    //           ],
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 24.0),
+                      padding: const EdgeInsets.only(top: 12.0),
                       child: Container(
-                        height: 120,
+                        height: 100,
                         child: Column(
                           children: [
-                            Text("Gênero",
+                            Text("Você é Personal Trainer?",
                                 style: TextStyle(
                                   color: Colors.grey[400],
                                   fontSize: 25,
@@ -332,23 +505,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                GenderContainer(
-                                  label: "Masculino",
-                                  sexo: sexo,
-                                  type: 0,
+                                PersonalContainer(
+                                  isPersonal: isPersonal,
+                                  label: 'Sim',
+                                  type: true,
                                   onTap: () {
                                     setState(() {
-                                      sexo = 0;
+                                      isPersonal = true;
                                     });
                                   },
                                 ),
-                                GenderContainer(
-                                  label: "Feminino",
-                                  sexo: sexo,
-                                  type: 1,
+                                PersonalContainer(
+                                  isPersonal: isPersonal,
+                                  label: 'Não',
+                                  type: false,
                                   onTap: () {
                                     setState(() {
-                                      sexo = 1;
+                                      isPersonal = false;
                                     });
                                   },
                                 ),
@@ -358,67 +531,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      height: 120,
-                      child: Column(
-                        children: [
-                          Text("Você é Personal Trainer?",
-                              style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 25,
-                                fontFamily: AppFonts.gothamLight,
-                              )),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              PersonalContainer(
-                                isPersonal: isPersonal,
-                                label: 'Sim',
-                                type: true,
-                                onTap: () {
-                                  setState(() {
-                                    isPersonal = true;
-                                  });
-                                },
-                              ),
-                              PersonalContainer(
-                                isPersonal: isPersonal,
-                                label: 'Não',
-                                type: false,
-                                onTap: () {
-                                  setState(() {
-                                    isPersonal = false;
-                                  });
-                                },
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 24.0),
+                      padding: const EdgeInsets.only(bottom: 70.0),
                       child: LoginButton(
                         onTap: () async {
                           // SET USER
-                          user = User(
-                              name: _nameController.text,
-                              lastName: _lastNameController.text,
-                              email: _emailController.text,
-                              phoneNumber: celFormatter.getUnmaskedText(),
-                              isPayApp: false,
-                              isPersonal: isPersonal,
-                              sex: sexo == 0 ? "Masculino" : "Feminino",
-                              photoURL: AppTexts.photoURL);
+                          if (_formKey.currentState.validate()) {
+                            user = User(
+                                name: _nameController.text,
+                                lastName: _lastNameController.text,
+                                email: _emailController.text,
+                                phoneNumber: celFormatter.getUnmaskedText(),
+                                isPayApp: false,
+                                isPersonal: isPersonal,
+                                sex: sexo == 0 ? "Masculino" : "Feminino",
+                                mostrarExerciciosPerfil: false,
+                                mostrarPerfilPesquisa: false,
+                                mostrarPlanilhasPerfil: false,
+                                nickname: '',
+                                seguidores: 0,
+                                seguindo: 0,
+                                photoURL: AppTexts.photoURL);
 
-                          setState(() {
-                            _isEnable = false;
-                          });
-                          await userManager.singUp(
-                              user, _passController.text, _onSucess, _onFailed);
-                          setState(() {
-                            _isEnable = true;
-                          });
+                            setState(() {
+                              _isEnable = false;
+                            });
+                            await userManager.singUp(user, _passController.text,
+                                _onSucess, _onFailed);
+                            setState(() {
+                              _isEnable = true;
+                            });
+                          }
                         },
                         isLoading: userManager.loading,
                       ),
@@ -449,7 +592,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _onFailed() {
     mostrarSnackBar(
-        'Erro ao entrar, verifique seu email ou sua senha novamente',
+        'Ocorreu um erro, verifique sua conexão ou tente novamente mais tarde.',
         Colors.red);
   }
 }

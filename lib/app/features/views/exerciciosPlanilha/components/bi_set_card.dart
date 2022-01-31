@@ -1,11 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/biset_exercicio.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
+import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 import 'exercicio_modal.dart';
 
@@ -38,14 +40,11 @@ class BiSetCard extends StatefulWidget {
 }
 
 class _BiSetCardState extends State<BiSetCard> {
-  bool isLoading = false;
+  bool isLoading = true;
   List<ExerciciosPlanilha> exerciciosBiset = [];
 
   Future<void> loadBiSetExercicios() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      setState(() {
-        isLoading = true;
-      });
       Map<String, dynamic> data = {};
       var snapshot = await FirebaseFirestore.instance
           .collection("users")
@@ -175,18 +174,29 @@ class _BiSetCardState extends State<BiSetCard> {
                                                 fontSize: 14),
                                           ),
                                         ),
-                                        AutoSizeText(
-                                          exerciciosBiset[0]
-                                              .title
-                                              .toString()
-                                              .toUpperCase(),
-                                          textAlign: TextAlign.start,
-                                          maxLines: 3,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "GothamBold",
-                                              fontSize: 20),
-                                        ),
+                                        if (isLoading) ...[
+                                          Shimmer.fromColors(
+                                            baseColor: AppColors.grey300
+                                                .withOpacity(0.4),
+                                            highlightColor: AppColors.grey300
+                                                .withOpacity(0.2),
+                                            child: Skeleton(
+                                                height: 30, width: width * 0.6),
+                                          )
+                                        ] else ...[
+                                          AutoSizeText(
+                                            exerciciosBiset[0]
+                                                .title
+                                                .toString()
+                                                .toUpperCase(),
+                                            textAlign: TextAlign.start,
+                                            maxLines: 3,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "GothamBold",
+                                                fontSize: 20),
+                                          ),
+                                        ]
                                       ],
                                     ),
                                   ),
@@ -275,18 +285,30 @@ class _BiSetCardState extends State<BiSetCard> {
                                                 fontSize: 14),
                                           ),
                                         ),
-                                        AutoSizeText(
-                                          exerciciosBiset[1]
-                                              .title
-                                              .toString()
-                                              .toUpperCase(),
-                                          textAlign: TextAlign.start,
-                                          maxLines: 3,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "GothamBold",
-                                              fontSize: 20),
-                                        ),
+                                        if (isLoading) ...[
+                                          Shimmer.fromColors(
+                                            baseColor: AppColors.grey300
+                                                .withOpacity(0.4),
+                                            highlightColor: AppColors.grey300
+                                                .withOpacity(0.2),
+                                            child: Skeleton(
+                                                height: 30, width: width * 0.6),
+                                          )
+                                        ] else ...[
+                                          AutoSizeText(
+                                            exerciciosBiset[1]
+                                                    .title
+                                                    .toString()
+                                                    .toUpperCase() ??
+                                                '',
+                                            textAlign: TextAlign.start,
+                                            maxLines: 3,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: "GothamBold",
+                                                fontSize: 20),
+                                          ),
+                                        ]
                                       ],
                                     ),
                                   ),

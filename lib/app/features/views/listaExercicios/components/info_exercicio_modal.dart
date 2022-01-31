@@ -26,9 +26,9 @@ class _ExercicioInfoModalState extends State<ExercicioInfoModal> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Container(
-      height: height * 0.65,
+      height: height * 0.7,
       child: Container(
-          height: height * 0.55,
+          height: height * 0.6,
           decoration: new BoxDecoration(
               color: AppColors.grey,
               borderRadius: new BorderRadius.only(

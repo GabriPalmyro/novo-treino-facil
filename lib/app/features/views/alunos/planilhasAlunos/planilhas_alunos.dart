@@ -65,16 +65,20 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
       child: Consumer<PlanilhaManager>(builder: (_, planilhas, __) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 70,
-            shadowColor: Colors.grey[850],
-            elevation: 25,
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
+            ),
+            toolbarHeight: 60,
+            // shadowColor: Colors.grey[850],
+            elevation: 0,
             centerTitle: false,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.add_circle_outline,
+                    color: AppColors.mainColor,
                     size: 28,
                   ),
                   tooltip: 'Adicionar Nova Planiha',
@@ -95,11 +99,11 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
               "Planilhas de ${widget.arguments.nomeUser}",
               maxLines: 2,
               style: TextStyle(
-                  color: AppColors.black,
+                  color: AppColors.mainColor,
                   fontFamily: AppFonts.gothamBold,
                   fontSize: 18),
             ),
-            backgroundColor: AppColors.mainColor,
+            backgroundColor: AppColors.grey,
           ),
           backgroundColor: AppColors.grey,
           body: SingleChildScrollView(
@@ -122,27 +126,32 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
                                         CrossAxisAlignment.stretch,
                                     children: List.generate(
                                         snapshot.data.length, (index) {
-                                      return CardPlanilha(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              AppRoutes.exerciciosPlanilha,
-                                              arguments:
-                                                  ExerciciosPlanilhaArguments(
-                                                      title: snapshot
-                                                          .data[index].title,
-                                                      idPlanilha: snapshot
-                                                          .data[index].id,
-                                                      idUser: widget
-                                                          .arguments.idUser,
-                                                      isPersonalAcess: true,
-                                                      isFriendAcess: false,
-                                                      nomeAluno: widget
-                                                          .arguments.nomeUser));
-                                        },
-                                        userId: widget.arguments.idUser,
-                                        planilha: snapshot.data[index],
-                                        index: index,
-                                        isPersonalAcess: true,
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            top: index != 0 ? 24.0 : 8),
+                                        child: CardPlanilha(
+                                          onTap: () {
+                                            Navigator.pushNamed(context,
+                                                AppRoutes.exerciciosPlanilha,
+                                                arguments:
+                                                    ExerciciosPlanilhaArguments(
+                                                        title: snapshot
+                                                            .data[index].title,
+                                                        idPlanilha: snapshot
+                                                            .data[index].id,
+                                                        idUser: widget
+                                                            .arguments.idUser,
+                                                        isPersonalAcess: true,
+                                                        isFriendAcess: false,
+                                                        nomeAluno: widget
+                                                            .arguments
+                                                            .nomeUser));
+                                          },
+                                          userId: widget.arguments.idUser,
+                                          planilha: snapshot.data[index],
+                                          index: index,
+                                          isPersonalAcess: true,
+                                        ),
                                       );
                                     }),
                                   ),

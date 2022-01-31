@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
-
+import 'package:firebase_admob/firebase_admob.dart';
 import 'components/card_request.dart';
 
 class RequestListPage extends StatefulWidget {
@@ -14,6 +15,35 @@ class RequestListPage extends StatefulWidget {
 }
 
 class _RequestListPageState extends State<RequestListPage> {
+  //*ADS
+  RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
+
+  Future<void> loadRewardedVideoAd() async {
+    rewardedVideoAd.load(adUnitId: rewardAdUnitId());
+  }
+
+  void listenerRewardedEvent() async {
+    rewardedVideoAd.listener = (RewardedVideoAdEvent event,
+        {String rewardType, int rewardAmount}) async {
+      if (event == RewardedVideoAdEvent.rewarded) {
+        await context
+            .read<PersonalManager>()
+            .loadMyPersonal(idUser: context.read<UserManager>().user.id);
+      } else if (event == RewardedVideoAdEvent.closed) {
+        await context
+            .read<PersonalManager>()
+            .loadMyPersonal(idUser: context.read<UserManager>().user.id);
+      }
+    };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadRewardedVideoAd();
+    listenerRewardedEvent();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -77,8 +107,7 @@ class _RequestListPageState extends State<RequestListPage> {
                                 if (response != null) {
                                   mostrarSnackBar(response, AppColors.red);
                                 } else {
-                                  await personalManager.loadMyPersonal(
-                                      idUser: userManager.user.id);
+                                  rewardedVideoAd.show();
                                 }
                               },
                               message:
