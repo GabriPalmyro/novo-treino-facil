@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +47,7 @@ class ExercicioViewModal extends StatefulWidget {
 class _ExercicioViewModalState extends State<ExercicioViewModal> {
   //* ADS
   InterstitialAd interstitialAdMuscle;
+  bool isInterstitialReady = false;
 
   void _loadInterstitialAd() {
     interstitialAdMuscle.load();
@@ -53,11 +56,11 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
   void _onInterstitialAdEvent(MobileAdEvent event) {
     switch (event) {
       case MobileAdEvent.loaded:
+        isInterstitialReady = true;
         break;
       case MobileAdEvent.failedToLoad:
-        print('Failed to load an interstitial ad');
-        break;
-      case MobileAdEvent.closed:
+        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+        isInterstitialReady = false;
         break;
       default:
       // do nothing
@@ -198,6 +201,16 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                               //controller: photoViewcontroller,
                               backgroundDecoration: const BoxDecoration(
                                 color: Colors.transparent,
+                              ),
+                              errorBuilder: (c, o, s) => Center(
+                                child: Text(
+                                  "Erro ao carregar exercício",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: AppFonts.gothamLight),
+                                ),
                               ),
                               loadingBuilder: (_, loadingProgress) => Center(
                                   child: Column(
@@ -552,17 +565,19 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                             context.read<AdsManager>();
 
                                         if (_formKey.currentState.validate()) {
-                                          //* VALIDAR ANÚNCIO INTERCALADO
-                                          if (await adsManager
-                                              .getIsAvaliableToShowAdEditExercise()) {
-                                            await interstitialAdMuscle.show();
-                                            await adsManager
-                                                .setIsAvaliableToShowAdEditExercise(
-                                                    false);
-                                          } else
-                                            await adsManager
-                                                .setIsAvaliableToShowAdEditExercise(
-                                                    true);
+                                          if (isInterstitialReady) {
+                                            //* VALIDAR ANÚNCIO INTERCALADO
+                                            if (await adsManager
+                                                .getIsAvaliableToShowAdEditExercise()) {
+                                              await interstitialAdMuscle.show();
+                                              await adsManager
+                                                  .setIsAvaliableToShowAdEditExercise(
+                                                      false);
+                                            } else
+                                              await adsManager
+                                                  .setIsAvaliableToShowAdEditExercise(
+                                                      true);
+                                          }
 
                                           if (widget.isBiSet) {
                                             ExerciciosPlanilha exercicio =

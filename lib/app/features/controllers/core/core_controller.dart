@@ -5,10 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:tabela_treino/app/features/models/core/core.dart';
 
 class CoreAppController extends ChangeNotifier {
-  CoreAppController() {
-    getAppCore();
-  }
-
   CoreApp coreInfos = CoreApp();
 
   Future<void> getAppCore() async {

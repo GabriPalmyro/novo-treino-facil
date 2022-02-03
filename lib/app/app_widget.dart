@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:tabela_treino/app/features/controllers/core/core_controller.dart
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/friend/friend_controller.dart';
+import 'package:tabela_treino/app/features/controllers/meAjuda/ajudas_controller.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart' as User;
 import 'package:tabela_treino/app/features/views/alunos/alunos_screen.dart';
@@ -17,6 +19,7 @@ import 'package:tabela_treino/app/features/views/buscarAmigos/buscar_amigo_scree
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/home/home_screen.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/lista_exercicios.dart';
+import 'package:tabela_treino/app/features/views/meAjuda/meajuda_screen.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/meus_exercicios_screen.dart';
 import 'package:tabela_treino/app/features/views/perfil/editarPerfil/editar_perfil.dart';
 import 'package:tabela_treino/app/features/views/perfil/perfil_screen.dart';
@@ -40,24 +43,21 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-// bool _payApp;
-double padding = 0;
 
 class _MyAppState extends State<MyApp> {
-  void displayBanner() {
-    myBanner
-      ..load()
-      ..show(
-        anchorOffset: -2,
-        anchorType: AnchorType.bottom,
-      ).then((value) {
-        print("anuncio mostrado");
-        print(padding);
-      }).catchError((_) {
-        print("ERRO $_");
-      });
+  void displayBanner() async {
+    try {
+      startBanner();
+      myBanner
+        ..load()
+        ..show(
+          anchorOffset: -2,
+          anchorType: AnchorType.bottom,
+        );
+    } catch (e) {
+      log("ERRO AO MOSTRAR ANUNCIO BANNER: $e");
+    }
   }
 
   @override
@@ -78,7 +78,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-7831186229252322~9095625736");
-    startBanner();
     displayBanner();
   }
 
@@ -122,6 +121,10 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (_) => CoreAppController(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MeAjudaController(),
           lazy: false,
         ),
       ],
@@ -185,6 +188,8 @@ class _MyAppState extends State<MyApp> {
                       friend: settings.arguments as User.User));
             case AppRoutes.meusExercicios:
               return MaterialPageRoute(builder: (_) => MeusExerciciosScreen());
+            case AppRoutes.meAjuda:
+              return MaterialPageRoute(builder: (_) => MeAjudaScreen());
             default:
               return null;
           }

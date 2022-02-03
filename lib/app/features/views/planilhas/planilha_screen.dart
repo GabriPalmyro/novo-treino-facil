@@ -1,5 +1,7 @@
-import 'package:admob_flutter/admob_flutter.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_admob/flutter_native_admob.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
@@ -8,7 +10,6 @@ import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_p
 import 'package:tabela_treino/app/features/views/planilhas/components/card_planilha.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 
 import 'components/info_dialog.dart';
 import 'components/lista_planilha_vazia.dart';
@@ -110,12 +111,34 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                                 children: [
                                   if (index % 3 == 0 && index != 0) ...[
                                     Container(
-                                        height: 80,
-                                        child: AdmobBanner(
-                                            adUnitId: nativeAdUnitId(),
-                                            adSize:
-                                                AdmobBannerSize.SMART_BANNER(
-                                                    context)))
+                                      height: 90,
+                                      padding: EdgeInsets.all(10),
+                                      child: NativeAdmob(
+                                        adUnitID: nativeAdUnitId(),
+                                        loading: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 1.5,
+                                            color: AppColors.mainColor,
+                                            backgroundColor: AppColors.mainColor
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                        error: Center(
+                                          child: Text(
+                                            "Falha ao carregar anúncio...",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    AppFonts.gothamLight,
+                                                color: AppColors.mainColor
+                                                    .withOpacity(0.6),
+                                                fontSize: 14),
+                                          ),
+                                        ),
+                                        numberAds: 3,
+                                        controller: _controller,
+                                        type: NativeAdmobType.banner,
+                                      ),
+                                    ),
                                   ],
                                   CardPlanilha(
                                     onTap: () {

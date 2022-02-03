@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +29,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
 
   //* ADS
   InterstitialAd interstitialAdMuscle;
+  bool isInterstitialReady = false;
 
   void _loadInterstitialAd() {
     interstitialAdMuscle.load();
@@ -35,11 +38,11 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
   void _onInterstitialAdEvent(MobileAdEvent event) {
     switch (event) {
       case MobileAdEvent.loaded:
+        isInterstitialReady = true;
         break;
       case MobileAdEvent.failedToLoad:
-        print('Failed to load an interstitial ad');
-        break;
-      case MobileAdEvent.closed:
+        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+        isInterstitialReady = false;
         break;
       default:
       // do nothing
@@ -106,7 +109,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                   child: Text(
                     nicknameController.text.isEmpty
                         ? amigosProcurados.amigosProcurados.isEmpty
-                            ? ""
+                            ? "Nenhum resultado encontrado"
                             : "Recentes"
                         : friends.isEmpty
                             ? userManager.loading || amigosProcurados.loading
@@ -157,19 +160,23 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                                 photoURL: amigosProcurados
                                     .amigosProcurados[index].photoURL,
                                 onTap: () async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
+                                  if (isInterstitialReady) {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
 
-                                  //* VALIDAR ANÚNCIO INTERCALADO 3
-                                  int adSeenTimes =
-                                      prefs.getInt('amigos_perfil_add');
-                                  if (adSeenTimes < 2) {
-                                    await prefs.setInt(
-                                        'amigos_perfil_add', adSeenTimes + 1);
-                                  } else {
-                                    await interstitialAdMuscle.show();
-                                    await prefs.setInt('amigos_perfil_add', 0);
+                                    //* VALIDAR ANÚNCIO INTERCALADO 3
+                                    int adSeenTimes =
+                                        prefs.getInt('amigos_perfil_add') ?? 0;
+                                    if (adSeenTimes < 2) {
+                                      await prefs.setInt(
+                                          'amigos_perfil_add', adSeenTimes + 1);
+                                    } else {
+                                      await interstitialAdMuscle.show();
+                                      await prefs.setInt(
+                                          'amigos_perfil_add', 0);
+                                    }
                                   }
+
                                   Navigator.pushNamed(
                                       context, AppRoutes.perfilAmigo,
                                       arguments: amigosProcurados

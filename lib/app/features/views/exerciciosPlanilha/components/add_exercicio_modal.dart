@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -41,6 +43,7 @@ class ExercicioAddModal extends StatefulWidget {
 class _ExercicioAddModalState extends State<ExercicioAddModal> {
   //* ADS
   InterstitialAd interstitialAdMuscle;
+  bool isInterstitialReady = false;
 
   void _loadInterstitialAd() {
     interstitialAdMuscle.load();
@@ -49,11 +52,11 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
   void _onInterstitialAdEvent(MobileAdEvent event) {
     switch (event) {
       case MobileAdEvent.loaded:
+        isInterstitialReady = true;
         break;
       case MobileAdEvent.failedToLoad:
-        print('Failed to load an interstitial ad');
-        break;
-      case MobileAdEvent.closed:
+        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+        isInterstitialReady = false;
         break;
       default:
       // do nothing
@@ -543,16 +546,15 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                       if (_formKey.currentState.validate()) {
                                         //* VALIDAR ANÚNCIO INTERCALADO 2
                                         int adSeenTimes =
-                                            prefs.getInt('add_exercicio_ad');
+                                            prefs.getInt('add_exercicio_ad') ??
+                                                0;
                                         if (adSeenTimes < 2) {
                                           await prefs.setInt('add_exercicio_ad',
                                               adSeenTimes + 1);
-                                          debugPrint(adSeenTimes.toString());
                                         } else {
                                           await interstitialAdMuscle.show();
                                           await prefs.setInt(
                                               'add_exercicio_ad', 0);
-                                          debugPrint(adSeenTimes.toString());
                                         }
 
                                         if (widget.isBiSet) {

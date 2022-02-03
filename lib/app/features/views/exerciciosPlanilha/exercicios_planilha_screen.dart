@@ -1,6 +1,10 @@
+import 'dart:developer' as dev;
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
@@ -14,6 +18,7 @@ import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/u
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'components/bi_set_card.dart';
 import 'components/planilha_vazia.dart';
 
@@ -51,6 +56,29 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
   int tamPlan = 0;
   bool _isEditing = false;
   bool isLoading = false;
+
+  //* ADS
+  InterstitialAd interstitialAdMuscle;
+  bool isInterstitialReady = false;
+
+  void _loadInterstitialAd() {
+    interstitialAdMuscle.load();
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        isInterstitialReady = true;
+        break;
+      case MobileAdEvent.failedToLoad:
+        dev.log(
+            'Failed to load an interstitial ad. Error: $event'.toUpperCase());
+        isInterstitialReady = false;
+        break;
+      default:
+      // do nothing
+    }
+  }
 
   Future<List<ExerciciosPlanilha>> biSetExerciseList(
       String idSet, CollectionReference ref) async {
@@ -122,6 +150,12 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
   void initState() {
     super.initState();
     loadExerciciosPlanilha();
+
+    interstitialAdMuscle = InterstitialAd(
+      adUnitId: interstitialAdUnitId(),
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
   }
 
   @override
@@ -207,6 +241,10 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                   color: AppColors.red,
                                   context: context);
                             } else {
+                              if (isInterstitialReady &&
+                                  (Random().nextInt(100) % 2 == 0)) {
+                                await interstitialAdMuscle.show();
+                              }
                               setState(() {
                                 listaExercicios = listaExerciciosTemp;
                                 listaExerciciosTemp =
@@ -285,96 +323,117 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                       BoxDecoration(color: AppColors.grey),
                                   child: listaExerciciosTemp[index].setType ==
                                           "uniset"
-                                      ? UniSetCard(
-                                          index: index,
-                                          isChanging: false,
-                                          isEditing: _isEditing,
-                                          exercicio: listaExerciciosTemp[index],
-                                          idUser: widget.arguments.idUser,
-                                          isFriendAcess:
-                                              widget.arguments.isFriendAcess,
-                                          onTap: () {},
-                                          onDelete: () async {
-                                            debugPrint(
-                                                'apagando uniset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
-                                            Navigator.pop(context);
-                                            String response = await exercicios
-                                                .deleteExerciseUniSet(
-                                                    listaExercicios:
-                                                        listaExerciciosTemp,
-                                                    planilhaId: widget
-                                                        .arguments.idPlanilha,
-                                                    idUser:
-                                                        widget.arguments.idUser,
-                                                    idExercise:
-                                                        listaExerciciosTemp[
-                                                                index]
-                                                            .id,
-                                                    index: index);
+                                      ? Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom:
+                                                  listaExerciciosTemp.length ==
+                                                          index + 1
+                                                      ? 70.0
+                                                      : 0),
+                                          child: UniSetCard(
+                                            index: index,
+                                            isChanging: false,
+                                            isEditing: _isEditing,
+                                            exercicio:
+                                                listaExerciciosTemp[index],
+                                            idUser: widget.arguments.idUser,
+                                            isFriendAcess:
+                                                widget.arguments.isFriendAcess,
+                                            onTap: () {},
+                                            onDelete: () async {
+                                              debugPrint(
+                                                  'apagando uniset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
+                                              Navigator.pop(context);
+                                              String response = await exercicios
+                                                  .deleteExerciseUniSet(
+                                                      listaExercicios:
+                                                          listaExerciciosTemp,
+                                                      planilhaId: widget
+                                                          .arguments.idPlanilha,
+                                                      idUser: widget
+                                                          .arguments.idUser,
+                                                      idExercise:
+                                                          listaExerciciosTemp[
+                                                                  index]
+                                                              .id,
+                                                      index: index);
 
-                                            if (response != null) {
-                                              mostrarSnackBar(
-                                                  message:
-                                                      'Ocorreu um erro. Tente novamente mais tarde.',
-                                                  color: AppColors.red,
-                                                  context: context);
-                                            } else {
-                                              setState(() {
-                                                listaExercicios =
-                                                    listaExerciciosTemp;
-                                                listaExerciciosTemp =
-                                                    List.empty(growable: true);
-                                                _isEditing = false;
-                                              });
-                                            }
-                                          },
+                                              if (response != null) {
+                                                mostrarSnackBar(
+                                                    message:
+                                                        'Ocorreu um erro. Tente novamente mais tarde.',
+                                                    color: AppColors.red,
+                                                    context: context);
+                                              } else {
+                                                setState(() {
+                                                  listaExercicios =
+                                                      listaExerciciosTemp;
+                                                  listaExerciciosTemp =
+                                                      List.empty(
+                                                          growable: true);
+                                                  _isEditing = false;
+                                                });
+                                              }
+                                            },
+                                          ),
                                         )
-                                      : BiSetCard(
-                                          index: index,
-                                          idPlanilha:
-                                              widget.arguments.idPlanilha,
-                                          exercicio: listaExerciciosTemp[index],
-                                          isChanging: false,
-                                          isEditing: _isEditing,
-                                          idUser: widget.arguments.idUser,
-                                          tamPlan: tamPlan,
-                                          titlePlanilha: widget.arguments.title,
-                                          isFriendAcess:
-                                              widget.arguments.isFriendAcess,
-                                          onDelete: () async {
-                                            debugPrint(
-                                                'apagando biset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
-                                            Navigator.pop(context);
-                                            String response = await exercicios
-                                                .deleteExerciseBiSet(
-                                                    planilhaId: widget
-                                                        .arguments.idPlanilha,
-                                                    idExercise:
-                                                        listaExerciciosTemp[
-                                                                index]
-                                                            .id,
-                                                    idUser:
-                                                        widget.arguments.idUser,
-                                                    listaExercicios:
-                                                        listaExerciciosTemp,
-                                                    index: index);
+                                      : Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom:
+                                                  listaExerciciosTemp.length ==
+                                                          index + 1
+                                                      ? 70.0
+                                                      : 0),
+                                          child: BiSetCard(
+                                            index: index,
+                                            idPlanilha:
+                                                widget.arguments.idPlanilha,
+                                            exercicio:
+                                                listaExerciciosTemp[index],
+                                            isChanging: false,
+                                            isEditing: _isEditing,
+                                            idUser: widget.arguments.idUser,
+                                            tamPlan: tamPlan,
+                                            titlePlanilha:
+                                                widget.arguments.title,
+                                            isFriendAcess:
+                                                widget.arguments.isFriendAcess,
+                                            onDelete: () async {
+                                              debugPrint(
+                                                  'apagando biset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
+                                              Navigator.pop(context);
+                                              String response = await exercicios
+                                                  .deleteExerciseBiSet(
+                                                      planilhaId: widget
+                                                          .arguments.idPlanilha,
+                                                      idExercise:
+                                                          listaExerciciosTemp[
+                                                                  index]
+                                                              .id,
+                                                      idUser: widget
+                                                          .arguments.idUser,
+                                                      listaExercicios:
+                                                          listaExerciciosTemp,
+                                                      index: index);
 
-                                            if (response != null) {
-                                              mostrarSnackBar(
-                                                  message:
-                                                      'Ocorreu um erro. Tente novamente mais tarde.',
-                                                  color: AppColors.red,
-                                                  context: context);
-                                            } else {
-                                              setState(() {
-                                                listaExercicios =
-                                                    listaExerciciosTemp;
-                                                listaExerciciosTemp =
-                                                    List.empty(growable: true);
-                                                _isEditing = false;
-                                              });
-                                            }
-                                          },
+                                              if (response != null) {
+                                                mostrarSnackBar(
+                                                    message:
+                                                        'Ocorreu um erro. Tente novamente mais tarde.',
+                                                    color: AppColors.red,
+                                                    context: context);
+                                              } else {
+                                                setState(() {
+                                                  listaExercicios =
+                                                      listaExerciciosTemp;
+                                                  listaExerciciosTemp =
+                                                      List.empty(
+                                                          growable: true);
+                                                  _isEditing = false;
+                                                });
+                                              }
+                                            },
+                                          ),
                                         ));
                             },
                           )

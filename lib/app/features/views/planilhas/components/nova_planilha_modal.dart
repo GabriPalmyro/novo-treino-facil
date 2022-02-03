@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/ads/ads_model.dart';
@@ -27,6 +29,7 @@ class NovaPlanilhaModal extends StatefulWidget {
 class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
   //* ADS
   InterstitialAd interstitialAdMuscle;
+  bool isInterstitialReady = false;
 
   void _loadInterstitialAd() {
     interstitialAdMuscle.load();
@@ -35,11 +38,11 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
   void _onInterstitialAdEvent(MobileAdEvent event) {
     switch (event) {
       case MobileAdEvent.loaded:
+        isInterstitialReady = true;
         break;
       case MobileAdEvent.failedToLoad:
-        print('Failed to load an interstitial ad');
-        break;
-      case MobileAdEvent.closed:
+        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+        isInterstitialReady = false;
         break;
       default:
       // do nothing
@@ -294,15 +297,17 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                   var adsManager = context.read<AdsManager>();
 
                                   if (_formKey.currentState.validate()) {
-                                    //* VALIDAR ANÚNCIO INTERCALADO
-                                    if (await adsManager
-                                        .getIsAvaliableNewPlanilha()) {
-                                      await interstitialAdMuscle.show();
-                                      await adsManager
-                                          .setIsAvaliableNewPlanilha(false);
-                                    } else
-                                      await adsManager
-                                          .setIsAvaliableNewPlanilha(true);
+                                    if (isInterstitialReady) {
+                                      //* VALIDAR ANÚNCIO INTERCALADO
+                                      if (await adsManager
+                                          .getIsAvaliableNewPlanilha()) {
+                                        await interstitialAdMuscle.show();
+                                        await adsManager
+                                            .setIsAvaliableNewPlanilha(false);
+                                      } else
+                                        await adsManager
+                                            .setIsAvaliableNewPlanilha(true);
+                                    }
 
                                     Navigator.pop(context);
                                     Planilha planilha = Planilha(

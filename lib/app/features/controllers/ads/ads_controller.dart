@@ -4,6 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AdsManager extends ChangeNotifier {
   SharedPreferences prefs;
 
+  int _paddingAds = 60;
+
+  set paddingAds(int value) => _paddingAds;
+
+  get paddingAds => _paddingAds;
+
   //* RESET ADS
   Future<void> resetAdsPreferences() async {
     prefs = await SharedPreferences.getInstance();

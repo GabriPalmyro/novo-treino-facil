@@ -217,7 +217,7 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 12.0),
                   child: CardOption(
-                      title: 'Meus Exercícios',
+                      title: 'Exercícios Personalizados',
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.meusExercicios);
                       }),

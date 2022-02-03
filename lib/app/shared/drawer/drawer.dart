@@ -5,6 +5,7 @@ import 'package:tabela_treino/app/core/app_routes.dart';
 
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
+import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 import 'package:tabela_treino/app/shared/shimmer/drawer/drawer_shimmer.dart';
@@ -148,35 +149,41 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            if (widget.pageNow != 3) {}
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.fitness_center,
-                                  size: 30,
-                                  color: AppColors.mainColor,
-                                ),
-                                SizedBox(width: 32),
-                                Text(
-                                  "Treinos Fáceis",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontFamily: AppFonts.gothamLight,
-                                    fontSize: 20,
+                        if (context
+                            .read<CoreAppController>()
+                            .coreInfos
+                            .mostrarTreinosFaceis) ...[
+                          InkWell(
+                            onTap: () {
+                              if (widget.pageNow != 3) {}
+                            },
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.fitness_center,
+                                    size: 30,
                                     color: AppColors.mainColor,
                                   ),
-                                )
-                              ],
+                                  SizedBox(width: 32),
+                                  Text(
+                                    "Treinos Fáceis",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      fontFamily: AppFonts.gothamLight,
+                                      fontSize: 20,
+                                      color: AppColors.mainColor,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 4) {
@@ -324,15 +331,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 ));
                           },
                           child: Container(
-                            padding:
-                                const EdgeInsets.only(top: 24.0, bottom: 24.0),
-                            child: Text(
-                              "Sair",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontFamily: AppFonts.gotham,
-                                fontSize: 20,
-                                color: Colors.red,
+                            padding: const EdgeInsets.only(
+                                top: 24.0, bottom: 24.0, left: 2.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Sair",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontFamily: AppFonts.gotham,
+                                  fontSize: 24,
+                                  color: Colors.red,
+                                ),
                               ),
                             ),
                           ),

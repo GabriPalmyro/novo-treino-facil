@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +20,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _hasLogin() async {
     await context.read<CoreAppController>().getAppCore();
-    await Future.delayed(Duration(seconds: 1));
     if (_auth.currentUser == null) {
       Navigator.pushNamed(context, AppRoutes.login);
     } else {
@@ -38,14 +36,45 @@ class _SplashScreenState extends State<SplashScreen> {
           decoration: BoxDecoration(color: AppColors.mainColor),
         ),
         LayoutBuilder(builder: (_, constraints) {
-          return Center(
-            child: SizedBox(
-              width: constraints.maxWidth * 0.5,
-              child: Image.asset(
-                AppImages.logo,
-                fit: BoxFit.cover,
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 150,
+                  width: constraints.maxWidth * 0.45,
+                  child: Image.asset(
+                    AppImages.logo,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.only(top: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Carregando Informações',
+                      style: TextStyle(
+                          fontFamily: AppFonts.gothamLight,
+                          fontSize: 18.0,
+                          color: AppColors.grey),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24.0),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.2,
+                        color: AppColors.grey,
+                        backgroundColor: AppColors.grey.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           );
         })
       ],

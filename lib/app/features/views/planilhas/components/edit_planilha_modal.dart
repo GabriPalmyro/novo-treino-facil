@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 
 import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
@@ -10,6 +13,7 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/select_diasemana.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 class EditPlanilhaModal extends StatefulWidget {
   final Planilha planilha;
@@ -35,6 +39,28 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
 
   List<DiaDaSemana> _diasDaSemana = [];
 
+  //* ADS
+  InterstitialAd interstitialAdMuscle;
+  bool isInterstitialReady = false;
+
+  void _loadInterstitialAd() {
+    interstitialAdMuscle.load();
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        isInterstitialReady = true;
+        break;
+      case MobileAdEvent.failedToLoad:
+        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+        isInterstitialReady = false;
+        break;
+      default:
+      // do nothing
+    }
+  }
+
   void resetCampos() {
     setState(() {
       _titleController.text = widget.planilha.title;
@@ -48,6 +74,12 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
     _titleController.text = widget.planilha.title;
     _descriptionController.text = widget.planilha.description;
     _diasDaSemana = widget.planilha.diasDaSemana;
+
+    interstitialAdMuscle = InterstitialAd(
+      adUnitId: interstitialAdUnitId(),
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
   }
 
   @override
@@ -60,9 +92,9 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
         child: Padding(
           padding: MediaQuery.of(context).viewInsets * 0.5,
           child: Container(
-            height: height * 0.65,
+            height: height * 0.6,
             child: Container(
-                height: height * 0.65,
+                height: height * 0.6,
                 decoration: new BoxDecoration(
                     color: AppColors.grey,
                     borderRadius: new BorderRadius.only(
@@ -314,6 +346,9 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                         index: widget.index,
                                         isPersonalAcess:
                                             widget.isPersonalAcess);
+                                    if (isInterstitialReady) {
+                                      await interstitialAdMuscle.show();
+                                    }
                                     Navigator.pop(context);
                                   }
                                 },

@@ -16,4 +16,5 @@ class AppRoutes {
   static const perfilAmigo = '/perfil-amigo';
   static const meusExercicios = '/meus-exercicios';
   static const preferencias = '/preferencias';
+  static const meAjuda = '/me-ajuda';
 }

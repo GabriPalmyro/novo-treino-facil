@@ -251,11 +251,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Skeleton(
                                 height: 80,
-                                width: (width / 3) * 0.82,
+                                width: (width / 2) * 0.83,
+                                // (width / 3) * 0.8,
                               ),
                               Skeleton(
                                 height: 80,
-                                width: (width / 3) * 0.82,
+                                width: (width / 2) * 0.83,
+                                // (width / 3) * 0.8,
                               ),
                               if (context
                                   .read<CoreAppController>()
@@ -313,8 +315,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             HomeButtonMin(
-                              width: (width / 3) * 0.8,
-                              title: 'Meus Exercícios',
+                              width: (width / 2) * 0.85,
+                              // (width / 3) * 0.8,
+                              title: 'Exercícios Personalizados',
                               icon: Icons.people_alt_outlined,
                               iconePath: AppImages.meusExercicios,
                               onTap: () {
@@ -323,7 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                             HomeButtonMin(
-                              width: (width / 3) * 0.8,
+                              width: (width / 2) * 0.85,
+                              // (width / 3) * 0.8,
                               title: userManager.user.isPersonal ?? false
                                   ? "Alunos"
                                   : "Personal\nTrainer",
@@ -494,8 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icons.help,
                           iconePath: AppImages.ajudas,
                           onTap: () {
-                            Navigator.pushNamed(
-                                context, AppRoutes.listaExercicios);
+                            Navigator.pushNamed(context, AppRoutes.meAjuda);
                           },
                         ),
                       ),
