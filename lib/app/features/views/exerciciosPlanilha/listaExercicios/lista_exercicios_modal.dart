@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/components/card_selecteds_exercices.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/components/filter_button.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
@@ -32,6 +33,23 @@ class ListaExerciciosModal extends StatefulWidget {
 
 class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
   final _searchController = TextEditingController();
+
+  Future<void> loadMyExercises() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      String idUser = context.read<UserManager>().user.id;
+      if (context.read<ExercisesManager>().listaMeusExercicios.isEmpty) {
+        await context
+            .read<ExercisesManager>()
+            .loadMyListExercises(idUser: idUser);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadMyExercises();
+  }
 
   String _selTypeSearch = "title";
 

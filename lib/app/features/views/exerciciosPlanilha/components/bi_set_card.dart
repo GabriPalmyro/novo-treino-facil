@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -45,26 +48,39 @@ class _BiSetCardState extends State<BiSetCard> {
 
   Future<void> loadBiSetExercicios() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Map<String, dynamic> data = {};
-      var snapshot = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(widget.idUser)
-          .collection("planilha")
-          .doc(widget.idPlanilha)
-          .collection('exercícios')
-          .doc(widget.exercicio.id)
-          .collection('sets')
-          .orderBy('pos')
-          .get();
+      try {
+        Map<String, dynamic> data = {};
+        var snapshot = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(widget.idUser)
+            .collection("planilha")
+            .doc(widget.idPlanilha)
+            .collection('exercícios')
+            .doc(widget.exercicio.id)
+            .collection('sets')
+            .get();
 
-      snapshot.docs.forEach((element) {
-        data = element.data();
-        data['id'] = element.id;
-        exerciciosBiset.add(ExerciciosPlanilha.fromMap(data));
-      });
-      setState(() {
-        isLoading = false;
-      });
+        snapshot.docs.forEach((element) {
+          data = element.data();
+          data['id'] = element.id;
+
+          exerciciosBiset.add(ExerciciosPlanilha.fromMap(data));
+        });
+
+        setState(() {
+          isLoading = false;
+        });
+      } on FirebaseAuthException catch (e) {
+        log('Error Firebase: ' + e.code.toString());
+        setState(() {
+          isLoading = false;
+        });
+      } catch (e) {
+        log('Error: ' + e.toString());
+        setState(() {
+          isLoading = false;
+        });
+      }
     });
   }
 

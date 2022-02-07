@@ -35,10 +35,9 @@ class _CardPlanilhaState extends State<CardPlanilha> {
         child: Stack(
           children: [
             Container(
-              height: 120,
               width: width * 0.9,
               padding:
-                  const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
+                  const EdgeInsets.symmetric(vertical: 25.0, horizontal: 20),
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: AppColors.mainColor,
@@ -56,6 +55,7 @@ class _CardPlanilhaState extends State<CardPlanilha> {
                 children: [
                   AutoSizeText(
                     widget.planilha.title.toUpperCase(),
+                    maxLines: 2,
                     style: TextStyle(
                         fontSize: 24, fontFamily: AppFonts.gothamBold),
                     textAlign: TextAlign.center,

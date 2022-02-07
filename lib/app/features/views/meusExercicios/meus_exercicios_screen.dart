@@ -84,7 +84,16 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
           body: loading
               ? ExerciciosPlanilhaShimmer()
               : exerciciosManager.listaMeusExercicios.isEmpty
-                  ? ExerciciosPlanilhaVazia()
+                  ? ExerciciosPlanilhaVazia(
+                      onTap: () {
+                        showModalBottomSheet(
+                            backgroundColor: Colors.transparent,
+                            isScrollControlled: true,
+                            enableDrag: false,
+                            context: context,
+                            builder: (_) => AdicionarExercicioModal());
+                      },
+                    )
                   : ListView.builder(
                       physics: BouncingScrollPhysics(),
                       itemCount: exerciciosManager.listaMeusExercicios.length,

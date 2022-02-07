@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 class ExerciciosPlanilhaVazia extends StatelessWidget {
+  final Function onTap;
+
+  const ExerciciosPlanilhaVazia({
+    @required this.onTap,
+  });
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -44,7 +50,10 @@ class ExerciciosPlanilhaVazia extends StatelessWidget {
           SizedBox(
             height: 12,
           ),
-          Icon(Icons.add_circle_outline, size: 36, color: AppColors.mainColor),
+          IconButton(
+              onPressed: onTap,
+              icon: Icon(Icons.add_circle_outline,
+                  size: 36, color: AppColors.mainColor)),
           SizedBox(
             height: 12,
           ),

@@ -83,11 +83,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         setState(() {
                           _isEnable = false;
                         });
-                        await userManager.signIn(_emailController.text,
-                            _passController.text, _onSucess, _onFailed);
-                        setState(() {
-                          _isEnable = true;
-                        });
+                        String response = await userManager.signIn(
+                            _emailController.text.trim(), _passController.text);
+                        if (response != null) {
+                          _onFailed(response);
+                          setState(() {
+                            _isEnable = true;
+                          });
+                        } else {
+                          _onSucess();
+                        }
                       }
                     },
                     prefixIcon: Padding(
@@ -118,11 +123,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() {
                         _isEnable = false;
                       });
-                      await userManager.signIn(_emailController.text,
-                          _passController.text, _onSucess, _onFailed);
-                      setState(() {
-                        _isEnable = true;
-                      });
+                      String response = await userManager.signIn(
+                          _emailController.text.trim(), _passController.text);
+                      if (response != null) {
+                        _onFailed(response);
+                        setState(() {
+                          _isEnable = true;
+                        });
+                      } else {
+                        _onSucess();
+                      }
                     }
                   },
                   child: AnimatedContainer(
@@ -172,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               if (_emailController.text.isEmpty) {
                                 mostrarSnackBar(
                                     context: context,
@@ -181,11 +191,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.redAccent);
                               } else if (_emailController.text.isNotEmpty ||
                                   _emailController.text.contains("@")) {
-                                {
+                                String response = await userManager
+                                    .resetPassword(_emailController.text);
+                                if (response != null) {
                                   mostrarSnackBar(
                                       context: context,
-                                      message: 'Confira seu e-mail!',
-                                      color: AppColors.mainColor);
+                                      message:
+                                          'Ocorreu um erro. Tente novamente mais tarde.',
+                                      color: AppColors.red);
+                                } else {
+                                  mostrarSnackBar(
+                                      context: context,
+                                      message:
+                                          'Confira sua caixa de entrada em seu e-mail.',
+                                      color: AppColors.lightGrey);
                                 }
                               }
                             },
@@ -248,10 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context, AppRoutes.home, (route) => false);
   }
 
-  void _onFailed() {
-    mostrarSnackBar(
-        context: context,
-        message: 'Erro ao entrar, verifique seu email ou sua senha novamente',
-        color: Colors.red);
+  void _onFailed(String error) {
+    mostrarSnackBar(context: context, message: error, color: AppColors.red);
   }
 }

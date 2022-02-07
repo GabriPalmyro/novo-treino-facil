@@ -95,7 +95,16 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
           body: planilhas.loading
               ? ExerciciosPlanilhaShimmer()
               : planilhas.listaPlanilhas.isEmpty
-                  ? PlanilhasVazia()
+                  ? PlanilhasVazia(onTap: () {
+                      showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (_) => NovaPlanilhaModal(
+                                idUser: widget.idUser,
+                                isPersonalAcess: widget.isPersonalAcess,
+                              ));
+                    })
                   : SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
                       child: Padding(

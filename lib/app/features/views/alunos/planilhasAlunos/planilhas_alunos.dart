@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +47,6 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
         listaPlanilhas.add(Planilha.fromMap(data));
         data = {};
       });
-
       return listaPlanilhas;
     } catch (e) {
       listaPlanilhas = [];
@@ -115,8 +116,19 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
                   builder: (context, snapshot) {
                     return snapshot.connectionState == ConnectionState.waiting
                         ? ExerciciosPlanilhaShimmer()
-                        : planilhas.listaPlanilhas.isEmpty
-                            ? PlanilhasVazia()
+                        : snapshot.data.isEmpty
+                            ? PlanilhasVazia(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      backgroundColor: Colors.transparent,
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (_) => NovaPlanilhaModal(
+                                            idUser: widget.arguments.idUser,
+                                            isPersonalAcess: true,
+                                          ));
+                                },
+                              )
                             : SingleChildScrollView(
                                 physics: BouncingScrollPhysics(),
                                 child: Padding(

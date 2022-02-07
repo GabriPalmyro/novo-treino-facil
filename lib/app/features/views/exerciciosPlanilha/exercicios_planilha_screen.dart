@@ -139,7 +139,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
         setState(() {
           isLoading = false;
         });
-        debugPrint('Erro: ' + e.toString());
+        dev.log('Erro: ' + e.toString());
         return listaExercicios;
       }
     });
@@ -302,7 +302,22 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
             body: exercicios.loading || isLoading
                 ? ExerciciosPlanilhaShimmer()
                 : listaExercicios.isEmpty
-                    ? ExerciciosPlanilhaVazia()
+                    ? ExerciciosPlanilhaVazia(
+                        onTap: () {
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (_) => SelectSetModal(
+                                    idUser: widget.arguments.idUser,
+                                    titlePlanilha: widget.arguments.title,
+                                    idPlanilha: widget.arguments.idPlanilha,
+                                    tamPlan: tamPlan,
+                                    isPersonalAcess:
+                                        widget.arguments.isPersonalAcess,
+                                  ));
+                        },
+                      )
                     : _isEditing
                         ? ReorderableListView.builder(
                             shrinkWrap: true,

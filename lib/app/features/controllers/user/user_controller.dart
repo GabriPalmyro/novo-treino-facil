@@ -35,6 +35,21 @@ class UserManager extends ChangeNotifier {
     return firebaseUser != null;
   }
 
+  String registerErrorType(String error) {
+    switch (error) {
+      case 'invalid-email':
+        return 'E-mail inválido. Tente novamente.';
+      case 'user-disabled':
+        return 'Usuário desativado. Tente novamente.';
+      case 'user-not-found':
+        return 'Senha inválida. Tente novamente.';
+      case 'wrong-password':
+        return 'Senha inválida. Tente novamente.';
+      default:
+        return 'Ocorreu um erro. Verifique seu e-mail e senha e tente novamente.';
+    }
+  }
+
   Future<void> singUp(User user, String pass, VoidCallback onSucess,
       VoidCallback onFailed) async {
     loading = true;
@@ -54,22 +69,40 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<void> signIn(String email, String pass, VoidCallback onSucess,
-      VoidCallback onFailed) async {
+  String loginErrorType(String error) {
+    switch (error) {
+      case 'invalid-email':
+        return 'E-mail inválido. Tente novamente.';
+      case 'user-disabled':
+        return 'Usuário desativado. Tente novamente.';
+      case 'user-not-found':
+        return 'Usuário não encontrado. Tente novamente.';
+      case 'wrong-password':
+        return 'Senha inválida. Tente novamente.';
+      default:
+        return 'Ocorreu um erro. Verifique seu e-mail e senha e tente novamente.';
+    }
+  }
+
+  Future<String> signIn(String email, String pass) async {
     loading = true;
 
     try {
-      await Future.delayed(Duration(seconds: 1));
+      // await Future.delayed(Duration(seconds: 1));
       Auth.UserCredential authUser =
           await _auth.signInWithEmailAndPassword(email: email, password: pass);
       firebaseUser = authUser.user;
       await loadCurrentUser();
-      onSucess();
       loading = false;
+      return null;
+    } on Auth.FirebaseAuthException catch (e) {
+      log(e.code.toString());
+      loading = false;
+      return loginErrorType(e.code);
     } catch (e) {
       debugPrint(e.toString());
-      onFailed();
       loading = false;
+      return 'Ocorreu um erro. Verifique seu e-mail e senha e tente novamente.';
     }
   }
 
@@ -102,6 +135,16 @@ class UserManager extends ChangeNotifier {
       debugPrint('Usuário criado com sucesso!');
     } catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  Future<String> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+      return e.toString();
     }
   }
 

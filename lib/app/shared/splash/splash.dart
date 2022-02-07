@@ -21,9 +21,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _hasLogin() async {
     await context.read<CoreAppController>().getAppCore();
     if (_auth.currentUser == null) {
-      Navigator.pushNamed(context, AppRoutes.login);
+      Navigator.pushNamedAndRemoveUntil(
+          context, AppRoutes.login, (route) => false);
     } else {
-      Navigator.pushNamed(context, AppRoutes.home);
+      Navigator.pushNamedAndRemoveUntil(
+          context, AppRoutes.home, (route) => false);
     }
   }
 

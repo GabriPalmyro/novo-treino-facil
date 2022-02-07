@@ -12,6 +12,7 @@ class AppBarLogin extends StatelessWidget {
           bottom: Radius.elliptical(300, 50),
         ),
       ),
+      leading: SizedBox(),
       elevation: 25,
       centerTitle: true,
       title: Image.asset(

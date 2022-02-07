@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -217,9 +219,6 @@ class _AlunosScreenState extends State<AlunosScreen>
                                         userManager.alunos.length, (index) {
                                       return CardAluno(
                                           acessarPlanilhas: () {
-                                            userManager.alunoNomeTemp =
-                                                userManager
-                                                    .alunos[index].alunoName;
                                             Navigator.pushNamed(context,
                                                 AppRoutes.planilhasAluno,
                                                 arguments:

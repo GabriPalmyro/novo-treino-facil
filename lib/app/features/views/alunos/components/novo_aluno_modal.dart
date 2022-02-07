@@ -29,6 +29,7 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
 
   //*ADS
   RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
+  bool rewardedFailedToLoad = false;
 
   Future<void> loadRewardedVideoAd() async {
     rewardedVideoAd.load(
@@ -38,7 +39,9 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
   void listenerRewardedEvent() async {
     rewardedVideoAd.listener = (RewardedVideoAdEvent event,
         {String rewardType, int rewardAmount}) async {
-      if (event == RewardedVideoAdEvent.rewarded) {
+      if (event == RewardedVideoAdEvent.failedToLoad) {
+        rewardedFailedToLoad = true;
+      } else if (event == RewardedVideoAdEvent.rewarded) {
         showCustomDialogOpt(
             title: 'Sucesso!',
             function: () {
@@ -199,7 +202,20 @@ class _NovoAlunoModalState extends State<NovoAlunoModal> {
                                           message: response,
                                           context: context);
                                     } else {
-                                      rewardedVideoAd.show();
+                                      if (!rewardedFailedToLoad) {
+                                        rewardedVideoAd.show();
+                                      } else {
+                                        showCustomDialogOpt(
+                                            title: 'Sucesso!',
+                                            function: () {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                            isOnlyOption: true,
+                                            message:
+                                                'Convite enviado com sucesso! Agora só falta seu aluno aceitar para completar o processo.',
+                                            context: context);
+                                      }
                                     }
                                   }
                                 },

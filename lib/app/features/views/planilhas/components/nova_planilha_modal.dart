@@ -230,7 +230,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                       Padding(
                         padding: const EdgeInsets.only(top: 12.0),
                         child: Text(
-                          'Dia da Semana:',
+                          'Dia da Semana (opcional):',
                           style: TextStyle(
                               fontFamily: AppFonts.gothamBook,
                               color: AppColors.white,

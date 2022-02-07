@@ -113,6 +113,7 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
 
   //*ADS
   RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
+  bool rewardedFailedToLoad = false;
 
   Future<void> loadRewardedVideoAd() async {
     rewardedVideoAd.load(adUnitId: rewardAdUnitId());
@@ -121,7 +122,9 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
   void listenerRewardedEvent() {
     rewardedVideoAd.listener =
         (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
-      if (event == RewardedVideoAdEvent.rewarded) {
+      if (event == RewardedVideoAdEvent.failedToLoad) {
+        rewardedFailedToLoad = true;
+      } else if (event == RewardedVideoAdEvent.rewarded) {
         adicionarNovoExercicio();
       } else if (event == RewardedVideoAdEvent.closed) {
         loadRewardedVideoAd();
@@ -189,7 +192,11 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
                     pickVideo: pickVideo,
                     enviarExercicio: () async {
                       if (_titleController.text.isNotEmpty && _video != null) {
-                        rewardedVideoAd.show();
+                        if (!rewardedFailedToLoad) {
+                          rewardedVideoAd.show();
+                        } else {
+                          adicionarNovoExercicio();
+                        }
                       } else {
                         showCustomDialogOpt(
                             title: 'Ocorreu um erro!',
