@@ -74,11 +74,13 @@ class _BiSetCardState extends State<BiSetCard> {
         log('Error Firebase: ' + e.code.toString());
         setState(() {
           isLoading = false;
+          exerciciosBiset = [];
         });
       } catch (e) {
         log('Error: ' + e.toString());
         setState(() {
           isLoading = false;
+          exerciciosBiset = [];
         });
       }
     });

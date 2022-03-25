@@ -77,7 +77,7 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
   }
 
   Future<void> adicionarNovoExercicio() async {
-    await context.read<UserManager>().createNewExe(
+    String response = await context.read<UserManager>().createNewExe(
         video: _video,
         title: _titleController.text,
         muscleText: agrupamentoMusc,
@@ -87,6 +87,17 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
           Navigator.pushNamedAndRemoveUntil(
               context, AppRoutes.meusExercicios, (route) => false);
         });
+
+    if (response != null) {
+      showCustomDialogOpt(
+          title: 'Erro!',
+          function: () {
+            Navigator.pop(context);
+          },
+          message: response,
+          context: context,
+          isDeleteMessage: true);
+    }
   }
 
   List<String> filters = [

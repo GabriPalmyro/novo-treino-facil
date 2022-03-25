@@ -52,8 +52,8 @@ def keystoreProperties = new Properties()
         applicationId "br.com.palmyro.treino_facil"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 20
-        versionName "2.1.20"
+        versionCode 21
+        versionName "2.1.21"
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true

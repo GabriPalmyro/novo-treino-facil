@@ -175,9 +175,6 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                       FormField(
                           initialValue: '',
                           validator: (text) {
-                            if (_descriptionController.text.isEmpty) {
-                              return "O campo descrição não pode estar vazio.";
-                            }
                             return null;
                           },
                           builder: (state) {

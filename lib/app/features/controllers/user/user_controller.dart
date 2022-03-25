@@ -414,7 +414,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<void> createNewExe(
+  Future<String> createNewExe(
       {File video,
       String muscleText,
       String title,
@@ -422,6 +422,18 @@ class UserManager extends ChangeNotifier {
       bool homeExe,
       Function onSucess}) async {
     loading = true;
+
+    //! VERIFICAR QUANTOS EXERCÍCIOS POSSUI
+    var listExe = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.id)
+        .collection("exercicios")
+        .get();
+
+    if (listExe.docs.length > 10) {
+      return "Limite máximo de exercícios personalizados atingido!";
+    }
+
     await FirebaseStorage.instance
         .refFromURL(
             "gs://treino-facil-22856.appspot.com/exercicios_compartilhados/${user.id}/exercicios/$muscleText")
@@ -464,6 +476,7 @@ class UserManager extends ChangeNotifier {
       loading = false;
       return error.toString();
     });
+    return 'Ocorreu um erro.';
   }
 
   //* PERSONAL AREA

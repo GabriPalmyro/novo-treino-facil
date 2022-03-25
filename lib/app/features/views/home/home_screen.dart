@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     filterDay();
+    // verifyNewVersion();
   }
 
   bool _isLoading = false;
@@ -109,6 +111,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (planilhas.isEmpty)
       planilhas = context.read<PlanilhaManager>().listaPlanilhas;
+  }
+
+  void verifyNewVersion() {
+    NewVersion(
+      context: context,
+      androidId: 'br.com.palmyro.treino_facil',
+    ).showAlertIfNecessary();
   }
 
   @override

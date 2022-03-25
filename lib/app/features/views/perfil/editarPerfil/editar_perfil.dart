@@ -439,6 +439,5 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
             'Erro ao atualizar, verifique seu email ou sua senha novamente',
         color: Colors.red,
         context: context);
-    ;
   }
 }

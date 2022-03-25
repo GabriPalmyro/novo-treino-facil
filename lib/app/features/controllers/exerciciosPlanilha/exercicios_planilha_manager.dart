@@ -172,17 +172,17 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
     loading = true;
     String id;
 
-    listaExerciciosBiSet[0].position = 0;
-    listaExerciciosBiSet[1].position = 1;
-
-    BiSetExercise biSetExercise = BiSetExercise(
-        firstExercise: listaExerciciosBiSet[0].title,
-        secondExercise: listaExerciciosBiSet[1].title,
-        setType: 'biset',
-        position: pos,
-        exercicios: listaExerciciosBiSet);
-
     try {
+      listaExerciciosBiSet[0].position = 0;
+      listaExerciciosBiSet[1].position = 1;
+
+      BiSetExercise biSetExercise = BiSetExercise(
+          firstExercise: listaExerciciosBiSet[0].title,
+          secondExercise: listaExerciciosBiSet[1].title,
+          setType: 'biset',
+          position: pos,
+          exercicios: listaExerciciosBiSet);
+
       //* ADICIONANDO BI SET
       await FirebaseFirestore.instance
           .collection("users")
