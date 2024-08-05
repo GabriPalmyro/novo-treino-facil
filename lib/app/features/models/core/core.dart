@@ -1,8 +1,8 @@
 class CoreApp {
-  bool mostrarAdicionarExercicios;
-  bool mostrarAjudas;
-  bool mostrarAlterarSenha;
-  bool mostrarTreinosFaceis;
+  bool? mostrarAdicionarExercicios;
+  bool? mostrarAjudas;
+  bool? mostrarAlterarSenha;
+  bool? mostrarTreinosFaceis;
 
   CoreApp({
     this.mostrarAdicionarExercicios,

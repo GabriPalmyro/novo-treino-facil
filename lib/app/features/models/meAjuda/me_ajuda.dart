@@ -1,9 +1,9 @@
 class MeAjuda {
-  String id;
-  String title;
-  String description;
-  String link;
-  bool show;
+  String? id;
+  String? title;
+  String? description;
+  String? link;
+  bool? show;
 
   MeAjuda({this.id, this.title, this.description, this.link, this.show});
 

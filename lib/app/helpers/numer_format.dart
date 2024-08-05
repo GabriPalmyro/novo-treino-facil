@@ -1,4 +1,4 @@
-import 'package:brasil_fields/util/util_brasil_fields.dart';
+import 'package:brasil_fields/brasil_fields.dart';
 
 String showNumber(String numberOld) {
   String number = UtilBrasilFields.removeCaracteres(numberOld);

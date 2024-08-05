@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
-import 'package:tabela_treino/app/core/app_fonts.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
@@ -216,7 +214,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSubmitted: (text) {
                                       _emailFocus.requestFocus();
                                     },
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      return null;
+                                    },
                                   );
                                 }),
                           )
@@ -536,7 +536,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: LoginButton(
                         onTap: () async {
                           // SET USER
-                          if (_formKey.currentState.validate()) {
+                          if (_formKey.currentState!.validate()) {
                             user = User(
                                 name: _nameController.text,
                                 lastName: _lastNameController.text,

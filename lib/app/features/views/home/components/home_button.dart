@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class HomeButton extends StatefulWidget {
@@ -10,16 +9,10 @@ class HomeButton extends StatefulWidget {
   final String iconePath;
   final double width;
   final double fontSize;
-  final Function onTap;
+  final VoidCallback onTap;
 
   const HomeButton(
-      {this.title,
-      this.description = '',
-      this.icon,
-      this.iconePath,
-      this.width,
-      this.fontSize = 16,
-      this.onTap});
+      {required this.title, this.description = '', required this.icon, required this.iconePath, required this.width, this.fontSize = 16, required this.onTap});
 
   @override
   _HomeButtonState createState() => _HomeButtonState();
@@ -40,16 +33,9 @@ class _HomeButtonState extends State<HomeButton> {
         height: 110,
         width: widget.width,
         decoration: BoxDecoration(
-            color: _onPressed
-                ? AppColors.lightGrey.withOpacity(0.8)
-                : AppColors.lightGrey,
+            color: _onPressed ? AppColors.lightGrey.withOpacity(0.8) : AppColors.lightGrey,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                  color: AppColors.black.withOpacity(0.3),
-                  blurRadius: 6,
-                  offset: Offset(0, 4))
-            ]),
+            boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.3), blurRadius: 6, offset: Offset(0, 4))]),
         padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -75,10 +61,7 @@ class _HomeButtonState extends State<HomeButton> {
                     widget.title,
                     textAlign: TextAlign.start,
                     maxLines: 2,
-                    style: TextStyle(
-                        fontSize: widget.fontSize,
-                        color: AppColors.white,
-                        fontFamily: AppFonts.gothamBook),
+                    style: TextStyle(fontSize: widget.fontSize, color: AppColors.white, fontFamily: AppFonts.gothamBook),
                   ),
                 ),
               ),
@@ -95,10 +78,15 @@ class HomeButtonMin extends StatefulWidget {
   final IconData icon;
   final String iconePath;
   final double width;
-  final Function onTap;
+  final VoidCallback onTap;
 
-  const HomeButtonMin(
-      {this.title, this.icon, this.iconePath, this.width, this.onTap});
+  const HomeButtonMin({
+    required this.title,
+    required this.icon,
+    required this.iconePath,
+    required this.width,
+    required this.onTap,
+  });
 
   @override
   _HomeButtonMinState createState() => _HomeButtonMinState();
@@ -125,16 +113,9 @@ class _HomeButtonMinState extends State<HomeButtonMin> {
                 height: 80,
                 width: widget.width,
                 decoration: BoxDecoration(
-                    color: _onPressed
-                        ? AppColors.lightGrey.withOpacity(0.8)
-                        : AppColors.lightGrey,
+                    color: _onPressed ? AppColors.lightGrey.withOpacity(0.8) : AppColors.lightGrey,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.black.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: Offset(0, 4))
-                    ]),
+                    boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.3), blurRadius: 6, offset: Offset(0, 4))]),
                 padding: EdgeInsets.all(8),
                 child: Center(
                     child: Image.asset(
@@ -150,11 +131,7 @@ class _HomeButtonMinState extends State<HomeButtonMin> {
                 widget.title,
                 textAlign: TextAlign.center,
                 maxLines: 2,
-                style: TextStyle(
-                    height: 1.1,
-                    fontSize: 14,
-                    color: AppColors.white,
-                    fontFamily: AppFonts.gothamBook),
+                style: TextStyle(height: 1.1, fontSize: 14, color: AppColors.white, fontFamily: AppFonts.gothamBook),
               ),
             ),
           ],

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
-import 'package:tabela_treino/app/core/app_routes.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
@@ -14,7 +11,7 @@ import 'components/header_drawer.dart';
 
 class CustomDrawer extends StatefulWidget {
   final int pageNow;
-  CustomDrawer({this.pageNow});
+  CustomDrawer({required this.pageNow});
 
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
@@ -37,11 +34,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeaderDrawer(
-                    fullName: (userManager.user.name.toUpperCase() +
-                        ' ' +
-                        userManager.user.lastName.toUpperCase()),
-                    photoURL: userManager.user.photoURL,
-                    isPersonal: userManager.user.isPersonal,
+                    fullName: userManager.user.fullName(),
+                    photoURL: userManager.user.photoURL!,
+                    isPersonal: userManager.user.isPersonal!,
                     onTap: () {
                       if (widget.pageNow != 5) {
                         Navigator.pushNamedAndRemoveUntil(
@@ -152,7 +147,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         if (context
                             .read<CoreAppController>()
                             .coreInfos
-                            .mostrarTreinosFaceis) ...[
+                            .mostrarTreinosFaceis!) ...[
                           InkWell(
                             onTap: () {
                               if (widget.pageNow != 3) {}
@@ -187,7 +182,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 4) {
-                              if (userManager.user.isPersonal) {
+                              if (userManager.user.isPersonal!) {
                                 Navigator.pushNamedAndRemoveUntil(context,
                                     AppRoutes.alunos, (route) => false);
                               } else {
@@ -203,7 +198,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
-                                  userManager.user.isPersonal ?? false
+                                  userManager.user.isPersonal!
                                       ? Icons.people_rounded
                                       : Icons.live_help,
                                   size: 30,
@@ -211,7 +206,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                 ),
                                 SizedBox(width: 32),
                                 Text(
-                                  userManager.user.isPersonal ?? false
+                                  userManager.user.isPersonal!
                                       ? "Alunos"
                                       : "Personal\nTrainer",
                                   textAlign: TextAlign.start,

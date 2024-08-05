@@ -1,25 +1,22 @@
-import 'dart:ui';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class CustomButton extends StatefulWidget {
   final String text;
   final Color color;
   final Color textColor;
-  final Function onTap;
+  final VoidCallback onTap;
   final double width;
   final double height;
   final double verticalPad;
   final double horizontalPad;
 
   const CustomButton(
-      {@required this.text,
-      @required this.color,
-      @required this.textColor,
-      @required this.onTap,
+      {required this.text,
+      required this.color,
+      required this.textColor,
+      required this.onTap,
       this.verticalPad = 12,
       this.horizontalPad = 10,
       this.height = 40,

@@ -1,23 +1,18 @@
 import 'dart:developer';
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/components/adicionar_video_page.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/components/exercicios_info_page.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 
-import 'package:firebase_admob/firebase_admob.dart';
-
-import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
 
 class AdicionarExercicioModal extends StatefulWidget {
   @override
-  _AdicionarExercicioModalState createState() =>
-      _AdicionarExercicioModalState();
+  _AdicionarExercicioModalState createState() => _AdicionarExercicioModalState();
 }
 
 class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
@@ -29,25 +24,24 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
   bool isHomeExe = false;
 
   //video
-  File _video;
+  XFile? _video = null;
   final picker = ImagePicker();
 
   // This funcion will helps you to pick a Video File
   pickVideo() async {
-    PickedFile pickedFile = await picker.getImage(source: ImageSource.gallery);
+    XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _video = File(pickedFile.path);
+      _video = pickedFile;
     });
-    int size = await _video.length();
-    String isGifJpg =
-        _video.path.substring(_video.path.length - 4, _video.path.length);
-    log(_video.path.toString());
+    int size = await _video!.length();
+    String isGifJpg = _video!.path.substring(_video!.path.length - 4, _video!.path.length);
+    log(_video!.path.toString());
 
     if (size > 5000000) {
       showCustomDialogOpt(
           title: 'Arquivo inválido.',
           isOnlyOption: true,
-          function: () {
+          VoidCallBack: () {
             Navigator.pop(context);
           },
           message: 'O arquivo excede o tamanho máximo de 5MB.',
@@ -56,7 +50,7 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
       showCustomDialogOpt(
           title: 'Arquivo inválido.',
           isOnlyOption: true,
-          function: () {
+          VoidCallBack: () {
             Navigator.pop(context);
           },
           message: 'O arquivo não é de formato suportado (.GIF, .JPEG ou .JPG)',
@@ -77,21 +71,20 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
   }
 
   Future<void> adicionarNovoExercicio() async {
-    String response = await context.read<UserManager>().createNewExe(
+    final response = await context.read<UserManager>().createNewExe(
         video: _video,
         title: _titleController.text,
         muscleText: agrupamentoMusc,
         level: dificuldade,
         homeExe: isHomeExe,
-        onSucess: () {
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.meusExercicios, (route) => false);
+        onSuccess: () {
+          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.meusExercicios, (route) => false);
         });
 
     if (response != null) {
       showCustomDialogOpt(
           title: 'Erro!',
-          function: () {
+          VoidCallBack: () {
             Navigator.pop(context);
           },
           message: response,
@@ -120,35 +113,34 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
     "Tríceps",
   ];
 
-  PageController _pageController;
+  late PageController _pageController;
 
   //*ADS
-  RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
-  bool rewardedFailedToLoad = false;
+  // RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
+  // bool rewardedFailedToLoad = false;
 
-  Future<void> loadRewardedVideoAd() async {
-    rewardedVideoAd.load(adUnitId: rewardAdUnitId());
-  }
+  // Future<void> loadRewardedVideoAd() async {
+  //   rewardedVideoAd.load(adUnitId: rewardAdUnitId());
+  // }
 
-  void listenerRewardedEvent() {
-    rewardedVideoAd.listener =
-        (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
-      if (event == RewardedVideoAdEvent.failedToLoad) {
-        rewardedFailedToLoad = true;
-      } else if (event == RewardedVideoAdEvent.rewarded) {
-        adicionarNovoExercicio();
-      } else if (event == RewardedVideoAdEvent.closed) {
-        loadRewardedVideoAd();
-      }
-    };
-  }
+  // void listenerRewardedEvent() {
+  //   rewardedVideoAd.listener = (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
+  //     if (event == RewardedVideoAdEvent.failedToLoad) {
+  //       rewardedFailedToLoad = true;
+  //     } else if (event == RewardedVideoAdEvent.rewarded) {
+  //       adicionarNovoExercicio();
+  //     } else if (event == RewardedVideoAdEvent.closed) {
+  //       loadRewardedVideoAd();
+  //     }
+  //   };
+  // }
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-    loadRewardedVideoAd();
-    listenerRewardedEvent();
+    // loadRewardedVideoAd();
+    // listenerRewardedEvent();
   }
 
   void navigationTapped(int page) {
@@ -170,10 +162,7 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
         child: Container(
             height: height * 0.95,
             decoration: new BoxDecoration(
-                color: AppColors.grey,
-                borderRadius: new BorderRadius.only(
-                    topLeft: const Radius.circular(25.0),
-                    topRight: const Radius.circular(25.0))),
+                color: AppColors.grey, borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0))),
             child: Container(
               child: PageView(
                 physics: NeverScrollableScrollPhysics(),
@@ -188,10 +177,12 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
                     dificuldade: dificuldade,
                     changeIsHomeExe: changeIsHomeExe,
                     isHomeExe: isHomeExe,
-                    onChanged: (String newValue) {
-                      setState(() {
-                        agrupamentoMusc = newValue;
-                      });
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          agrupamentoMusc = newValue;
+                        });
+                      }
                     },
                     changePage: () {
                       _pageController.jumpToPage(1);
@@ -203,21 +194,16 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
                     pickVideo: pickVideo,
                     enviarExercicio: () async {
                       if (_titleController.text.isNotEmpty && _video != null) {
-                        if (!rewardedFailedToLoad) {
-                          rewardedVideoAd.show();
-                        } else {
-                          adicionarNovoExercicio();
-                        }
+                        adicionarNovoExercicio();
                       } else {
                         showCustomDialogOpt(
                             title: 'Ocorreu um erro!',
                             isOnlyOption: true,
                             isDeleteMessage: true,
-                            function: () {
+                            VoidCallBack: () {
                               Navigator.pop(context);
                             },
-                            message:
-                                'Verifique o título do seu exercício e se você selecionou um vídeo.\nTente novamente mais tarde.',
+                            message: 'Verifique o título do seu exercício e se você selecionou um vídeo.\nTente novamente mais tarde.',
                             context: context);
                       }
                     },

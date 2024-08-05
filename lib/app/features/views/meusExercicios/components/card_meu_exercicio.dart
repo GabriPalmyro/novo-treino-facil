@@ -7,13 +7,13 @@ import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 class CardMeuExercicio extends StatelessWidget {
   final int index;
   final Exercise exercise;
-  final Function onTap;
-  final Function deleteExercise;
+  final VoidCallback onTap;
+  final VoidCallback deleteExercise;
   const CardMeuExercicio(
-      {@required this.index,
-      @required this.exercise,
-      @required this.onTap,
-      @required this.deleteExercise});
+      {required this.index,
+      required this.exercise,
+      required this.onTap,
+      required this.deleteExercise});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class CardMeuExercicio extends StatelessWidget {
                           isDeleteMessage: true,
                           message:
                               'Essa ação não poderá ser desfeita após concluida.',
-                          function: deleteExercise);
+                          VoidCallBack: deleteExercise);
                     }),
               ),
               Column(
@@ -63,7 +63,7 @@ class CardMeuExercicio extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(left: 15, right: 15),
                     child: AutoSizeText(
-                      exercise.title.toUpperCase(),
+                      exercise.title!.toUpperCase(),
                       maxLines: 2,
                       style: TextStyle(
                           fontSize: 25,
@@ -76,7 +76,7 @@ class CardMeuExercicio extends StatelessWidget {
                     thickness: 1,
                   ),
                   AutoSizeText(
-                    exercise.muscleId.toUpperCase(),
+                    exercise.muscleId!.toUpperCase(),
                     maxLines: 2,
                     style: TextStyle(
                         fontSize: 15,

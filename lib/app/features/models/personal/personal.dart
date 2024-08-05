@@ -1,13 +1,13 @@
 import 'package:tabela_treino/app/helpers/date_format.dart';
 
 class Personal {
-  String id;
-  String personalId;
-  String personalName;
-  String personalEmail;
-  String personalPhone;
-  String personalPhoto;
-  DateTime connectionDate;
+  String? id;
+  String? personalId;
+  String? personalName;
+  String? personalEmail;
+  String? personalPhone;
+  String? personalPhoto;
+  DateTime? connectionDate;
 
   Personal({
     this.id,
@@ -26,7 +26,7 @@ class Personal {
       'personal_email': personalEmail,
       'personal_phoneNumber': personalPhone,
       'personal_photo': personalPhoto,
-      'connection_date': connectionDate.millisecondsSinceEpoch,
+      'connection_date': connectionDate?.millisecondsSinceEpoch,
     };
   }
 

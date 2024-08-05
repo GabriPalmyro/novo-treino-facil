@@ -1,8 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
@@ -63,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onFieldSubmitted: (text) {
                       passNode.requestFocus();
                     },
-                  )),
+                  ),),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 18.0),
@@ -79,11 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     isObscure: _obscureTextPass,
                     focusNode: passNode,
                     onFieldSubmitted: (text) async {
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState!.validate()) {
                         setState(() {
                           _isEnable = false;
                         });
-                        String response = await userManager.signIn(
+
+                        final response = await userManager.signIn(
                             _emailController.text.trim(), _passController.text);
                         if (response != null) {
                           _onFailed(response);
@@ -119,11 +118,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (_formKey.currentState.validate()) {
+                    if (_formKey.currentState!.validate()) {
                       setState(() {
                         _isEnable = false;
                       });
-                      String response = await userManager.signIn(
+
+                      final response = await userManager.signIn(
                           _emailController.text.trim(), _passController.text);
                       if (response != null) {
                         _onFailed(response);
@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.redAccent);
                               } else if (_emailController.text.isNotEmpty ||
                                   _emailController.text.contains("@")) {
-                                String response = await userManager
+                                final response = await userManager
                                     .resetPassword(_emailController.text);
                                 if (response != null) {
                                   mostrarSnackBar(

@@ -6,9 +6,9 @@ import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 class CardExercicio extends StatelessWidget {
   final int index;
   final Exercise exercise;
-  final Function onTap;
+  final VoidCallback onTap;
   const CardExercicio(
-      {@required this.index, @required this.exercise, @required this.onTap});
+      {required this.index, required this.exercise, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class CardExercicio extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(left: 15, right: 15),
                 child: AutoSizeText(
-                  exercise.title.toUpperCase(),
+                  exercise.title!.toUpperCase(),
                   maxLines: 2,
                   style: TextStyle(
                       fontSize: 25, height: 1.1, fontFamily: AppFonts.gotham),
@@ -48,7 +48,7 @@ class CardExercicio extends StatelessWidget {
                 thickness: 1,
               ),
               AutoSizeText(
-                exercise.muscleId.toUpperCase(),
+                exercise.muscleId!.toUpperCase(),
                 maxLines: 2,
                 style: TextStyle(
                     fontSize: 15, height: 1.1, fontFamily: AppFonts.gothamBook),

@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 
@@ -8,8 +7,8 @@ class ExerciciosInfoPage extends StatefulWidget {
   final TextEditingController titleController;
   final String agrupamentoMusc;
   final List<String> titles;
-  final Function(String) onChanged;
-  final Function changePage;
+  final Function(String?) onChanged;
+  final VoidCallback changePage;
   final Function(int) changeDificuldade;
   final Function(bool) changeIsHomeExe;
   final int dificuldade;
@@ -17,16 +16,16 @@ class ExerciciosInfoPage extends StatefulWidget {
   final GlobalKey formKey;
 
   const ExerciciosInfoPage(
-      {@required this.titleController,
-      @required this.agrupamentoMusc,
-      @required this.titles,
-      @required this.dificuldade,
-      @required this.changeDificuldade,
-      @required this.changeIsHomeExe,
-      @required this.isHomeExe,
-      @required this.onChanged,
-      @required this.changePage,
-      @required this.formKey});
+      {required this.titleController,
+      required this.agrupamentoMusc,
+      required this.titles,
+      required this.dificuldade,
+      required this.changeDificuldade,
+      required this.changeIsHomeExe,
+      required this.isHomeExe,
+      required this.onChanged,
+      required this.changePage,
+      required this.formKey});
 
   @override
   _ExerciciosInfoPageState createState() => _ExerciciosInfoPageState();

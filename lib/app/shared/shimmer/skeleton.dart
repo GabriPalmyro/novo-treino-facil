@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 class Skeleton extends StatelessWidget {
-  const Skeleton({Key key, @required this.height, @required this.width})
-      : super(key: key);
+  const Skeleton({required this.height, required this.width});
 
   final double height;
   final double width;
@@ -14,7 +13,9 @@ class Skeleton extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-          color: AppColors.lightGrey, borderRadius: BorderRadius.circular(8)),
+        color: AppColors.lightGrey,
+        borderRadius: BorderRadius.circular(8),
+      ),
     );
   }
 }

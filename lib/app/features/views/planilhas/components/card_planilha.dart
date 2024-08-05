@@ -11,14 +11,14 @@ class CardPlanilha extends StatefulWidget {
   final Planilha planilha;
   final String userId;
   final int index;
-  final Function onTap;
+  final VoidCallback onTap;
   final bool isPersonalAcess;
 
   const CardPlanilha(
-      {@required this.planilha,
-      @required this.userId,
-      @required this.index,
-      @required this.onTap,
+      {required this.planilha,
+      required this.userId,
+    required this.index,
+      required this.onTap,
       this.isPersonalAcess = false});
 
   @override
@@ -54,7 +54,7 @@ class _CardPlanilhaState extends State<CardPlanilha> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AutoSizeText(
-                    widget.planilha.title.toUpperCase(),
+                    widget.planilha.title!.toUpperCase(),
                     maxLines: 2,
                     style: TextStyle(
                         fontSize: 24, fontFamily: AppFonts.gothamBold),
@@ -65,7 +65,7 @@ class _CardPlanilhaState extends State<CardPlanilha> {
                     thickness: 0.5,
                   ),
                   AutoSizeText(
-                    widget.planilha.description,
+                    widget.planilha.description!,
                     maxLines: 2,
                     style: TextStyle(
                         fontSize: 18, fontFamily: AppFonts.gothamBook),
@@ -92,10 +92,10 @@ class _CardPlanilhaState extends State<CardPlanilha> {
                         }
                       },
                       icon: Icon(
-                        widget.planilha.favorito
+                        widget.planilha.favorito!
                             ? Icons.star
                             : Icons.star_border,
-                        color: widget.planilha.favorito
+                        color: widget.planilha.favorito!
                             ? AppColors.black
                             : AppColors.black,
                       ))),

@@ -5,11 +5,11 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 
 class FriendManager extends ChangeNotifier {
   //Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
-  Auth.User firebaseUser;
+  late Auth.User firebaseUser;
 
   List<Planilha> listaPlanilhasFriend = [];
 
-  Future<void> loadFriendPlanList({String idFriend}) async {
+  Future<void> loadFriendPlanList({required String idFriend}) async {
     Map<String, dynamic> data = {};
     listaPlanilhasFriend = [];
     debugPrint('LOADING LISTAS FRIEND');

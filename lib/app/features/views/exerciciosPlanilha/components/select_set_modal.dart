@@ -1,11 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercicios/lista_exercicios_modal.dart';
-import '/app/core/app_colors.dart';
+
 import '/app/core/core.dart';
-import 'package:provider/provider.dart';
 
 class SelectSetModal extends StatelessWidget {
   final String idPlanilha;
@@ -15,10 +15,10 @@ class SelectSetModal extends StatelessWidget {
   final bool isPersonalAcess;
 
   SelectSetModal(
-      {@required this.idPlanilha,
-      @required this.titlePlanilha,
-      @required this.tamPlan,
-      @required this.idUser,
+      {required this.idPlanilha,
+      required this.titlePlanilha,
+      required this.tamPlan,
+      required this.idUser,
       this.isPersonalAcess = false});
 
   @override
@@ -46,7 +46,7 @@ class SelectSetModal extends StatelessWidget {
                       await context
                           .read<ExercisesManager>()
                           .loadMyListExercises(
-                              idUser: context.read<UserManager>().user.id);
+                              idUser: context.read<UserManager>().user.id!);
                       showModalBottomSheet(
                         backgroundColor: Colors.transparent,
                         isScrollControlled: true,
@@ -102,7 +102,7 @@ class SelectSetModal extends StatelessWidget {
                       await context
                           .read<ExercisesManager>()
                           .loadMyListExercises(
-                              idUser: context.read<UserManager>().user.id);
+                              idUser: context.read<UserManager>().user.id!);
                       showModalBottomSheet(
                           backgroundColor: Colors.transparent,
                           isScrollControlled: true,

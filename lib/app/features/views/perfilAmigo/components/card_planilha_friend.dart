@@ -8,10 +8,10 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 class CardPlanilhaFriend extends StatefulWidget {
   final Planilha planilha;
   final int index;
-  final Function onTap;
+  final VoidCallback onTap;
 
   const CardPlanilhaFriend(
-      {@required this.planilha, @required this.index, @required this.onTap});
+      {required this.planilha, required this.index, required this.onTap});
 
   @override
   _CardPlanilhaFriendState createState() => _CardPlanilhaFriendState();
@@ -59,7 +59,7 @@ class _CardPlanilhaFriendState extends State<CardPlanilhaFriend> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     AutoSizeText(
-                      widget.planilha.title.toUpperCase(),
+                      widget.planilha.title!.toUpperCase(),
                       style: TextStyle(
                           fontSize: 24, fontFamily: AppFonts.gothamBold),
                       textAlign: TextAlign.center,
@@ -69,7 +69,7 @@ class _CardPlanilhaFriendState extends State<CardPlanilhaFriend> {
                       thickness: 0.5,
                     ),
                     AutoSizeText(
-                      widget.planilha.description,
+                      widget.planilha.description!,
                       maxLines: 2,
                       style: TextStyle(
                           fontSize: 18, fontFamily: AppFonts.gothamBook),

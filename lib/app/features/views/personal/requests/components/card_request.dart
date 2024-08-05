@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
-
 import 'package:tabela_treino/app/features/models/personal/personal.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 class CardRequest extends StatefulWidget {
   final Personal personal;
-  final Function excluirPedido;
-  final Function aceitarPedido;
+  final VoidCallback excluirPedido;
+  final VoidCallback aceitarPedido;
 
-  const CardRequest({this.personal, this.excluirPedido, this.aceitarPedido});
+  const CardRequest({required this.personal, required this.excluirPedido, required this.aceitarPedido});
 
   @override
   _CardRequestState createState() => _CardRequestState();
@@ -41,10 +39,9 @@ class _CardRequestState extends State<CardRequest> {
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       height: 60,
-                      child: Image.network(widget.personal.personalPhoto,
+                      child: Image.network(widget.personal.personalPhoto!,
                           fit: BoxFit.cover, loadingBuilder:
-                              (BuildContext context, Widget child,
-                                  ImageChunkEvent loadingProgress) {
+                              (_, child, loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
                         }
@@ -67,14 +64,14 @@ class _CardRequestState extends State<CardRequest> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.personal.personalName,
+                              widget.personal.personalName!,
                               style: TextStyle(
                                   fontFamily: AppFonts.gotham,
                                   fontSize: 24,
                                   color: AppColors.white),
                             ),
                             Text(
-                              widget.personal.personalEmail,
+                              widget.personal.personalEmail!,
                               style: TextStyle(
                                   fontFamily: AppFonts.gothamLight,
                                   fontSize: 14,

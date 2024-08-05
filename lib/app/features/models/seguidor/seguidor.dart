@@ -1,9 +1,9 @@
 class Follower {
-  String id;
-  String followerId;
-  String name;
-  String photoURL;
-  String email;
+  String? id;
+  String? followerId;
+  String? name;
+  String? photoURL;
+  String? email;
 
   Follower({
     this.id,

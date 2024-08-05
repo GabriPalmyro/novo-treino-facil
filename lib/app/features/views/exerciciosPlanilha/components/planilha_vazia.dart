@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 class ExerciciosPlanilhaVazia extends StatelessWidget {
-  final Function onTap;
+  final VoidCallback onTap;
 
   const ExerciciosPlanilhaVazia({
-    @required this.onTap,
+    required this.onTap,
   });
 
   @override

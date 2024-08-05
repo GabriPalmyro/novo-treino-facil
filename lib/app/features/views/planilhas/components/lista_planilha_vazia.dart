@@ -1,13 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class PlanilhasVazia extends StatelessWidget {
-  final Function onTap;
+  final VoidCallback onTap;
 
   const PlanilhasVazia({
-    @required this.onTap,
+    required this.onTap,
   });
 
   @override

@@ -20,10 +20,10 @@ class ListaExerciciosModal extends StatefulWidget {
   final bool isBiSet;
 
   ListaExerciciosModal(
-      {@required this.idPlanilha,
-      @required this.titlePlanilha,
-      @required this.tamPlan,
-      @required this.idUser,
+      {required this.idPlanilha,
+      required this.titlePlanilha,
+      required this.tamPlan,
+      required this.idUser,
       this.isPersonalAcess = false,
       this.isBiSet = false});
 
@@ -36,11 +36,11 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
 
   Future<void> loadMyExercises() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String idUser = context.read<UserManager>().user.id;
+      final idUser = context.read<UserManager>().user.id;
       if (context.read<ExercisesManager>().listaMeusExercicios.isEmpty) {
         await context
             .read<ExercisesManager>()
-            .loadMyListExercises(idUser: idUser);
+            .loadMyListExercises(idUser: idUser!);
       }
     });
   }
@@ -92,7 +92,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
           showCustomDialogOpt(
               context: context,
               title: 'Cancelar a adição desse(s) exercício(s)?',
-              function: () {
+              VoidCallBack: () {
                 exerciciosPlanilha.limparExercicioBiSetLista();
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -133,7 +133,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                       context: context,
                                       title:
                                           'Cancelar a adição desse(s) exercício(s)?',
-                                      function: () {
+                                      VoidCallBack: () {
                                         exerciciosPlanilha
                                             .limparExercicioBiSetLista();
                                         Navigator.pop(context);

@@ -1,17 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/flutter_native_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'components/card_exercicio.dart';
 import 'components/filter_button.dart';
 import 'components/info_exercicio_modal.dart';
@@ -23,37 +16,37 @@ class ListaExerciciosScreen extends StatefulWidget {
 
 class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   //* ADS
-  InterstitialAd interstitialAdMuscle;
-  bool isInterstitialReady = false;
+  // InterstitialAd interstitialAdMuscle;
+  // bool isInterstitialReady = false;
 
-  void _loadInterstitialAd() {
-    interstitialAdMuscle.load();
-  }
+  // void _loadInterstitialAd() {
+  //   interstitialAdMuscle.load();
+  // }
 
-  void _onInterstitialAdEvent(MobileAdEvent event) {
-    switch (event) {
-      case MobileAdEvent.loaded:
-        isInterstitialReady = true;
-        break;
-      case MobileAdEvent.failedToLoad:
-        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-        isInterstitialReady = false;
-        break;
-      default:
-      // do nothing
-    }
-  }
+  // void _onInterstitialAdEvent(MobileAdEvent event) {
+  //   switch (event) {
+  //     case MobileAdEvent.loaded:
+  //       isInterstitialReady = true;
+  //       break;
+  //     case MobileAdEvent.failedToLoad:
+  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+  //       isInterstitialReady = false;
+  //       break;
+  //     default:
+  //     // do nothing
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
     carregarMeusExercicios();
     _searchController.addListener(_onSearchChanged);
-    interstitialAdMuscle = InterstitialAd(
-      adUnitId: interstitialAdUnitId(),
-      listener: _onInterstitialAdEvent,
-    );
-    _loadInterstitialAd();
+    // interstitialAdMuscle = InterstitialAd(
+    //   adUnitId: interstitialAdUnitId(),
+    //   listener: _onInterstitialAdEvent,
+    // );
+    // _loadInterstitialAd();
   }
 
   @override
@@ -70,7 +63,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
 
   Future<void> carregarMeusExercicios() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String id = context.read<UserManager>().user.id;
+      String id = context.read<UserManager>().user.id!;
       await context.read<ExercisesManager>().loadMyListExercises(idUser: id);
     });
   }
@@ -80,7 +73,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   String _selTypeSearch = "title";
 
   //*ADS
-  final _controller = NativeAdmobController();
+  // final _controller = NativeAdmobController();
 
   Widget _buildSearchField() {
     return TextField(
@@ -244,56 +237,56 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                                 : 0),
                         child: Column(
                           children: [
-                            if (index % 8 == 0 && index != 0) ...[
-                              Container(
-                                height: 90,
-                                padding: EdgeInsets.all(10),
-                                child: NativeAdmob(
-                                  adUnitID: nativeAdUnitId(),
-                                  loading: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 1.5,
-                                      color: AppColors.mainColor,
-                                      backgroundColor:
-                                          AppColors.mainColor.withOpacity(0.5),
-                                    ),
-                                  ),
-                                  error: Center(
-                                    child: Text(
-                                      "Falha ao carregar anúncio...",
-                                      style: TextStyle(
-                                          fontFamily: AppFonts.gothamLight,
-                                          color: AppColors.mainColor
-                                              .withOpacity(0.6),
-                                          fontSize: 14),
-                                    ),
-                                  ),
-                                  numberAds: 3,
-                                  controller: _controller,
-                                  type: NativeAdmobType.banner,
-                                ),
-                              ),
-                            ],
+                            // if (index % 8 == 0 && index != 0) ...[
+                            //   Container(
+                            //     height: 90,
+                            //     padding: EdgeInsets.all(10),
+                            //     child: NativeAdmob(
+                            //       adUnitID: nativeAdUnitId(),
+                            //       loading: Center(
+                            //         child: CircularProgressIndicator(
+                            //           strokeWidth: 1.5,
+                            //           color: AppColors.mainColor,
+                            //           backgroundColor:
+                            //               AppColors.mainColor.withOpacity(0.5),
+                            //         ),
+                            //       ),
+                            //       error: Center(
+                            //         child: Text(
+                            //           "Falha ao carregar anúncio...",
+                            //           style: TextStyle(
+                            //               fontFamily: AppFonts.gothamLight,
+                            //               color: AppColors.mainColor
+                            //                   .withOpacity(0.6),
+                            //               fontSize: 14),
+                            //         ),
+                            //       ),
+                            //       numberAds: 3,
+                            //       controller: _controller,
+                            //       type: NativeAdmobType.banner,
+                            //     ),
+                            //   ),
+                            // ],
                             CardExercicio(
                               index: index,
                               onTap: () async {
-                                if (isInterstitialReady) {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
+                                // if (isInterstitialReady) {
+                                //   SharedPreferences prefs =
+                                //       await SharedPreferences.getInstance();
 
-                                  //* VALIDAR ANÚNCIO INTERCALADO 3
-                                  int adSeenTimes =
-                                      prefs.getInt('view_exercicio') ?? 0;
-                                  if (adSeenTimes < 3) {
-                                    await prefs.setInt(
-                                        'view_exercicio', adSeenTimes + 1);
-                                  } else {
-                                    await interstitialAdMuscle.show();
-                                    await prefs.setInt('view_exercicio', 0);
-                                  }
+                                //   //* VALIDAR ANÚNCIO INTERCALADO 3
+                                //   int adSeenTimes =
+                                //       prefs.getInt('view_exercicio') ?? 0;
+                                //   if (adSeenTimes < 3) {
+                                //     await prefs.setInt(
+                                //         'view_exercicio', adSeenTimes + 1);
+                                //   } else {
+                                //     await interstitialAdMuscle.show();
+                                //     await prefs.setInt('view_exercicio', 0);
+                                //   }
 
-                                  await interstitialAdMuscle.load();
-                                }
+                                //   await interstitialAdMuscle.load();
+                                // }
 
                                 showModalBottomSheet(
                                     backgroundColor: Colors.transparent,

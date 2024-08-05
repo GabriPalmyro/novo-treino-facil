@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
 
 class LoginButton extends StatelessWidget {
-  final Function onTap;
+  final VoidCallback onTap;
   final bool isLoading;
-  const LoginButton({this.onTap, this.isLoading});
+  const LoginButton({required this.onTap, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {

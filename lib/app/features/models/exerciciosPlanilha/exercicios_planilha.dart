@@ -1,14 +1,14 @@
 class ExerciciosPlanilha {
-  String id;
-  int position;
-  String title;
-  String muscleId;
-  String video;
-  String series;
-  String reps;
-  int carga;
-  String comments;
-  String setType;
+  String? id;
+  int? position;
+  String? title;
+  String? muscleId;
+  String? video;
+  String? series;
+  String? reps;
+  int? carga;
+  String? comments;
+  String? setType;
 
   ExerciciosPlanilha({
     this.id,

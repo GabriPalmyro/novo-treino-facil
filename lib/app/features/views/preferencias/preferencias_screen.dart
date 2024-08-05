@@ -19,11 +19,11 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
   @override
   void initState() {
     super.initState();
-    mostrarPlanilhas = context.read<UserManager>().user.mostrarPlanilhasPerfil;
+    mostrarPlanilhas = context.read<UserManager>().user.mostrarPlanilhasPerfil!;
     mostrarExercicios =
-        context.read<UserManager>().user.mostrarExerciciosPerfil;
+        context.read<UserManager>().user.mostrarExerciciosPerfil!;
     mostrarPerfilPesquisa =
-        context.read<UserManager>().user.mostrarPerfilPesquisa;
+        context.read<UserManager>().user.mostrarPerfilPesquisa!;
   }
 
   @override
@@ -45,7 +45,7 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
           actions: [
             IconButton(
                 onPressed: () async {
-                  String response = await userManager.changeUserPreferences(
+                  final response = await userManager.changeUserPreferences(
                       mostrarPlanilhas: mostrarPlanilhas,
                       mostrarExercicios: mostrarExercicios,
                       mostrarPerfilPesquisa: mostrarPerfilPesquisa);

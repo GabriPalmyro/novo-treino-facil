@@ -1,6 +1,4 @@
-import 'dart:developer';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -29,36 +27,33 @@ import 'package:tabela_treino/app/features/views/planilhas/planilha_screen.dart'
 import 'package:tabela_treino/app/features/views/preferencias/preferencias_screen.dart';
 import 'package:tabela_treino/app/features/views/register/register_screen.dart';
 import 'package:tabela_treino/app/shared/splash/splash.dart';
+
 import '/app/core/core.dart';
 import '/app/features/controllers/user/user_controller.dart';
-
 import 'features/controllers/planilha/planilha_manager.dart';
 import 'features/views/login/login_screen.dart';
-import 'shared/services/pushNotifications/push_notification_service.dart';
-import 'package:firebase_admob/firebase_admob.dart';
-import 'ads/ads_model.dart';
 
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+// final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
 class _MyAppState extends State<MyApp> {
-  void displayBanner() async {
-    try {
-      startBanner();
-      myBanner
-        ..load()
-        ..show(
-          anchorOffset: -2,
-          anchorType: AnchorType.bottom,
-        );
-    } catch (e) {
-      log("ERRO AO MOSTRAR ANUNCIO BANNER: $e");
-    }
-  }
+  // void displayBanner() async {
+  //   try {
+  //     startBanner();
+  //     myBanner
+  //       ..load()
+  //       ..show(
+  //         anchorOffset: -2,
+  //         anchorType: AnchorType.bottom,
+  //       );
+  //   } catch (e) {
+  //     log("ERRO AO MOSTRAR ANUNCIO BANNER: $e");
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -68,23 +63,23 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    myBanner?.dispose();
-    myInterstitial?.dispose();
+    // myBanner?.dispose();
+    // myInterstitial?.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    FirebaseAdMob.instance
-        .initialize(appId: "ca-app-pub-7831186229252322~9095625736");
-    displayBanner();
+    // FirebaseAdMob.instance
+    //     .initialize(appId: "ca-app-pub-7831186229252322~9095625736");
+    // displayBanner();
   }
 
   @override
   Widget build(BuildContext context) {
-    final pushNotificationService = PushNotificationService(_firebaseMessaging);
-    pushNotificationService.initialise();
+    // final pushNotificationService = PushNotificationService(_firebaseMessaging);
+    // pushNotificationService.initialise();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -141,8 +136,8 @@ class _MyAppState extends State<MyApp> {
         // ],
         builder: (context, child) {
           return MediaQuery(
-            child: child,
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: child!,
+            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.0)),
           );
         },
         initialRoute: AppRoutes.splash,
@@ -172,10 +167,10 @@ class _MyAppState extends State<MyApp> {
                       ));
             case AppRoutes.planilhasAluno:
               return MaterialPageRoute(
-                  builder: (_) => PlanilhaAlunoScreen(arguments));
+                  builder: (_) => PlanilhaAlunoScreen(arguments as PlanilhaAlunoArguments));
             case AppRoutes.exerciciosPlanilha:
               return MaterialPageRoute(
-                  builder: (_) => ExerciciosPlanilhaScreen(arguments));
+                  builder: (_) => ExerciciosPlanilhaScreen(arguments as ExerciciosPlanilhaArguments));
             case AppRoutes.alunos:
               return MaterialPageRoute(builder: (_) => AlunosScreen());
             case AppRoutes.personal:

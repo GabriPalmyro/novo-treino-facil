@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
-class SearchBar extends StatefulWidget {
-  final Function onPressed;
-  final Function onSubmitted;
+class SearchBarWidget extends StatefulWidget {
+  final VoidCallback onPressed;
+  final Function(String?) onSubmitted;
   final TextEditingController controller;
-  final FocusNode node;
+  final FocusNode? node;
 
-  const SearchBar(
-      {@required this.onPressed,
-      @required this.onSubmitted,
-      @required this.controller,
-      @required this.node});
+  const SearchBarWidget(
+      {required this.onPressed,
+      required this.onSubmitted,
+      required this.controller,
+      required this.node});
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -30,7 +30,7 @@ class _SearchBarState extends State<SearchBar> {
             borderRadius: BorderRadius.circular(10), color: AppColors.grey340),
         child: TextField(
           controller: widget.controller,
-          focusNode: widget.node,
+          focusNode: widget.focusNode,
           style: TextStyle(
               fontFamily: AppFonts.gotham,
               color: AppColors.mainColor,
@@ -65,7 +65,7 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 
-  Widget hidingIcon() {
+  Widget? hidingIcon() {
     if (searchText.isNotEmpty) {
       return IconButton(
           icon: Icon(
@@ -75,7 +75,7 @@ class _SearchBarState extends State<SearchBar> {
           splashColor: Colors.redAccent,
           onPressed: () {
             setState(() {
-              widget.controller.clear();
+              widget.controller!.clear();
               searchText = "";
             });
           });

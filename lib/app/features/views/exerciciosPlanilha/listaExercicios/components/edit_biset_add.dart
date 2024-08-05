@@ -2,8 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
-
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
@@ -14,10 +12,10 @@ class EditBiSetAdd extends StatefulWidget {
   final ExerciciosPlanilha exerciciosPlanilha;
 
   const EditBiSetAdd({
-    Key key,
-    @required this.exerciciosPlanilha,
-    @required this.index,
-  }) : super(key: key);
+    
+    required this.exerciciosPlanilha,
+    required this.index,
+  });
 
   @override
   _EditBiSetAddState createState() => _EditBiSetAddState();
@@ -39,10 +37,10 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
   @override
   void initState() {
     super.initState();
-    _seriesController.text = widget.exerciciosPlanilha.series;
-    _repsController.text = widget.exerciciosPlanilha.reps;
+    _seriesController.text = widget.exerciciosPlanilha.series!;
+    _repsController.text = widget.exerciciosPlanilha.reps!;
     _cargaController.text = widget.exerciciosPlanilha.carga.toString();
-    _obsController.text = widget.exerciciosPlanilha.comments;
+    _obsController.text = widget.exerciciosPlanilha.comments!;
   }
 
   void resetFields() {
@@ -55,9 +53,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
   }
 
   String _calculateProgress(ImageChunkEvent loadingProgress) {
-    return ((loadingProgress.cumulativeBytesLoaded * 100) /
-            loadingProgress.expectedTotalBytes)
-        .toStringAsFixed(2);
+    return ((loadingProgress.cumulativeBytesLoaded * 100) / loadingProgress.expectedTotalBytes!).toStringAsFixed(2);
   }
 
   bool _isEnable = true;
@@ -78,8 +74,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Consumer<ExerciciosPlanilhaManager>(
-        builder: (_, exerciseManager, __) {
+    return Consumer<ExerciciosPlanilhaManager>(builder: (_, exerciseManager, __) {
       return Padding(
         padding: MediaQuery.of(context).viewInsets * 0.8,
         child: Container(
@@ -87,10 +82,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
           child: Container(
               height: height * 0.75,
               decoration: new BoxDecoration(
-                  color: AppColors.grey,
-                  borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(25.0),
-                      topRight: const Radius.circular(25.0))),
+                  color: AppColors.grey, borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0))),
               child: Padding(
                 padding: EdgeInsets.only(top: 18.0, right: 18, left: 18),
                 child: Form(
@@ -106,14 +98,9 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                             Expanded(
                               flex: 80,
                               child: AutoSizeText(
-                                exerciseManager
-                                    .listaExerciciosBiSet[widget.index].title
-                                    .toUpperCase(),
+                                exerciseManager.listaExerciciosBiSet[widget.index].title!.toUpperCase(),
                                 maxLines: 2,
-                                style: TextStyle(
-                                    fontFamily: AppFonts.gothamBold,
-                                    color: AppColors.white,
-                                    fontSize: 22.0),
+                                style: TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.white, fontSize: 22.0),
                               ),
                             ),
                             Expanded(
@@ -174,32 +161,22 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                     Text(
                                       "Carregando exercício: ",
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontFamily: "Gotham"),
+                                      style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: "Gotham"),
                                     ),
                                     SizedBox(
                                       height: 25,
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 40),
+                                      padding: const EdgeInsets.symmetric(horizontal: 40),
                                       child: Text(
-                                        loadingProgress == null
-                                            ? "0.00%"
-                                            : "${_calculateProgress(loadingProgress)}%",
+                                        loadingProgress == null ? "0.00%" : "${_calculateProgress(loadingProgress)}%",
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.amber,
-                                            fontSize: 30,
-                                            fontFamily: "GothamBold"),
+                                        style: TextStyle(color: Colors.amber, fontSize: 30, fontFamily: "GothamBold"),
                                       ),
                                     ),
                                   ],
                                 )),
-                                imageProvider: NetworkImage(exerciseManager
-                                    .listaExerciciosBiSet[widget.index].video),
+                                imageProvider: NetworkImage(exerciseManager.listaExerciciosBiSet[widget.index].video!),
                                 initialScale: PhotoViewComputedScale.contained,
                                 minScale: PhotoViewComputedScale.covered * 0.5,
                               ),
@@ -213,15 +190,13 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                     child: FormField<String>(
                                         initialValue: '',
                                         validator: (text) {
                                           if (_seriesController.text.isEmpty) {
                                             setState(() {
-                                              errorMessage =
-                                                  'Séries não pode ser vazia';
+                                              errorMessage = 'Séries não pode ser vazia';
                                             });
                                             return 'Séries não pode ser vazia';
                                           }
@@ -230,52 +205,32 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                         builder: (state) {
                                           return Container(
                                               child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text('Séries',
                                                   style: TextStyle(
-                                                      fontFamily:
-                                                          AppFonts.gothamBook,
-                                                      color: state.hasError
-                                                          ? Colors.red
-                                                          : AppColors.white,
-                                                      fontSize: 18)),
+                                                      fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 18)),
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8.0),
+                                                padding: const EdgeInsets.only(top: 8.0),
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     color: AppColors.lightGrey,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
+                                                    borderRadius: BorderRadius.circular(5),
                                                   ),
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10.0),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                                   child: TextFormField(
                                                     enabled: _isEnable,
-                                                    controller:
-                                                        _seriesController,
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                    cursorColor:
-                                                        AppColors.mainColor,
+                                                    controller: _seriesController,
+                                                    keyboardType: TextInputType.text,
+                                                    cursorColor: AppColors.mainColor,
                                                     showCursor: true,
                                                     textAlign: TextAlign.center,
                                                     focusNode: _seriesFocus,
                                                     onFieldSubmitted: (text) {
                                                       _repsFocus.requestFocus();
                                                     },
-                                                    textInputAction:
-                                                        TextInputAction.next,
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            AppFonts.gothamBook,
-                                                        color: state.hasError
-                                                            ? Colors.red
-                                                            : AppColors.white),
+                                                    textInputAction: TextInputAction.next,
+                                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                                     decoration: InputDecoration(
                                                       border: InputBorder.none,
                                                     ),
@@ -289,15 +244,13 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                 ),
                                 Expanded(
                                     child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: FormField<String>(
                                       initialValue: '',
                                       validator: (text) {
                                         if (_repsController.text.isEmpty) {
                                           setState(() {
-                                            errorMessage =
-                                                'Repetições não pode ser vazia';
+                                            errorMessage = 'Repetições não pode ser vazia';
                                           });
                                           return 'Repetições não pode ser vazia';
                                         }
@@ -306,37 +259,25 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                       builder: (state) {
                                         return Container(
                                             child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             AutoSizeText('Repetições',
                                                 maxLines: 1,
                                                 style: TextStyle(
-                                                    fontFamily:
-                                                        AppFonts.gothamBook,
-                                                    color: state.hasError
-                                                        ? Colors.red
-                                                        : AppColors.white,
-                                                    fontSize: 18)),
+                                                    fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 18)),
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0),
+                                              padding: const EdgeInsets.only(top: 8.0),
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: AppColors.lightGrey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
+                                                  borderRadius: BorderRadius.circular(5),
                                                 ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10.0),
+                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                                 child: TextFormField(
                                                   enabled: _isEnable,
                                                   controller: _repsController,
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  cursorColor:
-                                                      AppColors.mainColor,
+                                                  keyboardType: TextInputType.text,
+                                                  cursorColor: AppColors.mainColor,
                                                   showCursor: true,
                                                   maxLines: null,
                                                   textAlign: TextAlign.center,
@@ -345,14 +286,8 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                                     _repsFocus.unfocus();
                                                     _cargaFocus.requestFocus();
                                                   },
-                                                  textInputAction:
-                                                      TextInputAction.next,
-                                                  style: TextStyle(
-                                                      fontFamily:
-                                                          AppFonts.gothamBook,
-                                                      color: state.hasError
-                                                          ? Colors.red
-                                                          : AppColors.white),
+                                                  textInputAction: TextInputAction.next,
+                                                  style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                                   decoration: InputDecoration(
                                                     border: InputBorder.none,
                                                   ),
@@ -365,24 +300,19 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                 )),
                                 Expanded(
                                     child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: FormField<String>(
                                       initialValue: '',
                                       validator: (text) {
-                                        RegExp regExp =
-                                            new RegExp(r'(^[0-9]*$)');
+                                        RegExp regExp = new RegExp(r'(^[0-9]*$)');
                                         if (_cargaController.text.isEmpty) {
                                           setState(() {
-                                            errorMessage =
-                                                'Carga não pode ser vazia';
+                                            errorMessage = 'Carga não pode ser vazia';
                                           });
                                           return 'Carga não pode ser vazia';
-                                        } else if (!regExp
-                                            .hasMatch(_cargaController.text)) {
+                                        } else if (!regExp.hasMatch(_cargaController.text)) {
                                           setState(() {
-                                            errorMessage =
-                                                'Carga não pode contar letras ou símbolos';
+                                            errorMessage = 'Carga não pode contar letras ou símbolos';
                                           });
                                           return 'Carga não pode contar letras ou símbolos';
                                         }
@@ -391,37 +321,25 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                       builder: (state) {
                                         return Container(
                                             child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             AutoSizeText('Carga',
                                                 maxLines: 1,
                                                 style: TextStyle(
-                                                    fontFamily:
-                                                        AppFonts.gothamBook,
-                                                    color: state.hasError
-                                                        ? Colors.red
-                                                        : AppColors.white,
-                                                    fontSize: 18)),
+                                                    fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 18)),
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0),
+                                              padding: const EdgeInsets.only(top: 8.0),
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: AppColors.lightGrey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
+                                                  borderRadius: BorderRadius.circular(5),
                                                 ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10.0),
+                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                                 child: TextFormField(
                                                   enabled: _isEnable,
                                                   controller: _cargaController,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  cursorColor:
-                                                      AppColors.mainColor,
+                                                  keyboardType: TextInputType.number,
+                                                  cursorColor: AppColors.mainColor,
                                                   showCursor: true,
                                                   maxLines: null,
                                                   textAlign: TextAlign.center,
@@ -430,20 +348,11 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                                     _cargaFocus.unfocus();
                                                     _obsFocus.requestFocus();
                                                   },
-                                                  textInputAction:
-                                                      TextInputAction.next,
-                                                  style: TextStyle(
-                                                      fontFamily:
-                                                          AppFonts.gothamBook,
-                                                      color: state.hasError
-                                                          ? Colors.red
-                                                          : AppColors.white),
+                                                  textInputAction: TextInputAction.next,
+                                                  style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                                   decoration: InputDecoration(
                                                     suffixText: 'kg',
-                                                    suffixStyle: TextStyle(
-                                                        fontFamily:
-                                                            AppFonts.gothamBook,
-                                                        color: AppColors.white),
+                                                    suffixStyle: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white),
                                                     border: InputBorder.none,
                                                   ),
                                                 ),
@@ -463,12 +372,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                               child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AutoSizeText('Observações',
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      fontFamily: AppFonts.gothamBook,
-                                      color: AppColors.white,
-                                      fontSize: 18)),
+                              AutoSizeText('Observações', maxLines: 1, style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white, fontSize: 18)),
                               Padding(
                                 padding: const EdgeInsets.only(top: 5.0),
                                 child: Container(
@@ -476,8 +380,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                     color: AppColors.lightGrey,
                                     borderRadius: BorderRadius.circular(5),
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                   child: TextFormField(
                                     enabled: _isEnable,
                                     controller: _obsController,
@@ -486,9 +389,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                     showCursor: true,
                                     maxLines: null,
                                     focusNode: _obsFocus,
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: AppColors.white),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white),
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                     ),
@@ -499,8 +400,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                           )),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 12.0, left: 8, right: 8, bottom: 12.0),
+                          padding: const EdgeInsets.only(top: 12.0, left: 8, right: 8, bottom: 12.0),
                           child: Container(
                             width: width * 0.9,
                             child: Row(
@@ -511,32 +411,19 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                     color: AppColors.mainColor,
                                     textColor: AppColors.black,
                                     onTap: () async {
-                                      if (_formKey.currentState.validate()) {
-                                        ExerciciosPlanilha exercicio =
-                                            ExerciciosPlanilha(
-                                                title: exerciseManager
-                                                    .listaExerciciosBiSet[
-                                                        widget.index]
-                                                    .title,
-                                                series: _seriesController.text,
-                                                reps: _repsController.text,
-                                                carga: int.tryParse(
-                                                    _cargaController.text),
-                                                setType: 'uniset',
-                                                comments: _obsController.text,
-                                                muscleId: exerciseManager
-                                                    .listaExerciciosBiSet[
-                                                        widget.index]
-                                                    .muscleId,
-                                                video: exerciseManager
-                                                    .listaExerciciosBiSet[
-                                                        widget.index]
-                                                    .video,
-                                                position: 0);
+                                      if (_formKey.currentState!.validate()) {
+                                        ExerciciosPlanilha exercicio = ExerciciosPlanilha(
+                                            title: exerciseManager.listaExerciciosBiSet[widget.index].title,
+                                            series: _seriesController.text,
+                                            reps: _repsController.text,
+                                            carga: int.tryParse(_cargaController.text),
+                                            setType: 'uniset',
+                                            comments: _obsController.text,
+                                            muscleId: exerciseManager.listaExerciciosBiSet[widget.index].muscleId,
+                                            video: exerciseManager.listaExerciciosBiSet[widget.index].video,
+                                            position: 0);
 
-                                        exerciseManager.substituirExercicio(
-                                            index: widget.index,
-                                            exerciciosPlanilha: exercicio);
+                                        exerciseManager.substituirExercicio(index: widget.index, exerciciosPlanilha: exercicio);
                                         Navigator.pop(context);
                                       }
                                     }),
@@ -559,13 +446,10 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                             ),
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: AppColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(8)),
+                              decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(8)),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   Icon(
                                     Icons.error_outline,
@@ -573,9 +457,7 @@ class _EditBiSetAddState extends State<EditBiSetAdd> {
                                   ),
                                   Text(
                                     errorMessage,
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: Colors.red),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: Colors.red),
                                   ),
                                 ],
                               ),

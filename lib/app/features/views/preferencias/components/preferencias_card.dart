@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class PreferenciasCard extends StatelessWidget {
   final Widget child;
 
   const PreferenciasCard({
-    @required this.child,
+    required this.child,
   });
 
   @override

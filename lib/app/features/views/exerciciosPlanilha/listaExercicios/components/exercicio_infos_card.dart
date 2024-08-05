@@ -11,10 +11,9 @@ class ExercicioInfoCard extends StatelessWidget {
   final ExerciciosPlanilha exerciciosPlanilha;
 
   const ExercicioInfoCard({
-    Key key,
-    @required this.index,
-    @required this.exerciciosPlanilha,
-  }) : super(key: key);
+    required this.index,
+    required this.exerciciosPlanilha,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +35,7 @@ class ExercicioInfoCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: AutoSizeText(
-              exerciciosPlanilha.title,
+              exerciciosPlanilha.title ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 22,
@@ -65,7 +64,7 @@ class ExercicioInfoCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: AutoSizeText(
-                        exerciciosPlanilha.series,
+                        exerciciosPlanilha.series ?? '',
                         style: TextStyle(
                           fontSize: 18,
                           fontFamily: AppFonts.gothamBook,
@@ -89,7 +88,7 @@ class ExercicioInfoCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: AutoSizeText(
-                        exerciciosPlanilha.reps,
+                        exerciciosPlanilha.reps ?? '',
                         style: TextStyle(
                           fontSize: 18,
                           fontFamily: AppFonts.gothamBook,
@@ -144,9 +143,7 @@ class ExercicioInfoCard extends StatelessWidget {
                         isScrollControlled: true,
                         enableDrag: false,
                         context: context,
-                        builder: (_) => EditBiSetAdd(
-                            exerciciosPlanilha: exerciciosPlanilha,
-                            index: index));
+                        builder: (_) => EditBiSetAdd(exerciciosPlanilha: exerciciosPlanilha, index: index));
                   },
                 ),
                 IconButton(
@@ -157,9 +154,7 @@ class ExercicioInfoCard extends StatelessWidget {
                   ),
                   tooltip: 'Remover Exercício',
                   onPressed: () {
-                    context
-                        .read<ExerciciosPlanilhaManager>()
-                        .removerExercicioBiSetLista(index: index);
+                    context.read<ExerciciosPlanilhaManager>().removerExercicioBiSetLista(index: index);
                   },
                 ),
               ],

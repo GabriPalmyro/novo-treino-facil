@@ -1,20 +1,20 @@
 import 'exercicios_planilha.dart';
 
 class BiSetExercise {
-  String id;
+  String? id;
 
   int position;
   String setType;
   String firstExercise;
   String secondExercise;
-  List<ExerciciosPlanilha> exercicios;
+  List<ExerciciosPlanilha>? exercicios;
 
   BiSetExercise({
     this.id,
-    this.position,
-    this.setType,
-    this.firstExercise,
-    this.secondExercise,
+    required this.position,
+    required this.setType,
+    required this.firstExercise,
+    required this.secondExercise,
     this.exercicios,
   });
 

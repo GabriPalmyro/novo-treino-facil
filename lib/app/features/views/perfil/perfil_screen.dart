@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
-import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -20,12 +18,11 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return Consumer2<UserManager, PlanilhaManager>(
-        builder: (_, userManager, planilhas, __) {
-      return WillPopScope(
-        onWillPop: () async {
+    return Consumer2<UserManager, PlanilhaManager>(builder: (_, userManager, planilhas, __) {
+      return PopScope(
+        canPop: true,
+        onPopInvoked: (value) {
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-          return Future.value(true);
         },
         child: Scaffold(
           drawer: CustomDrawer(pageNow: 5),
@@ -54,10 +51,7 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
             ],
             title: Text(
               "Perfil",
-              style: TextStyle(
-                  color: AppColors.mainColor,
-                  fontFamily: AppFonts.gothamBold,
-                  fontSize: 30),
+              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 30),
             ),
             backgroundColor: AppColors.grey,
           ),
@@ -74,34 +68,23 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0),
-                        child:
-                            UserPhotoWidget(photo: userManager.user.photoURL),
+                        child: UserPhotoWidget(photo: userManager.user.photoURL!),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 18.0),
                         child: Text(
-                          userManager.user.name +
-                              ' ' +
-                              userManager.user.lastName,
+                          userManager.user.fullName(),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: AppFonts.gotham,
-                              color: AppColors.white,
-                              fontSize: 20,
-                              letterSpacing: 1.2),
+                          style: TextStyle(fontFamily: AppFonts.gotham, color: AppColors.white, fontSize: 20, letterSpacing: 1.2),
                         ),
                       ),
-                      if (userManager.user.isPersonal) ...[
+                      if (userManager.user.isPersonal ?? false) ...[
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
                             'Personal Trainer',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: AppFonts.gothamLight,
-                                color: AppColors.white,
-                                fontSize: 14,
-                                letterSpacing: 1.2),
+                            style: TextStyle(fontFamily: AppFonts.gothamLight, color: AppColors.white, fontSize: 14, letterSpacing: 1.2),
                           ),
                         ),
                       ],
@@ -116,8 +99,7 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      planilhas.listaPlanilhas.length
-                                          .toString(),
+                                      planilhas.listaPlanilhas.length.toString(),
                                       style: TextStyle(
                                         fontFamily: AppFonts.gothamBook,
                                         color: AppColors.white,
@@ -199,15 +181,13 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: width * 0.35, vertical: 18.0),
+                        padding: EdgeInsets.symmetric(horizontal: width * 0.35, vertical: 18.0),
                         child: CustomButton(
                             text: 'Editar Perfil',
                             color: AppColors.grey300,
                             textColor: AppColors.white,
                             onTap: () {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.editarPerfil);
+                              Navigator.pushNamed(context, AppRoutes.editarPerfil);
                             }),
                       )
                     ],
@@ -248,7 +228,7 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
 class UserPhotoWidget extends StatelessWidget {
   final String photo;
 
-  const UserPhotoWidget({this.photo});
+  const UserPhotoWidget({required this.photo});
 
   @override
   Widget build(BuildContext context) {
@@ -279,9 +259,7 @@ class UserPhotoWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: Image.network(photo, fit: BoxFit.fitWidth, loadingBuilder:
-              (BuildContext context, Widget child,
-                  ImageChunkEvent loadingProgress) {
+          child: Image.network(photo, fit: BoxFit.fitWidth, loadingBuilder: (_, child, loadingProgress) {
             if (loadingProgress == null) {
               return child;
             }

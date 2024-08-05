@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
-import 'package:firebase_admob/firebase_admob.dart';
+
 import 'components/card_request.dart';
 
 class RequestListPage extends StatefulWidget {
@@ -16,40 +14,39 @@ class RequestListPage extends StatefulWidget {
 
 class _RequestListPageState extends State<RequestListPage> {
   //*ADS
-  RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
+  // RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
 
-  Future<void> loadRewardedVideoAd() async {
-    rewardedVideoAd.load(adUnitId: rewardAdUnitId());
-  }
+  // Future<void> loadRewardedVideoAd() async {
+  //   rewardedVideoAd.load(adUnitId: rewardAdUnitId());
+  // }
 
-  void listenerRewardedEvent() async {
-    rewardedVideoAd.listener = (RewardedVideoAdEvent event,
-        {String rewardType, int rewardAmount}) async {
-      if (event == RewardedVideoAdEvent.rewarded) {
-        await context
-            .read<PersonalManager>()
-            .loadMyPersonal(idUser: context.read<UserManager>().user.id);
-      } else if (event == RewardedVideoAdEvent.closed) {
-        await context
-            .read<PersonalManager>()
-            .loadMyPersonal(idUser: context.read<UserManager>().user.id);
-      }
-    };
-  }
+  // void listenerRewardedEvent() async {
+  //   rewardedVideoAd.listener = (RewardedVideoAdEvent event,
+  //       {String rewardType, int rewardAmount}) async {
+  //     if (event == RewardedVideoAdEvent.rewarded) {
+  //       await context
+  //           .read<PersonalManager>()
+  //           .loadMyPersonal(idUser: context.read<UserManager>().user.id);
+  //     } else if (event == RewardedVideoAdEvent.closed) {
+  //       await context
+  //           .read<PersonalManager>()
+  //           .loadMyPersonal(idUser: context.read<UserManager>().user.id);
+  //     }
+  //   };
+  // }
 
   @override
   void initState() {
     super.initState();
-    loadRewardedVideoAd();
-    listenerRewardedEvent();
+    // loadRewardedVideoAd();
+    // listenerRewardedEvent();
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    return Consumer2<UserManager, PersonalManager>(
-        builder: (_, userManager, personalManager, __) {
+    return Consumer2<UserManager, PersonalManager>(builder: (_, userManager, personalManager, __) {
       if (personalManager.loading)
         return Center(
           child: CircularProgressIndicator(),
@@ -67,19 +64,14 @@ class _RequestListPageState extends State<RequestListPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.sentiment_dissatisfied_rounded,
-                            size: 52, color: AppColors.mainColor),
+                        Icon(Icons.sentiment_dissatisfied_rounded, size: 52, color: AppColors.mainColor),
                         SizedBox(
                           height: 5,
                         ),
                         Text(
                           "Você não possui nenhum\npedido de conexão",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontFamily: AppFonts.gothamBook,
-                              color: Colors.white,
-                              height: 1.2),
+                          style: TextStyle(fontSize: 22, fontFamily: AppFonts.gothamBook, color: Colors.white, height: 1.2),
                         ),
                       ],
                     ),
@@ -96,34 +88,28 @@ class _RequestListPageState extends State<RequestListPage> {
                           await showCustomDialogOpt(
                               context: context,
                               title: 'Aceitar Pedido?',
-                              function: () async {
+                              VoidCallBack: () async {
                                 Navigator.pop(context);
-                                String response =
-                                    await personalManager.acceptPersonalRequest(
-                                        personal: personalManager
-                                            .personalRequestList[index],
-                                        user: userManager.user);
+                                final response =
+                                    await personalManager.acceptPersonalRequest(personal: personalManager.personalRequestList[index], user: userManager.user);
 
                                 if (response != null) {
                                   mostrarSnackBar(response, AppColors.red);
                                 } else {
-                                  rewardedVideoAd.show();
+                                  // rewardedVideoAd.show();
                                 }
                               },
                               message:
-                                  'Ao realizar essa ação seus pedidos de conexão serão apagados e ${personalManager.personalRequestList[index].personalName.split(" ")[0]} será seu atual Personal.');
+                                  'Ao realizar essa ação seus pedidos de conexão serão apagados e ${personalManager.personalRequestList[index].personalName!.split(" ")[0]} será seu atual Personal.');
                         },
                         excluirPedido: () async {
                           await showCustomDialogOpt(
                               context: context,
                               title: 'Excluir Pedido?',
                               isDeleteMessage: true,
-                              function: () async {
-                                String response =
-                                    await personalManager.deletePersonalRequest(
-                                        requestId: personalManager
-                                            .personalRequestList[index].id,
-                                        userId: userManager.user.id);
+                              VoidCallBack: () async {
+                                final response = await personalManager.deletePersonalRequest(
+                                    requestId: personalManager.personalRequestList[index].id!, userId: userManager.user.id!);
 
                                 if (response != null) {
                                   mostrarSnackBar(response, AppColors.red);

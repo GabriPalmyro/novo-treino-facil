@@ -1,11 +1,11 @@
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 
 class Planilha {
-  String id;
-  String title;
-  String description;
-  bool favorito;
-  List<DiaDaSemana> diasDaSemana;
+  String? id;
+  String? title;
+  String? description;
+  bool? favorito;
+  List<DiaDaSemana>? diasDaSemana;
 
   Planilha(
       {this.id,
@@ -19,7 +19,7 @@ class Planilha {
       'title': title,
       'description': description,
       'favorito': favorito,
-      'diasDaSemana': diasDaSemana?.map((x) => x.toMap())?.toList(),
+      'diasDaSemana': diasDaSemana?.map((x) => x.toMap()).toList(),
     };
   }
 

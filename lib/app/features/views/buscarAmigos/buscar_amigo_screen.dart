@@ -1,10 +1,7 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
-import 'package:tabela_treino/app/core/app_routes.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -12,7 +9,6 @@ import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/card_friend.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/search_bar.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 
 class BuscarAmigosScreen extends StatefulWidget {
   @override
@@ -27,38 +23,10 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
 
   List<User> friends = [];
 
-  //* ADS
-  InterstitialAd interstitialAdMuscle;
-  bool isInterstitialReady = false;
-
-  void _loadInterstitialAd() {
-    interstitialAdMuscle.load();
-  }
-
-  void _onInterstitialAdEvent(MobileAdEvent event) {
-    switch (event) {
-      case MobileAdEvent.loaded:
-        isInterstitialReady = true;
-        break;
-      case MobileAdEvent.failedToLoad:
-        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-        isInterstitialReady = false;
-        break;
-      default:
-      // do nothing
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     carregarProcurados();
-
-    interstitialAdMuscle = InterstitialAd(
-      adUnitId: interstitialAdUnitId(),
-      listener: _onInterstitialAdEvent,
-    );
-    _loadInterstitialAd();
   }
 
   Future<void> carregarProcurados() async {
@@ -84,7 +52,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
             iconTheme: IconThemeData(
               color: AppColors.mainColor,
             ),
-            title: SearchBar(
+            title: SearchBarWidget(
               onPressed: () {
                 nicknameController.clear();
               },
@@ -154,28 +122,28 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                             itemBuilder: (_, index) {
                               return CardFriend(
                                 nickname: amigosProcurados
-                                    .amigosProcurados[index].nickname,
+                                    .amigosProcurados[index].nickname!,
                                 name:
                                     '${amigosProcurados.amigosProcurados[index].name} ${amigosProcurados.amigosProcurados[index].lastName}',
                                 photoURL: amigosProcurados
-                                    .amigosProcurados[index].photoURL,
+                                    .amigosProcurados[index].photoURL!,
                                 onTap: () async {
-                                  if (isInterstitialReady) {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
+                                  // if (isInterstitialReady) {
+                                  //   SharedPreferences prefs =
+                                  //       await SharedPreferences.getInstance();
 
-                                    //* VALIDAR ANÚNCIO INTERCALADO 3
-                                    int adSeenTimes =
-                                        prefs.getInt('amigos_perfil_add') ?? 0;
-                                    if (adSeenTimes < 2) {
-                                      await prefs.setInt(
-                                          'amigos_perfil_add', adSeenTimes + 1);
-                                    } else {
-                                      await interstitialAdMuscle.show();
-                                      await prefs.setInt(
-                                          'amigos_perfil_add', 0);
-                                    }
-                                  }
+                                  //   //* VALIDAR ANÚNCIO INTERCALADO 3
+                                  //   int adSeenTimes =
+                                  //       prefs.getInt('amigos_perfil_add') ?? 0;
+                                  //   if (adSeenTimes < 2) {
+                                  //     await prefs.setInt(
+                                  //         'amigos_perfil_add', adSeenTimes + 1);
+                                  //   } else {
+                                  //     await interstitialAdMuscle.show();
+                                  //     await prefs.setInt(
+                                  //         'amigos_perfil_add', 0);
+                                  //   }
+                                  // }
 
                                   Navigator.pushNamed(
                                       context, AppRoutes.perfilAmigo,
@@ -209,12 +177,12 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                         shrinkWrap: true,
                         itemCount: friends.length,
                         itemBuilder: (_, index) {
-                          return friends[index].mostrarPerfilPesquisa
+                          return friends[index].mostrarPerfilPesquisa!
                               ? CardFriend(
-                                  nickname: friends[index].nickname,
+                                  nickname: friends[index].nickname!,
                                   name:
                                       '${friends[index].name} ${friends[index].lastName}',
-                                  photoURL: friends[index].photoURL,
+                                  photoURL: friends[index].photoURL!,
                                   onTap: () async {
                                     if (friends[index].id !=
                                         userManager.user.id) {

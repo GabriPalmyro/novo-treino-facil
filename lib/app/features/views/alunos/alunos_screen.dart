@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/alunos/components/aluno_card.dart';
@@ -16,14 +15,13 @@ class AlunosScreen extends StatefulWidget {
   _AlunosScreenState createState() => _AlunosScreenState();
 }
 
-class _AlunosScreenState extends State<AlunosScreen>
-    with TickerProviderStateMixin {
+class _AlunosScreenState extends State<AlunosScreen> with TickerProviderStateMixin {
   bool isExpanded = true;
   bool loading = true;
 
-  AnimationController expandController;
-  AnimationController animationController;
-  Animation<double> animation;
+  late AnimationController expandController;
+  late AnimationController animationController;
+  late Animation<double> animation;
 
   @override
   void initState() {
@@ -44,10 +42,8 @@ class _AlunosScreenState extends State<AlunosScreen>
 
   ///Setting up the animation
   void prepareAnimations() {
-    expandController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    expandController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     animation = CurvedAnimation(
       parent: expandController,
       curve: Curves.easeInOutCubic,
@@ -73,8 +69,7 @@ class _AlunosScreenState extends State<AlunosScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.home, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
         return true;
       },
       child: Consumer<UserManager>(builder: (_, userManager, __) {
@@ -98,21 +93,14 @@ class _AlunosScreenState extends State<AlunosScreen>
                   ),
                   tooltip: 'Adicionar Novo Aluno',
                   onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (_) => NovoAlunoModal());
+                    showModalBottomSheet(backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (_) => NovoAlunoModal());
                   },
                 ),
               ),
             ],
             title: Text(
               "Meus Alunos",
-              style: TextStyle(
-                  color: AppColors.mainColor,
-                  fontFamily: AppFonts.gothamBold,
-                  fontSize: 30),
+              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 30),
             ),
             backgroundColor: AppColors.grey,
           ),
@@ -121,9 +109,7 @@ class _AlunosScreenState extends State<AlunosScreen>
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator()),
+                    Align(alignment: Alignment.center, child: CircularProgressIndicator()),
                     Padding(
                       padding: const EdgeInsets.only(top: 24.0),
                       child: Align(
@@ -131,10 +117,7 @@ class _AlunosScreenState extends State<AlunosScreen>
                         child: Text(
                           'Buscando informações de seus alunos',
                           //textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: AppColors.mainColor,
-                              fontFamily: AppFonts.gothamBook,
-                              fontSize: 16),
+                          style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBook, fontSize: 16),
                         ),
                       ),
                     )
@@ -147,17 +130,11 @@ class _AlunosScreenState extends State<AlunosScreen>
                     children: [
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 10.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
                         decoration: BoxDecoration(
                             color: AppColors.mainColor,
                             borderRadius: BorderRadius.circular(10.0),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: AppColors.black.withOpacity(0.3),
-                                  blurRadius: 5,
-                                  offset: Offset(0, 5))
-                            ]),
+                            boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.3), blurRadius: 5, offset: Offset(0, 5))]),
                         child: Column(
                           children: [
                             Row(
@@ -167,14 +144,9 @@ class _AlunosScreenState extends State<AlunosScreen>
                                 Expanded(
                                   flex: 80,
                                   child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10.0),
+                                    padding: EdgeInsets.symmetric(horizontal: 10.0),
                                     child: AutoSizeText('Ver Lista de Alunos',
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            fontFamily: AppFonts.gothamBold,
-                                            color: AppColors.black)),
+                                        maxLines: 1, style: TextStyle(fontSize: 24, fontFamily: AppFonts.gothamBold, color: AppColors.black)),
                                   ),
                                 ),
                                 Expanded(
@@ -185,19 +157,14 @@ class _AlunosScreenState extends State<AlunosScreen>
                                       onTap: () {
                                         setState(() {
                                           isExpanded = !isExpanded;
-                                          isExpanded
-                                              ? animationController.forward()
-                                              : animationController.reverse();
+                                          isExpanded ? animationController.forward() : animationController.reverse();
 
                                           _runExpandCheck();
                                         });
                                       },
                                       child: Tooltip(
-                                          message:
-                                              isExpanded ? 'Fechar' : 'Abrir',
-                                          child: AnimatedIcon(
-                                              icon: AnimatedIcons.menu_close,
-                                              progress: animationController)),
+                                          message: isExpanded ? 'Fechar' : 'Abrir',
+                                          child: AnimatedIcon(icon: AnimatedIcons.menu_close, progress: animationController)),
                                     ),
                                   ),
                                 )
@@ -207,61 +174,36 @@ class _AlunosScreenState extends State<AlunosScreen>
                               axisAlignment: 1.0,
                               sizeFactor: animation,
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10.0, left: 5.0),
+                                padding: const EdgeInsets.only(top: 10.0, left: 5.0),
                                 child: Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: List.generate(
-                                        userManager.alunos.length, (index) {
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: List.generate(userManager.alunos.length, (index) {
+                                      final aluno = userManager.alunos[index];
                                       return CardAluno(
                                           acessarPlanilhas: () {
-                                            Navigator.pushNamed(context,
-                                                AppRoutes.planilhasAluno,
-                                                arguments:
-                                                    PlanilhaAlunoArguments(
-                                                        nomeUser: userManager
-                                                            .alunos[index]
-                                                            .alunoName,
-                                                        idUser: userManager
-                                                            .alunos[index]
-                                                            .alunoId));
+                                            Navigator.pushNamed(context, AppRoutes.planilhasAluno,
+                                                arguments: PlanilhaAlunoArguments(nomeUser: aluno.alunoName!, idUser: aluno.alunoId!));
                                           },
                                           excluirAluno: () async {
                                             await showCustomDialogOpt(
                                                 context: context,
-                                                function: () async {
-                                                  String response =
-                                                      await userManager
-                                                          .deletePersonalAlunoConnection(
-                                                              personalId:
-                                                                  userManager
-                                                                      .user.id,
-                                                              userId:
-                                                                  userManager
-                                                                      .alunos[
-                                                                          index]
-                                                                      .alunoId);
+                                                VoidCallBack: () async {
+                                                  final response = await userManager.deletePersonalAlunoConnection(
+                                                      personalId: userManager.user.id!, userId: userManager.alunos[index].alunoId!);
 
                                                   if (response != null) {
                                                     Navigator.pop(context);
-                                                    mostrarSnackBar(
-                                                        context: context,
-                                                        message: response,
-                                                        color: AppColors.red);
+                                                    mostrarSnackBar(context: context, message: response, color: AppColors.red);
                                                   } else {
-                                                    userManager
-                                                        .removerPersonalAluno(
-                                                            index: index);
+                                                    userManager.removerPersonalAluno(index: index);
 
                                                     Navigator.pop(context);
                                                   }
                                                 },
                                                 isDeleteMessage: true,
                                                 title: 'Excluir Aluno?',
-                                                message:
-                                                    'Essa ação irá excluir esse aluno permanentemente.');
+                                                message: 'Essa ação irá excluir esse aluno permanentemente.');
                                           },
                                           aluno: userManager.alunos[index]);
                                     }),

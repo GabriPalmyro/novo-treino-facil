@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
@@ -11,6 +10,7 @@ import 'package:tabela_treino/app/features/views/home/components/home_button.dar
 import 'package:tabela_treino/app/features/views/home/components/planilha_widget.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
+
 import '/app/core/core.dart';
 import '/app/features/controllers/user/user_controller.dart';
 import '/app/helpers/name_formats.dart';
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Planilha> planilhas = [];
   bool dayHasTraining = false;
-  int indexDay;
+  int? indexDay;
 
   List<String> daysOfTheWeek = [
     'Sunday',
@@ -68,27 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (day) {
       case 'Monday':
         return 0;
-        break;
       case 'Tuesday':
         return 1;
-        break;
       case 'Wednesday':
         return 2;
-        break;
       case 'Thursday':
         return 3;
-        break;
       case 'Friday':
         return 4;
-        break;
       case 'Saturday':
         return 5;
-        break;
       case 'Sunday':
         return 6;
-        break;
       default:
-        return null;
+        return 0;
     }
   }
 
@@ -102,8 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
     indexDay = dayOfTheWeek(todayDayOfWeek);
 
     context.read<PlanilhaManager>().listaPlanilhas.forEach((element) {
-      if (element.diasDaSemana[indexDay].isSelected &&
-          element.diasDaSemana[indexDay].dia == diasDaSemana[indexDay]) {
+      if (element.diasDaSemana![indexDay!].isSelected &&
+          element.diasDaSemana![indexDay!].dia == diasDaSemana[indexDay!]) {
         dayHasTraining = true;
         planilhas.add(element);
       }
@@ -111,13 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (planilhas.isEmpty)
       planilhas = context.read<PlanilhaManager>().listaPlanilhas;
-  }
-
-  void verifyNewVersion() {
-    NewVersion(
-      context: context,
-      androidId: 'br.com.palmyro.treino_facil',
-    ).showAlertIfNecessary();
   }
 
   @override
@@ -203,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Olá, ${capitalizeString(userManager.user.name)}",
+                                "Olá, ${capitalizeString(userManager.user.name!)}",
                                 style: TextStyle(
                                     fontFamily: AppFonts.gothamBold,
                                     fontSize: 33,
@@ -271,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (context
                                   .read<CoreAppController>()
                                   .coreInfos
-                                  .mostrarTreinosFaceis) ...[
+                                  .mostrarTreinosFaceis!) ...[
                                 Skeleton(
                                   height: 80,
                                   width: (width / 3) * 0.82,
@@ -345,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : Icons.live_help,
                               iconePath: AppImages.personal,
                               onTap: () {
-                                if (userManager.user.isPersonal) {
+                                if (userManager.user.isPersonal ?? false) {
                                   Navigator.pushNamedAndRemoveUntil(context,
                                       AppRoutes.alunos, (route) => false);
                                 } else {
@@ -357,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (context
                                 .read<CoreAppController>()
                                 .coreInfos
-                                .mostrarTreinosFaceis) ...[
+                                .mostrarTreinosFaceis ?? false) ...[
                               HomeButtonMin(
                                 width: (width / 3) * 0.8,
                                 title: 'Treinos Fáceis',
@@ -460,13 +446,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.pushNamed(
                                   context, AppRoutes.exerciciosPlanilha,
                                   arguments: ExerciciosPlanilhaArguments(
-                                    title: planilhas[index].title,
-                                    idPlanilha: planilhas[index].id,
-                                    idUser: userManager.user.id,
+                                    title: planilhas[index].title!,
+                                    idPlanilha: planilhas[index].id!,
+                                    idUser: userManager.user.id!,
                                   ));
                             },
-                            title: planilhas[index].title,
-                            description: planilhas[index].description,
+                            title: planilhas[index].title ?? '',
+                            description: planilhas[index].description ?? '',
                           );
                         }),
                       ),
@@ -476,7 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (context
                     .read<CoreAppController>()
                     .coreInfos
-                    .mostrarAjudas) ...[
+                    .mostrarAjudas!) ...[
                   if (userManager.loading || _isLoading) ...[
                     Shimmer.fromColors(
                       baseColor: AppColors.lightGrey,

@@ -1,15 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
-
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
-import 'package:firebase_admob/firebase_admob.dart';
-import '/app/core/app_colors.dart';
 import '/app/core/core.dart';
 import '/app/features/controllers/planilha/planilha_manager.dart';
 import '/app/features/models/planilha/planilha.dart';
@@ -19,35 +13,34 @@ import '/app/features/views/planilhas/components/select_diasemana.dart';
 class NovaPlanilhaModal extends StatefulWidget {
   final String idUser;
   final bool isPersonalAcess;
-  const NovaPlanilhaModal(
-      {Key key, @required this.idUser, @required this.isPersonalAcess})
-      : super(key: key);
+  const NovaPlanilhaModal({required this.idUser, required this.isPersonalAcess});
+
   @override
   _NovaPlanilhaModalState createState() => _NovaPlanilhaModalState();
 }
 
 class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
   //* ADS
-  InterstitialAd interstitialAdMuscle;
+  // InterstitialAd interstitialAdMuscle;
   bool isInterstitialReady = false;
 
-  void _loadInterstitialAd() {
-    interstitialAdMuscle.load();
-  }
+  // void _loadInterstitialAd() {
+  //   interstitialAdMuscle.load();
+  // }
 
-  void _onInterstitialAdEvent(MobileAdEvent event) {
-    switch (event) {
-      case MobileAdEvent.loaded:
-        isInterstitialReady = true;
-        break;
-      case MobileAdEvent.failedToLoad:
-        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-        isInterstitialReady = false;
-        break;
-      default:
-      // do nothing
-    }
-  }
+  // void _onInterstitialAdEvent(MobileAdEvent event) {
+  //   switch (event) {
+  //     case MobileAdEvent.loaded:
+  //       isInterstitialReady = true;
+  //       break;
+  //     case MobileAdEvent.failedToLoad:
+  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+  //       isInterstitialReady = false;
+  //       break;
+  //     default:
+  //     // do nothing
+  //   }
+  // }
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
@@ -76,11 +69,11 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
   @override
   void initState() {
     super.initState();
-    interstitialAdMuscle = InterstitialAd(
-      adUnitId: interstitialAdUnitId(),
-      listener: _onInterstitialAdEvent,
-    );
-    _loadInterstitialAd();
+    // interstitialAdMuscle = InterstitialAd(
+    //   adUnitId: interstitialAdUnitId(),
+    //   listener: _onInterstitialAdEvent,
+    // );
+    // _loadInterstitialAd();
   }
 
   @override
@@ -97,10 +90,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
             child: Container(
                 height: height * 0.65,
                 decoration: new BoxDecoration(
-                    color: AppColors.grey,
-                    borderRadius: new BorderRadius.only(
-                        topLeft: const Radius.circular(25.0),
-                        topRight: const Radius.circular(25.0))),
+                    color: AppColors.grey, borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0))),
                 child: Padding(
                   padding: EdgeInsets.only(top: 18.0, right: 18, left: 18),
                   child: Column(
@@ -109,10 +99,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                     children: [
                       Text(
                         'Criar Nova Planiilha',
-                        style: TextStyle(
-                            fontFamily: AppFonts.gothamBold,
-                            color: AppColors.white,
-                            fontSize: 26.0),
+                        style: TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.white, fontSize: 26.0),
                       ),
                       Divider(
                         color: AppColors.white,
@@ -135,12 +122,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                   padding: const EdgeInsets.only(top: 12.0),
                                   child: Text(
                                     'Nome Planilha:',
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: state.hasError
-                                            ? Colors.red
-                                            : AppColors.white,
-                                        fontSize: 16.0),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 16.0),
                                   ),
                                 ),
                                 Padding(
@@ -151,18 +133,13 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                       color: AppColors.lightGrey,
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                     child: TextFormField(
                                       controller: _titleController,
                                       keyboardType: TextInputType.text,
                                       cursorColor: AppColors.mainColor,
                                       showCursor: true,
-                                      style: TextStyle(
-                                          fontFamily: AppFonts.gothamBook,
-                                          color: state.hasError
-                                              ? Colors.red
-                                              : AppColors.white),
+                                      style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                       ),
@@ -186,12 +163,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                   padding: const EdgeInsets.only(top: 12.0),
                                   child: Text(
                                     'Descrição Planilha:',
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: state.hasError
-                                            ? Colors.red
-                                            : AppColors.white,
-                                        fontSize: 16.0),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 16.0),
                                   ),
                                 ),
                                 Padding(
@@ -202,19 +174,14 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                       color: AppColors.lightGrey,
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                     child: TextFormField(
                                       controller: _descriptionController,
                                       keyboardType: TextInputType.text,
                                       cursorColor: AppColors.mainColor,
                                       maxLines: null,
                                       showCursor: true,
-                                      style: TextStyle(
-                                          fontFamily: AppFonts.gothamBook,
-                                          color: state.hasError
-                                              ? Colors.red
-                                              : AppColors.white),
+                                      style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                       ),
@@ -228,10 +195,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                         padding: const EdgeInsets.only(top: 12.0),
                         child: Text(
                           'Dia da Semana (opcional):',
-                          style: TextStyle(
-                              fontFamily: AppFonts.gothamBook,
-                              color: AppColors.white,
-                              fontSize: 16.0),
+                          style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white, fontSize: 16.0),
                         ),
                       ),
                       Padding(
@@ -252,11 +216,9 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                 color: AppColors.lightGrey,
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 10.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Selecionar dias da semana',
                                       style: TextStyle(
@@ -293,32 +255,21 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                 onTap: () async {
                                   var adsManager = context.read<AdsManager>();
 
-                                  if (_formKey.currentState.validate()) {
+                                  if (_formKey.currentState!.validate()) {
                                     if (isInterstitialReady) {
                                       //* VALIDAR ANÚNCIO INTERCALADO
-                                      if (await adsManager
-                                          .getIsAvaliableNewPlanilha()) {
-                                        await interstitialAdMuscle.show();
-                                        await adsManager
-                                            .setIsAvaliableNewPlanilha(false);
+                                      if (await adsManager.getIsAvaliableNewPlanilha()) {
+                                        // await interstitialAdMuscle.show();
+                                        await adsManager.setIsAvaliableNewPlanilha(false);
                                       } else
-                                        await adsManager
-                                            .setIsAvaliableNewPlanilha(true);
+                                        await adsManager.setIsAvaliableNewPlanilha(true);
                                     }
 
                                     Navigator.pop(context);
                                     Planilha planilha = Planilha(
-                                        title: _titleController.text,
-                                        description:
-                                            _descriptionController.text,
-                                        diasDaSemana: diasDaSemana,
-                                        favorito: false);
-                                    String response = await planilhaManager
-                                        .createNovaPlanilha(
-                                            idUser: widget.idUser,
-                                            planilha: planilha,
-                                            isPersonalAcess:
-                                                widget.isPersonalAcess);
+                                        title: _titleController.text, description: _descriptionController.text, diasDaSemana: diasDaSemana, favorito: false);
+                                    final response = await planilhaManager.createNovaPlanilha(
+                                        idUser: widget.idUser, planilha: planilha, isPersonalAcess: widget.isPersonalAcess);
 
                                     if (response == 'MAX') {
                                       mostrarSnackBar(
@@ -329,10 +280,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                           context: context);
                                     } else if (response != null) {
                                       mostrarSnackBar(
-                                          message:
-                                              'Ocorreu um erro ao criar a planilha. Tente novamente mais tarde.',
-                                          color: AppColors.red,
-                                          context: context);
+                                          message: 'Ocorreu um erro ao criar a planilha. Tente novamente mais tarde.', color: AppColors.red, context: context);
                                     }
                                   }
                                 },

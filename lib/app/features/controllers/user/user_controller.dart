@@ -5,13 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tabela_treino/app/features/models/aluno/aluno.dart';
 import 'package:tabela_treino/app/features/models/seguidor/seguidor.dart';
+
 import '/app/features/models/user/user.dart';
 
 class UserManager extends ChangeNotifier {
   Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
-  Auth.User firebaseUser;
+  Auth.User? firebaseUser;
   User user = User();
   String alunoNomeTemp = '';
   List<Aluno> alunos = [];
@@ -57,7 +59,7 @@ class UserManager extends ChangeNotifier {
     try {
       //await Future.delayed(Duration(seconds: 2));
       Auth.UserCredential authUser = await _auth.createUserWithEmailAndPassword(
-          email: user.email, password: pass);
+          email: user.email!, password: pass);
       firebaseUser = authUser.user;
       onSucess();
       await saveUserData(user.toMap());
@@ -84,7 +86,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> signIn(String email, String pass) async {
+  Future<String?> signIn(String email, String pass) async {
     loading = true;
 
     try {
@@ -129,7 +131,7 @@ class UserManager extends ChangeNotifier {
       this.user = User.fromMap(userData);
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .set(userData);
 
       debugPrint('Usuário criado com sucesso!');
@@ -138,7 +140,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> resetPassword(String email) async {
+  Future<String?> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       return null;
@@ -156,9 +158,9 @@ class UserManager extends ChangeNotifier {
         try {
           DocumentSnapshot docUser = await FirebaseFirestore.instance
               .collection("users")
-              .doc(firebaseUser.uid)
+              .doc(firebaseUser!.uid)
               .get();
-          Map<String, dynamic> _userData = docUser.data();
+          Map<String, dynamic> _userData = docUser.data() as Map<String, dynamic>;
           _userData['id'] = docUser.id;
           user = User.fromMap(_userData);
         } catch (e) {
@@ -171,18 +173,16 @@ class UserManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> changeUserInfos(
-      {@required User newUser,
-      @required String password,
-      VoidCallback onSucess,
-      VoidCallback onFailed}) async {
+  Future<String?> changeUserInfos(
+      {required User newUser,
+      required String password,}) async {
     // ignore: await_only_futures
     if (firebaseUser == null) firebaseUser = await _auth.currentUser;
     loading = true;
     try {
-      Auth.UserCredential authResult = await firebaseUser
+      Auth.UserCredential authResult = await firebaseUser!
           .reauthenticateWithCredential(Auth.EmailAuthProvider.credential(
-              email: user.email, password: password));
+              email: user.email!, password: password));
       authResult.user;
 
       if (user.email == newUser.email) {
@@ -201,14 +201,14 @@ class UserManager extends ChangeNotifier {
         };
         await FirebaseFirestore.instance
             .collection("users")
-            .doc(firebaseUser.uid)
+            .doc(firebaseUser!.uid)
             .update(newUserInfos);
         log("PERFIL ATUALIZADO");
         user = User.fromMap(newUserInfos);
         loading = false;
         return null;
       } else {
-        await firebaseUser.updateEmail(newUser.email);
+        await firebaseUser?.verifyBeforeUpdateEmail(newUser.email!);
 
         Map<String, dynamic> newUserInfos = {
           "nickname": newUser.nickname,
@@ -226,7 +226,7 @@ class UserManager extends ChangeNotifier {
 
         await FirebaseFirestore.instance
             .collection("users")
-            .doc(firebaseUser.uid)
+            .doc(firebaseUser!.uid)
             .update(newUserInfos);
         log("PERFIL ATUALIZADO");
         user = User.fromMap(newUserInfos);
@@ -240,10 +240,10 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> changeUserPreferences(
-      {bool mostrarPlanilhas,
-      bool mostrarExercicios,
-      bool mostrarPerfilPesquisa}) async {
+  Future<String?> changeUserPreferences(
+      {required bool mostrarPlanilhas,
+      required bool mostrarExercicios,
+      required bool mostrarPerfilPesquisa}) async {
     try {
       Map<String, dynamic> newUserInfos = {
         "mostrar_planilhas_perfil": mostrarPlanilhas,
@@ -253,7 +253,7 @@ class UserManager extends ChangeNotifier {
 
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .update(newUserInfos);
 
       user.mostrarPlanilhasPerfil = mostrarPlanilhas;
@@ -269,7 +269,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<List<User>> carregarAmigos({String nickname}) async {
+  Future<List<User>> carregarAmigos({required String nickname}) async {
     Map<String, dynamic> data = {};
     friends = [];
     debugPrint('LOADING FRIENDS');
@@ -292,15 +292,15 @@ class UserManager extends ChangeNotifier {
     } catch (e) {
       loading = false;
       debugPrint(e.toString());
-      return null;
+      return friends;
     }
   }
 
-  Future<bool> checkIsFollowing({String friendId}) async {
+  Future<bool> checkIsFollowing({required String friendId}) async {
     try {
       var followers = await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .collection('seguindo')
           .where('followerId', isEqualTo: friendId)
           .get();
@@ -314,19 +314,19 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> adicionarSeguidor({User friend}) async {
+  Future<String?> adicionarSeguidor({required User friend}) async {
     try {
       var follower = Follower(
-          followerId: firebaseUser.uid,
-          name: user.name + ' ' + user.lastName,
-          email: user.email,
-          photoURL: user.photoURL);
+          followerId: firebaseUser!.uid,
+          name: user.name! + ' ' + user.lastName!,
+          email: user.email!,
+          photoURL: user.photoURL!,);
 
       var following = Follower(
-          followerId: friend.id,
-          name: friend.name + ' ' + friend.lastName,
-          email: friend.email,
-          photoURL: friend.photoURL);
+          followerId: friend.id!,
+          name: friend.name! + ' ' + friend.lastName!,
+          email: friend.email!,
+          photoURL: friend.photoURL!);
 
       await FirebaseFirestore.instance
           .collection("users")
@@ -336,12 +336,12 @@ class UserManager extends ChangeNotifier {
 
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .collection('seguindo')
           .add(following.toMap());
 
-      user.seguindo = user.seguindo + 1;
-      friend.seguidores = friend.seguidores + 1;
+      user.seguindo = user.seguindo! + 1;
+      friend.seguidores = friend.seguidores! + 1;
 
       await FirebaseFirestore.instance
           .collection("users")
@@ -350,7 +350,7 @@ class UserManager extends ChangeNotifier {
 
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .update(user.toMap());
 
       notifyListeners();
@@ -362,13 +362,13 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> removerSeguidor({User friend}) async {
+  Future<String?> removerSeguidor({required User friend}) async {
     try {
       var queryFollower = await FirebaseFirestore.instance
           .collection("users")
           .doc(friend.id)
           .collection('seguidores')
-          .where('followerId', isEqualTo: firebaseUser.uid)
+          .where('followerId', isEqualTo: firebaseUser!.uid)
           .get();
 
       await FirebaseFirestore.instance
@@ -380,20 +380,20 @@ class UserManager extends ChangeNotifier {
 
       queryFollower = await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .collection('seguindo')
           .where('followerId', isEqualTo: friend.id)
           .get();
 
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .collection('seguindo')
           .doc(queryFollower.docs.first.id)
           .delete();
 
-      user.seguindo = user.seguindo - 1;
-      friend.seguidores = friend.seguidores - 1;
+      user.seguindo = user.seguindo! - 1;
+      friend.seguidores = friend.seguidores! - 1;
 
       await FirebaseFirestore.instance
           .collection("users")
@@ -402,7 +402,7 @@ class UserManager extends ChangeNotifier {
 
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser!.uid)
           .update(user.toMap());
 
       notifyListeners();
@@ -414,14 +414,14 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> createNewExe(
-      {File video,
-      String muscleText,
-      String title,
-      int level,
-      bool homeExe,
-      Function onSucess}) async {
-    loading = true;
+  Future<String?> createNewExe(
+        {XFile? video,
+        String? muscleText,
+        String? title,
+        int? level,
+        bool? homeExe,
+        VoidCallback? onSuccess}) async {
+      loading = true;
 
     //! VERIFICAR QUANTOS EXERCÍCIOS POSSUI
     var listExe = await FirebaseFirestore.instance
@@ -434,11 +434,13 @@ class UserManager extends ChangeNotifier {
       return "Limite máximo de exercícios personalizados atingido!";
     }
 
+    File videoFile = File(video!.path);
+
     await FirebaseStorage.instance
         .refFromURL(
             "gs://treino-facil-22856.appspot.com/exercicios_compartilhados/${user.id}/exercicios/$muscleText")
         .child("${title}_${DateTime.now().day}_${DateTime.now().month}")
-        .putFile(video)
+        .putFile(videoFile)
         .then((value) async {
       if (value.state == TaskState.success) {
         await value.ref.getDownloadURL().then((value) {
@@ -459,7 +461,7 @@ class UserManager extends ChangeNotifier {
               .add(data)
               .then((value) {
             print("Succesfuly Uploaded");
-            onSucess();
+            onSuccess?.call();
             loading = false;
             return null;
           }).catchError((error) {
@@ -481,14 +483,14 @@ class UserManager extends ChangeNotifier {
 
   //* PERSONAL AREA
 
-  Future<String> carregarAlunos() async {
+  Future<String?> carregarAlunos() async {
     Map<String, dynamic> data = {};
     alunos = [];
     debugPrint('LOADING ALUNOS');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
-          .doc(_auth.currentUser.uid)
+          .doc(_auth.currentUser!.uid)
           .collection("alunos")
           .orderBy('client_name')
           .get();
@@ -509,7 +511,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> sendAlunoRequest({String emailAluno}) async {
+  Future<String?> sendAlunoRequest({required String emailAluno}) async {
     loading = true;
     try {
       var getResponse = await FirebaseFirestore.instance
@@ -538,7 +540,7 @@ class UserManager extends ChangeNotifier {
             .collection("request_list")
             .add({
           "personal_Id": user.id,
-          "personal_name": user.name + " " + user.lastName,
+          "personal_name": user.name! + " " + user.lastName!,
           "personal_email": user.email,
           "personal_photo": user.photoURL,
           "personal_phoneNumber": user.phoneNumber
@@ -557,9 +559,9 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String> deletePersonalAlunoConnection({
-    String personalId,
-    String userId,
+  Future<String?> deletePersonalAlunoConnection({
+    required String personalId,
+    required String userId,
   }) async {
     loading = true;
     try {
@@ -604,7 +606,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  removerPersonalAluno({int index}) {
+  removerPersonalAluno({required int index}) {
     alunos.removeAt(index);
     notifyListeners();
   }

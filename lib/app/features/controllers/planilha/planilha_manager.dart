@@ -6,8 +6,8 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 
 class PlanilhaManager extends ChangeNotifier {
   Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
-  Auth.User firebaseUser;
-  ExerciciosPlanilhaManager exerciciosPlanilhaManager;
+  late Auth.User firebaseUser;
+  ExerciciosPlanilhaManager? exerciciosPlanilhaManager;
 
   List<Planilha> listaPlanilhas = [];
 
@@ -28,7 +28,7 @@ class PlanilhaManager extends ChangeNotifier {
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
-          .doc(_auth.currentUser.uid)
+          .doc(_auth.currentUser!.uid)
           .collection("planilha")
           .orderBy('title')
           .get();
@@ -48,13 +48,13 @@ class PlanilhaManager extends ChangeNotifier {
   }
 
   //METHOD 2
-  Future<String> createNovaPlanilha(
-      {@required Planilha planilha,
-      @required String idUser,
-      @required bool isPersonalAcess,
+  Future<String?> createNovaPlanilha(
+      {required Planilha planilha,
+      required String idUser,
+      required bool isPersonalAcess,
       bool adView = false}) async {
     loading = true;
-    String id;
+    String? id;
     try {
       if (listaPlanilhas.length < 7 || adView) {
         await FirebaseFirestore.instance
@@ -63,11 +63,11 @@ class PlanilhaManager extends ChangeNotifier {
             .collection("planilha")
             .add(planilha.toMap())
             .then((value) => id = value.id);
-        planilha.id = id;
+        planilha.id = id!;
         if (!isPersonalAcess) {
           listaPlanilhas.add(planilha);
           listaPlanilhas.sort((a, b) {
-            return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+            return a.title!.toLowerCase().compareTo(b.title!.toLowerCase());
           });
         }
       } else {
@@ -83,11 +83,11 @@ class PlanilhaManager extends ChangeNotifier {
   }
 
   //METHOD 4
-  Future<String> editPlanilha(
-      {@required Planilha planilha,
-      @required String idUser,
-      @required int index,
-      @required bool isPersonalAcess}) async {
+  Future<String?> editPlanilha(
+      {required Planilha planilha,
+      required String idUser,
+      required int index,
+      required bool isPersonalAcess}) async {
     loading = true;
     try {
       await FirebaseFirestore.instance
@@ -109,12 +109,12 @@ class PlanilhaManager extends ChangeNotifier {
   }
 
   //METHOD 5
-  Future<String> changePlanilhaToFavorite(Planilha planilha, int index) async {
-    planilha.favorito = !planilha.favorito;
+  Future<String?> changePlanilhaToFavorite(Planilha planilha, int index) async {
+    planilha.favorito = !planilha.favorito!;
     try {
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(_auth.currentUser.uid)
+          .doc(_auth.currentUser!.uid)
           .collection("planilha")
           .doc(planilha.id)
           .update(planilha.toMap());
@@ -127,11 +127,11 @@ class PlanilhaManager extends ChangeNotifier {
     }
   }
 
-  Future<String> deletarPlanilhaCompleta(
-      {@required String planilhaId,
-      @required String userId,
-      @required int index,
-      @required bool isPersonalAcess}) async {
+  Future<String?> deletarPlanilhaCompleta(
+      {required String planilhaId,
+      required String userId,
+      required int index,
+      required bool isPersonalAcess}) async {
     loading = false;
     try {
       var docWorksheet = await FirebaseFirestore.instance
@@ -141,7 +141,7 @@ class PlanilhaManager extends ChangeNotifier {
           .doc(planilhaId)
           .get();
 
-      if (docWorksheet.data().isEmpty) {
+      if (docWorksheet.data()!.isEmpty) {
         //! PLANILHA VAZIA - APAGANDO
         debugPrint('PLANILHA VAZIA - APAGANDO');
         await FirebaseFirestore.instance

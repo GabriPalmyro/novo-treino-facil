@@ -3,8 +3,8 @@ class DiaDaSemana {
   bool isSelected;
 
   DiaDaSemana({
-    this.dia,
-    this.isSelected,
+    required this.dia,
+    this.isSelected = false,
   });
 
   Map<String, dynamic> toMap() {

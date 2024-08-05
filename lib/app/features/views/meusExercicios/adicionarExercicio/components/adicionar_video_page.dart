@@ -1,23 +1,23 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 
 class ExercicioVideoPage extends StatefulWidget {
-  final File video;
-  final Function pickVideo;
-  final Function enviarExercicio;
+  final XFile? video;
+  final VoidCallback pickVideo;
+  final VoidCallback enviarExercicio;
   final PageController pageController;
 
   const ExercicioVideoPage(
-      {@required this.video,
-      @required this.pickVideo,
-      @required this.enviarExercicio,
-      @required this.pageController});
+      {required this.video,
+      required this.pickVideo,
+      required this.enviarExercicio,
+      required this.pageController});
 
   @override
   _ExercicioVideoPageState createState() => _ExercicioVideoPageState();
@@ -105,7 +105,7 @@ class _ExercicioVideoPageState extends State<ExercicioVideoPage> {
                       height: height * 0.4,
                       width: width,
                       child: Image.file(
-                        widget.video,
+                        File(widget.video!.path),
                         fit: BoxFit.contain,
                       ),
                     ),

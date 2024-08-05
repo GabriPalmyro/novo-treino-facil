@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
 import 'package:tabela_treino/app/features/models/personal/personal.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:tabela_treino/app/features/models/user/user.dart';
 
 class PersonalManager extends ChangeNotifier {
   Personal personal = Personal();
   List<Personal> personalRequestList = [];
 
-  Auth.User firebaseUser;
+  late Auth.User firebaseUser;
 
   bool _loading = false;
 
@@ -20,7 +20,7 @@ class PersonalManager extends ChangeNotifier {
   bool get loading => _loading;
 
   // METHOD 1
-  Future<void> loadMyPersonal({String idUser}) async {
+  Future<void> loadMyPersonal({required String idUser}) async {
     loading = true;
     Map<String, dynamic> data = {};
     debugPrint('LOADING PERSONAL');
@@ -48,7 +48,7 @@ class PersonalManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> loadMyPersonalRequestList({String idUser}) async {
+  Future<String?> loadMyPersonalRequestList({required String idUser}) async {
     loading = true;
     Map<String, dynamic> data = {};
     personalRequestList = [];
@@ -77,7 +77,7 @@ class PersonalManager extends ChangeNotifier {
     }
   }
 
-  Future<String> acceptPersonalRequest({Personal personal, User user}) async {
+  Future<String?> acceptPersonalRequest({required Personal personal, required User user}) async {
     loading = true;
 
     try {
@@ -120,7 +120,7 @@ class PersonalManager extends ChangeNotifier {
             .collection("alunos")
             .add({
           "client_Id": user.id,
-          "client_name": user.name + " " + user.lastName,
+          "client_name": user.fullName(),
           "client_email": user.email,
           "client_phoneNumber": user.phoneNumber,
           "client_photo": user.photoURL,
@@ -151,8 +151,8 @@ class PersonalManager extends ChangeNotifier {
     }
   }
 
-  Future<String> deletePersonalRequest(
-      {String requestId, String userId}) async {
+  Future<String?> deletePersonalRequest(
+      {required String requestId, required String userId}) async {
     loading = true;
     try {
       await FirebaseFirestore.instance
