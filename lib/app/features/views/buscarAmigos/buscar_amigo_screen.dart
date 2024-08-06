@@ -7,7 +7,7 @@ import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_p
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/card_friend.dart';
-import 'package:tabela_treino/app/features/views/buscarAmigos/components/search_bar.dart';
+import 'package:tabela_treino/app/features/views/buscarAmigos/components/search_bar_widget.dart';
 import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class BuscarAmigosScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                 friends = await userManager.carregarAmigos(
                     nickname: nicknameController.text);
               },
-              node: nicknameNode,
+              focusNode: nicknameNode,
               controller: nicknameController,
             ),
             backgroundColor: AppColors.grey,

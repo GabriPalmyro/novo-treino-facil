@@ -105,7 +105,7 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: List.generate(planilhas.listaPlanilhas.length, (index) {
                             return Padding(
-                              padding: EdgeInsets.only(top: (index % 3 != 0 && index != 0) ? 24 : 0),
+                              padding: EdgeInsets.only(top: 24),
                               child: Column(
                                 children: [
                                   // TODO (ADS) - Implementar ADS Novamente

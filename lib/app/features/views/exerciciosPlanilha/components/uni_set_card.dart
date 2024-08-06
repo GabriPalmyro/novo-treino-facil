@@ -55,7 +55,6 @@ class _UniSetCardState extends State<UniSetCard> {
             flex: widget.isEditing ? 90 : 100,
             child: Container(
               margin: EdgeInsets.fromLTRB(widget.isEditing ? 8.0 : 20.0, 12.0, 20.0, 12.0),
-              height: 150,
               width: width * 0.8,
               decoration: BoxDecoration(
                 borderRadius: new BorderRadius.all(new Radius.circular(12.0)),

@@ -5,19 +5,19 @@ class SearchBarWidget extends StatefulWidget {
   final VoidCallback onPressed;
   final Function(String?) onSubmitted;
   final TextEditingController controller;
-  final FocusNode? node;
+  final FocusNode? focusNode;
 
   const SearchBarWidget(
       {required this.onPressed,
       required this.onSubmitted,
       required this.controller,
-      required this.node});
+      required this.focusNode});
 
   @override
-  _SearchBarState createState() => _SearchBarState();
+  _SearchBarWidgetState createState() => _SearchBarWidgetState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchBarWidgetState extends State<SearchBarWidget> {
   String searchText = '';
 
   @override
