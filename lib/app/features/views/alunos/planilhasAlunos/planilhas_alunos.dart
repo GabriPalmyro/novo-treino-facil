@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,7 @@ class PlanilhaAlunoArguments {
   final String nomeUser;
   final String idUser;
 
-  PlanilhaAlunoArguments({this.nomeUser, this.idUser});
+  PlanilhaAlunoArguments({required this.nomeUser, required this.idUser});
 }
 
 class PlanilhaAlunoScreen extends StatefulWidget {
@@ -32,12 +34,7 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
     Map<String, dynamic> data = {};
     List<Planilha> listaPlanilhas = List.empty(growable: true);
     try {
-      var queryWorksheet = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(widget.arguments.idUser)
-          .collection("planilha")
-          .orderBy('title')
-          .get();
+      var queryWorksheet = await FirebaseFirestore.instance.collection("users").doc(widget.arguments.idUser).collection("planilha").orderBy('title').get();
 
       queryWorksheet.docs.forEach((element) async {
         data = element.data();
@@ -48,20 +45,15 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
       return listaPlanilhas;
     } catch (e) {
       listaPlanilhas = [];
-      debugPrint('Erro: ' + e.toString());
+      log('Erro: ' + e.toString());
       return listaPlanilhas;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.alunos, (route) => false);
-        return true;
-      },
-      child: Consumer<PlanilhaManager>(builder: (_, planilhas, __) {
+    return Consumer<PlanilhaManager>(
+      builder: (_, planilhas, __) {
         return Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(
@@ -97,10 +89,7 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
             title: AutoSizeText(
               "Planilhas de ${widget.arguments.nomeUser}",
               maxLines: 2,
-              style: TextStyle(
-                  color: AppColors.mainColor,
-                  fontFamily: AppFonts.gothamBold,
-                  fontSize: 18),
+              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 18),
             ),
             backgroundColor: AppColors.grey,
           ),
@@ -110,68 +99,67 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 70.0),
               child: FutureBuilder<List<Planilha>>(
-                  future: loadPlanilha(),
-                  builder: (context, snapshot) {
-                    return snapshot.connectionState == ConnectionState.waiting
-                        ? ExerciciosPlanilhaShimmer()
-                        : snapshot.data.isEmpty
-                            ? PlanilhasVazia(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      context: context,
-                                      builder: (_) => NovaPlanilhaModal(
-                                            idUser: widget.arguments.idUser,
-                                            isPersonalAcess: true,
-                                          ));
-                                },
-                              )
-                            : SingleChildScrollView(
-                                physics: BouncingScrollPhysics(),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 70.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: List.generate(
-                                        snapshot.data.length, (index) {
+                future: loadPlanilha(),
+                builder: (context, snapshot) {
+                  return snapshot.connectionState == ConnectionState.waiting
+                      ? ExerciciosPlanilhaShimmer()
+                      : snapshot.data!.isEmpty
+                          ? PlanilhasVazia(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (_) => NovaPlanilhaModal(
+                                          idUser: widget.arguments.idUser,
+                                          isPersonalAcess: true,
+                                        ));
+                              },
+                            )
+                          : SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 70.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: List.generate(
+                                    snapshot.data!.length,
+                                    (index) {
+                                      final planilha = snapshot.data![index];
                                       return Padding(
-                                        padding: EdgeInsets.only(
-                                            top: index != 0 ? 24.0 : 8),
+                                        padding: EdgeInsets.only(top: index != 0 ? 24.0 : 8),
                                         child: CardPlanilha(
                                           onTap: () {
-                                            Navigator.pushNamed(context,
-                                                AppRoutes.exerciciosPlanilha,
-                                                arguments:
-                                                    ExerciciosPlanilhaArguments(
-                                                        title: snapshot
-                                                            .data[index].title,
-                                                        idPlanilha: snapshot
-                                                            .data[index].id,
-                                                        idUser: widget
-                                                            .arguments.idUser,
-                                                        isPersonalAcess: true,
-                                                        isFriendAcess: false,
-                                                        nomeAluno: widget
-                                                            .arguments
-                                                            .nomeUser));
+                                            Navigator.pushNamed(
+                                              context,
+                                              AppRoutes.exerciciosPlanilha,
+                                              arguments: ExerciciosPlanilhaArguments(
+                                                title: planilha.title!,
+                                                idPlanilha: planilha.id!,
+                                                idUser: widget.arguments.idUser,
+                                                isPersonalAcess: true,
+                                                isFriendAcess: false,
+                                                nomeAluno: widget.arguments.nomeUser,
+                                              ),
+                                            );
                                           },
                                           userId: widget.arguments.idUser,
-                                          planilha: snapshot.data[index],
+                                          planilha: planilha,
                                           index: index,
                                           isPersonalAcess: true,
                                         ),
                                       );
-                                    }),
+                                    },
                                   ),
                                 ),
-                              );
-                  }),
+                              ),
+                            );
+                },
+              ),
             ),
           ),
         );
-      }),
+      },
     );
   }
 }

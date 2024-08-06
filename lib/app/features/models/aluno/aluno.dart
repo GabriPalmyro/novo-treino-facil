@@ -1,10 +1,10 @@
 class Aluno {
-  String id;
-  String alunoId;
-  String alunoEmail;
-  String alunoName;
-  String alunoNumero;
-  String alunoPhoto;
+  String? id;
+  String? alunoId;
+  String? alunoEmail;
+  String? alunoName;
+  String? alunoNumero;
+  String? alunoPhoto;
 
   Aluno({
     this.id,

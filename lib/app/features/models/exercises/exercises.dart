@@ -1,10 +1,10 @@
 class Exercise {
-  String id;
-  String title;
-  String video;
-  String muscleId;
-  int level;
-  bool isHomeExercise;
+  String? id;
+  String? title;
+  String? video;
+  String? muscleId;
+  int? level;
+  bool? isHomeExercise;
 
   Exercise({
     this.id,

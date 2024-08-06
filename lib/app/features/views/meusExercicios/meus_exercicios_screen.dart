@@ -22,7 +22,7 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
 
   Future<void> loadMyExercises() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String idUser = context.read<UserManager>().user.id;
+      String idUser = context.read<UserManager>().user.id!;
       await context
           .read<ExercisesManager>()
           .loadMyListExercises(idUser: idUser);
@@ -101,8 +101,9 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
                         return CardMeuExercicio(
                           index: index,
                           deleteExercise: () async {
-                            String userId = context.read<UserManager>().user.id;
-                            String response = await exerciciosManager
+                            String userId = context.read<UserManager>().user.id!;
+                            
+                            final response = await exerciciosManager
                                 .deleteMyExercise(index: index, userId: userId);
 
                             if (response != null) {

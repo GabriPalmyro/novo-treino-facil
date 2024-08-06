@@ -10,9 +10,9 @@ class MeAjudaController extends ChangeNotifier {
 
   set loading(bool value) => _loading;
 
-  get loading => _loading;
+  bool get loading => _loading;
 
-  Future<void> getListaAjudas() async {
+  Future<String?> getListaAjudas() async {
     loading = true;
     MeAjuda temp;
     listaAjudas = [];
@@ -26,6 +26,7 @@ class MeAjudaController extends ChangeNotifier {
         listaAjudas.add(temp);
       }
       loading = false;
+      return null;
     } catch (e) {
       loading = false;
       log(e.toString());

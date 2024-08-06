@@ -1,9 +1,9 @@
 class MeAjuda {
-  String id;
-  String title;
-  String description;
-  String link;
-  bool show;
+  String? id;
+  String? title;
+  String? description;
+  String? link;
+  bool? show;
 
   MeAjuda({this.id, this.title, this.description, this.link, this.show});
 
@@ -23,11 +23,11 @@ class MeAjuda {
 
   factory MeAjuda.fromMap(Map<String, dynamic> map) {
     return MeAjuda(
-      id: map['id'] as String ?? '',
-      title: map['titulo'] as String ?? '',
-      description: map['descricao'] as String ?? '',
-      link: map['link'] as String ?? '',
-      show: map['mostrar'] as bool ?? false,
+      id: map['id'] as String? ?? '',
+      title: map['titulo'] as String? ?? '',
+      description: map['descricao'] as String? ?? '',
+      link: map['link'] as String? ?? '',
+      show: map['mostrar'] as bool? ?? false,
     );
   }
 }

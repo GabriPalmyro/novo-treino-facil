@@ -7,13 +7,13 @@ class HeaderDrawer extends StatelessWidget {
   final String fullName;
   final String photoURL;
   final bool isPersonal;
-  final Function onTap;
+  final VoidCallback onTap;
 
   const HeaderDrawer({
-    this.fullName,
-    this.photoURL,
-    this.isPersonal,
-    this.onTap,
+    required this.fullName,
+    required this.photoURL,
+    required this.isPersonal,
+    required this.onTap,
   });
 
   @override
@@ -58,8 +58,8 @@ class HeaderDrawer extends StatelessWidget {
                           //     imageUrl: photoURL,
                           //     fit: BoxFit.fitWidth,
                           //     // progressIndicatorBuilder: (_, url, download) {
-                          //     //   debugPrint(download.downloaded.toString());
-                          //     //   debugPrint(url.toString());
+                          //     //   log(download.downloaded.toString());
+                          //     //   log(url.toString());
                           //     //   return Center(child: CircularProgressIndicator());
                           //     // },
                           //     errorWidget: (context, url, error) =>
@@ -74,21 +74,22 @@ class HeaderDrawer extends StatelessWidget {
                           //                 fit: BoxFit.fitWidth),
                           //           ),
                           //         ))
-                          Image.network(photoURL, fit: BoxFit.fitWidth,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-                        return Center(
+                          Image.network(
+                        photoURL,
+                        fit: BoxFit.fitWidth,
+                        loadingBuilder: (_, __, ___) {
+                          return Center(
                             child: ClipRRect(
-                                borderRadius: BorderRadius.circular(60),
-                                child: Shimmer.fromColors(
-                                    baseColor: AppColors.lightGrey,
-                                    highlightColor: AppColors.grey300,
-                                    child: Skeleton(height: 100, width: 100))));
-                      }),
+                              borderRadius: BorderRadius.circular(60),
+                              child: Shimmer.fromColors(
+                                baseColor: AppColors.lightGrey,
+                                highlightColor: AppColors.grey300,
+                                child: Skeleton(height: 100, width: 100),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -99,11 +100,7 @@ class HeaderDrawer extends StatelessWidget {
               Text(
                 fullName,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontFamily: AppFonts.gotham,
-                    color: AppColors.white,
-                    fontSize: 17,
-                    letterSpacing: 3),
+                style: TextStyle(fontFamily: AppFonts.gotham, color: AppColors.white, fontSize: 17, letterSpacing: 3),
               ),
               SizedBox(
                 height: 5,
@@ -111,11 +108,7 @@ class HeaderDrawer extends StatelessWidget {
               Text(
                 isPersonal ? "Personal Trainer" : "Aluno",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontFamily: AppFonts.gothamBook,
-                    color: AppColors.white,
-                    fontSize: 13,
-                    letterSpacing: 2),
+                style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white, fontSize: 13, letterSpacing: 2),
               ),
               Divider(
                 color: AppColors.black.withOpacity(0.4),

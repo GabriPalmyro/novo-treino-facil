@@ -1,14 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 
 class ExercicioInfoModal extends StatefulWidget {
   final Exercise exercicio;
 
-  ExercicioInfoModal({this.exercicio});
+  ExercicioInfoModal({required this.exercicio});
 
   @override
   _ExercicioInfoModalState createState() => _ExercicioInfoModalState();
@@ -17,7 +16,7 @@ class ExercicioInfoModal extends StatefulWidget {
 class _ExercicioInfoModalState extends State<ExercicioInfoModal> {
   String _calculateProgress(ImageChunkEvent loadingProgress) {
     return ((loadingProgress.cumulativeBytesLoaded * 100) /
-            loadingProgress.expectedTotalBytes)
+            loadingProgress.expectedTotalBytes!)
         .toStringAsFixed(2);
   }
 
@@ -46,7 +45,7 @@ class _ExercicioInfoModalState extends State<ExercicioInfoModal> {
                     Expanded(
                       flex: 80,
                       child: AutoSizeText(
-                        widget.exercicio.title.toUpperCase(),
+                        widget.exercicio.title!.toUpperCase(),
                         maxLines: 2,
                         style: TextStyle(
                             fontFamily: AppFonts.gothamBold,
@@ -136,7 +135,7 @@ class _ExercicioInfoModalState extends State<ExercicioInfoModal> {
                             ),
                           ],
                         )),
-                        imageProvider: NetworkImage(widget.exercicio.video),
+                        imageProvider: NetworkImage(widget.exercicio.video!),
                         initialScale: PhotoViewComputedScale.contained,
                         minScale: PhotoViewComputedScale.covered * 0.5,
                       ),

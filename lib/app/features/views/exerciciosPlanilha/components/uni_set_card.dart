@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
-
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
 
@@ -10,19 +9,19 @@ class UniSetCard extends StatefulWidget {
   final bool isChanging;
   final ExerciciosPlanilha exercicio;
   final String idUser;
-  final Function onTap;
+  final VoidCallback onTap;
   final bool isFriendAcess;
   final bool isEditing;
-  final Function onDelete;
+  final VoidCallback? onDelete;
 
   const UniSetCard(
-      {@required this.index,
-      @required this.isChanging,
-      @required this.idUser,
-      @required this.exercicio,
-      @required this.onTap,
+      {required this.index,
+      required this.isChanging,
+      required this.idUser,
+      required this.exercicio,
+      required this.onTap,
       this.isFriendAcess = false,
-      this.isEditing,
+      required this.isEditing,
       this.onDelete});
 
   @override
@@ -41,23 +40,23 @@ class _UniSetCardState extends State<UniSetCard> {
         children: [
           if (widget.isEditing) ...[
             Expanded(
-                flex: 10,
-                child: Container(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.reorder,
-                      color: AppColors.white,
-                    ),
+              flex: 10,
+              child: Container(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Center(
+                  child: Icon(
+                    Icons.reorder,
+                    color: AppColors.white,
                   ),
-                )),
+                ),
+              ),
+            ),
           ],
           Expanded(
             flex: widget.isEditing ? 90 : 100,
             child: Container(
-              margin: EdgeInsets.fromLTRB(
-                  widget.isEditing ? 8.0 : 20.0, 12.0, 20.0, 12.0),
-              height: 150,
+              constraints: BoxConstraints(minHeight: 120),
+              margin: EdgeInsets.fromLTRB(widget.isEditing ? 8.0 : 20.0, 12.0, 20.0, 12.0),
               width: width * 0.8,
               decoration: BoxDecoration(
                 borderRadius: new BorderRadius.all(new Radius.circular(12.0)),
@@ -74,8 +73,7 @@ class _UniSetCardState extends State<UniSetCard> {
               child: widget.isChanging
                   ? Center(
                       child: CircularProgressIndicator(
-                        valueColor:
-                            new AlwaysStoppedAnimation<Color>(Colors.grey[850]),
+                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.grey[850]!),
                       ),
                     )
                   : Stack(
@@ -104,12 +102,12 @@ class _UniSetCardState extends State<UniSetCard> {
                                 iconSize: 20,
                                 onPressed: () async {
                                   await showCustomDialogOpt(
-                                      context: context,
-                                      title: 'Excluir exercício?',
-                                      isDeleteMessage: true,
-                                      message:
-                                          'Essa ação não poderá ser desfeita após concluida.',
-                                      function: widget.onDelete);
+                                    context: context,
+                                    title: 'Excluir exercício?',
+                                    isDeleteMessage: true,
+                                    message: 'Essa ação não poderá ser desfeita após concluida.',
+                                    VoidCallBack: widget.onDelete!,
+                                  );
                                 }),
                           )
                         ],
@@ -133,14 +131,11 @@ class _UniSetCardState extends State<UniSetCard> {
                                 height: 10,
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 30),
+                                padding: const EdgeInsets.symmetric(horizontal: 30),
                                 child: AutoSizeText(
-                                  widget.exercicio.title.toUpperCase(),
+                                  widget.exercicio.title!.toUpperCase(),
                                   maxLines: 3,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: AppFonts.gothamBold),
+                                  style: TextStyle(fontSize: 20, fontFamily: AppFonts.gothamBold),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -151,52 +146,33 @@ class _UniSetCardState extends State<UniSetCard> {
                                 height: 8,
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   Column(
                                     children: [
-                                      Text("Séries",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: AppFonts.gotham)),
+                                      Text("Séries", style: TextStyle(fontSize: 20, fontFamily: AppFonts.gotham)),
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      Text(widget.exercicio.series,
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: AppFonts.gothamBook)),
+                                      Text(widget.exercicio.series!, style: TextStyle(fontSize: 18, fontFamily: AppFonts.gothamBook)),
                                     ],
                                   ),
                                   Column(
                                     children: [
-                                      Text("Repetições",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: AppFonts.gotham)),
+                                      Text("Repetições", style: TextStyle(fontSize: 20, fontFamily: AppFonts.gotham)),
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      Text(widget.exercicio.reps,
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: AppFonts.gothamBook)),
+                                      Text(widget.exercicio.reps!, style: TextStyle(fontSize: 18, fontFamily: AppFonts.gothamBook)),
                                     ],
                                   ),
                                   Column(
                                     children: [
-                                      Text("Carga",
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: AppFonts.gotham)),
+                                      Text("Carga", style: TextStyle(fontSize: 20, fontFamily: AppFonts.gotham)),
                                       SizedBox(
                                         height: 3,
                                       ),
-                                      Text("${widget.exercicio.carga}kg",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: AppFonts.gothamBook)),
+                                      Text("${widget.exercicio.carga}kg", style: TextStyle(fontSize: 18, fontFamily: AppFonts.gothamBook)),
                                     ],
                                   ),
                                 ],

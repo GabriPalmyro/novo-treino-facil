@@ -7,13 +7,13 @@ class CardFriend extends StatelessWidget {
   final String nickname;
   final String name;
   final String photoURL;
-  final Function onTap;
+  final VoidCallback onTap;
 
   const CardFriend(
-      {@required this.nickname,
-      @required this.name,
-      @required this.photoURL,
-      @required this.onTap});
+      {required this.nickname,
+      required this.name,
+      required this.photoURL,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {

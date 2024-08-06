@@ -1,0 +1,39 @@
+workflows:
+  android-workflow:
+    name: Android workflow
+    max_build_duration: 60
+    environment:
+      android_signing:
+        - Treino Facil Key
+      groups:
+        - firebase_credentials
+      vars:
+        PACKAGE_NAME: "br.com.palmyro.treino_facil"
+      flutter: 3.19.3
+    scripts:
+      - name: Set up local.properties
+        script: | 
+            echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Build Android Version
+        script: |
+          flutter build appbundle --release --build-number=$(($BUILD_NUMBER + 100))
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - gabripalmyro13579@gmail.com
+        notify:
+          success: true
+          failure: false
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:999959493758:android:77a1ae7e13b756b0da2c2f
+          groups: 
+            - android-testers

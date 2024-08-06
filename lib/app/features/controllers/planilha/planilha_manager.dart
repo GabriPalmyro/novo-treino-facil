@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
@@ -6,8 +8,8 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 
 class PlanilhaManager extends ChangeNotifier {
   Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
-  Auth.User firebaseUser;
-  ExerciciosPlanilhaManager exerciciosPlanilhaManager;
+  late Auth.User firebaseUser;
+  ExerciciosPlanilhaManager? exerciciosPlanilhaManager;
 
   List<Planilha> listaPlanilhas = [];
 
@@ -24,11 +26,11 @@ class PlanilhaManager extends ChangeNotifier {
   Future<void> loadWorksheetList() async {
     Map<String, dynamic> data = {};
     listaPlanilhas = [];
-    debugPrint('LOADING LISTAS');
+    log('LOADING LISTAS');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
-          .doc(_auth.currentUser.uid)
+          .doc(_auth.currentUser!.uid)
           .collection("planilha")
           .orderBy('title')
           .get();
@@ -39,22 +41,22 @@ class PlanilhaManager extends ChangeNotifier {
         listaPlanilhas.add(Planilha.fromMap(data));
       });
 
-      debugPrint('PLAN LIST LOAD SUCESS');
+      log('PLAN LIST LOAD SUCESS');
     } catch (e) {
       listaPlanilhas = [];
-      debugPrint(e.toString());
+      log(e.toString());
     }
     notifyListeners();
   }
 
   //METHOD 2
-  Future<String> createNovaPlanilha(
-      {@required Planilha planilha,
-      @required String idUser,
-      @required bool isPersonalAcess,
+  Future<String?> createNovaPlanilha(
+      {required Planilha planilha,
+      required String idUser,
+      required bool isPersonalAcess,
       bool adView = false}) async {
     loading = true;
-    String id;
+    String? id;
     try {
       if (listaPlanilhas.length < 7 || adView) {
         await FirebaseFirestore.instance
@@ -63,11 +65,11 @@ class PlanilhaManager extends ChangeNotifier {
             .collection("planilha")
             .add(planilha.toMap())
             .then((value) => id = value.id);
-        planilha.id = id;
+        planilha.id = id!;
         if (!isPersonalAcess) {
           listaPlanilhas.add(planilha);
           listaPlanilhas.sort((a, b) {
-            return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+            return a.title!.toLowerCase().compareTo(b.title!.toLowerCase());
           });
         }
       } else {
@@ -77,17 +79,17 @@ class PlanilhaManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
 
   //METHOD 4
-  Future<String> editPlanilha(
-      {@required Planilha planilha,
-      @required String idUser,
-      @required int index,
-      @required bool isPersonalAcess}) async {
+  Future<String?> editPlanilha(
+      {required Planilha planilha,
+      required String idUser,
+      required int index,
+      required bool isPersonalAcess}) async {
     loading = true;
     try {
       await FirebaseFirestore.instance
@@ -102,19 +104,19 @@ class PlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
   }
 
   //METHOD 5
-  Future<String> changePlanilhaToFavorite(Planilha planilha, int index) async {
-    planilha.favorito = !planilha.favorito;
+  Future<String?> changePlanilhaToFavorite(Planilha planilha, int index) async {
+    planilha.favorito = !planilha.favorito!;
     try {
       await FirebaseFirestore.instance
           .collection("users")
-          .doc(_auth.currentUser.uid)
+          .doc(_auth.currentUser!.uid)
           .collection("planilha")
           .doc(planilha.id)
           .update(planilha.toMap());
@@ -122,16 +124,16 @@ class PlanilhaManager extends ChangeNotifier {
       notifyListeners();
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
 
-  Future<String> deletarPlanilhaCompleta(
-      {@required String planilhaId,
-      @required String userId,
-      @required int index,
-      @required bool isPersonalAcess}) async {
+  Future<String?> deletarPlanilhaCompleta(
+      {required String planilhaId,
+      required String userId,
+      required int index,
+      required bool isPersonalAcess}) async {
     loading = false;
     try {
       var docWorksheet = await FirebaseFirestore.instance
@@ -141,9 +143,9 @@ class PlanilhaManager extends ChangeNotifier {
           .doc(planilhaId)
           .get();
 
-      if (docWorksheet.data().isEmpty) {
+      if (docWorksheet.data()!.isEmpty) {
         //! PLANILHA VAZIA - APAGANDO
-        debugPrint('PLANILHA VAZIA - APAGANDO');
+        log('PLANILHA VAZIA - APAGANDO');
         await FirebaseFirestore.instance
             .collection("users")
             .doc(userId)
@@ -164,7 +166,7 @@ class PlanilhaManager extends ChangeNotifier {
       queryWorksheet.docs.forEach((element) async {
         if (element.data()["set_type"] == 'uniset') {
           //! APAGANDO EXERCICIO UNISET
-          debugPrint('APAGANDO EXERCICIO UNI SET ${element.id}');
+          log('APAGANDO EXERCICIO UNI SET ${element.id}');
           await FirebaseFirestore.instance
               .collection("users")
               .doc(userId)
@@ -187,7 +189,7 @@ class PlanilhaManager extends ChangeNotifier {
               .get();
 
           queryBiSet.docs.forEach((elementBiSet) async {
-            debugPrint(
+            log(
                 'APAGANDO EXERCICIO BI SET ${element.id} - ${elementBiSet.id}');
             await FirebaseFirestore.instance
                 .collection("users")
@@ -201,7 +203,7 @@ class PlanilhaManager extends ChangeNotifier {
                 .delete();
           });
 
-          debugPrint('APAGANDO SET ${element.id}');
+          log('APAGANDO SET ${element.id}');
           //* DELETANDO SET
           await FirebaseFirestore.instance
               .collection("users")
@@ -215,7 +217,7 @@ class PlanilhaManager extends ChangeNotifier {
       });
 
       //! PLANILHA VAZIA - APAGANDO
-      debugPrint('PLANILHA VAZIA - APAGANDO');
+      log('PLANILHA VAZIA - APAGANDO');
       await FirebaseFirestore.instance
           .collection("users")
           .doc(userId)
@@ -230,7 +232,7 @@ class PlanilhaManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }

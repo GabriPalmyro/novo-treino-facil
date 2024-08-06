@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
-import 'package:tabela_treino/app/core/app_fonts.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
@@ -186,7 +184,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSubmitted: (text) {
                                       _lastNameFocus.requestFocus();
                                     },
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_nameController.text.isEmpty)
+                                        return 'Nome não pode ser vazio';
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -216,7 +218,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSubmitted: (text) {
                                       _emailFocus.requestFocus();
                                     },
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      return null;
+                                    },
                                   );
                                 }),
                           )
@@ -268,7 +272,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSubmitted: (text) {
                                       _numberFocus.requestFocus();
                                     },
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_emailController.text.isEmpty) {
+                                        _emailFocus.requestFocus();
+                                        return "E-mail não pode ser vazio!";
+                                      } else if (!emailValid(
+                                          _emailController.text)) {
+                                        _emailFocus.requestFocus();
+                                        {
+                                          return 'E-mail Inválido!';
+                                        }
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -320,7 +336,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     inputFormatters: [
                                       celFormatter,
                                     ],
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_numberController.text.isEmpty) {
+                                        _numberFocus.requestFocus();
+                                        return 'Número não pode ser vazia';
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -380,7 +402,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             : Icons.visibility),
                                       ),
                                     ),
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_passController.text.isEmpty) {
+                                        _passFocus.requestFocus();
+                                        return 'Senha não pode ser vazia';
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -442,7 +470,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             : Icons.visibility),
                                       ),
                                     ),
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_passConfirmController.text.isEmpty) {
+                                        _passConfirmFocus.requestFocus();
+                                        return 'Confirmar Senha não pode ser vazio';
+                                      } else if (_passConfirmController.text !=
+                                          _passController.text) {
+                                        _passConfirmFocus.requestFocus();
+                                        return 'Senhas não coincidem';
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -536,7 +574,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: LoginButton(
                         onTap: () async {
                           // SET USER
-                          if (_formKey.currentState.validate()) {
+                          if (_formKey.currentState!.validate()) {
                             user = User(
                                 name: _nameController.text,
                                 lastName: _lastNameController.text,

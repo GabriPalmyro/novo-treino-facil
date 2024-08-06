@@ -17,12 +17,9 @@ class ExercisesManager extends ChangeNotifier {
   Future<void> loadListExercises() async {
     Map<String, dynamic> data = {};
     listaExercicios = [];
-    debugPrint('LOADING LIST EXERCISES');
+    log('LOADING LIST EXERCISES');
     try {
-      var queryWorksheet = await FirebaseFirestore.instance
-          .collection("musculos2")
-          .orderBy('title')
-          .get();
+      var queryWorksheet = await FirebaseFirestore.instance.collection("musculos2").orderBy('title').get();
 
       queryWorksheet.docs.forEach((element) {
         data = element.data();
@@ -31,15 +28,15 @@ class ExercisesManager extends ChangeNotifier {
         resultList.add(Exercise.fromMap(data));
       });
 
-      debugPrint('EXERCICE LIST LOAD SUCESS');
+      log('EXERCICE LIST LOAD SUCESS');
     } catch (e) {
       listaExercicios = [];
-      debugPrint('ERROR LOADING: ' + e.toString());
+      log('ERROR LOADING: ' + e.toString());
     }
     notifyListeners();
   }
 
-  void searchResultList({String searchController, String selectedType}) {
+  void searchResultList({required String searchController, required String selectedType}) {
     List<Exercise> showResults = [];
 
     //se o controlador não estiver vazio
@@ -47,15 +44,13 @@ class ExercisesManager extends ChangeNotifier {
       // parametro de busca
       //analisar todos os arquivos do banco de dados
       for (var tripSnapshot in listaExercicios) {
-        var title = tripSnapshot.title.toUpperCase();
+        var title = tripSnapshot.title!.toUpperCase();
         var homeExe = tripSnapshot.isHomeExercise;
-        var muscleId = tripSnapshot.muscleId.toUpperCase();
+        var muscleId = tripSnapshot.muscleId!.toUpperCase();
         //se o tipo for "home_exe"
         if (selectedType == "home_exe") {
-          if (title.startsWith(searchController.toUpperCase()) &&
-              homeExe == true) {
-            showResults.add(
-                tripSnapshot); //adiciona apenas os procurados e home_exe na lista
+          if (title.startsWith(searchController.toUpperCase()) && homeExe == true) {
+            showResults.add(tripSnapshot); //adiciona apenas os procurados e home_exe na lista
           }
           //se o tipo for "muscleId"
         } else if (selectedType == "muscleId") {
@@ -66,22 +61,17 @@ class ExercisesManager extends ChangeNotifier {
         } else if (selectedType == "title") {
           //se o tipo for title
           if (title.startsWith(searchController.toUpperCase())) {
-            showResults
-                .add(tripSnapshot); //adiciona apenas os procurados na lista
+            showResults.add(tripSnapshot); //adiciona apenas os procurados na lista
           }
         } else if (selectedType == "mines") {
           for (var meusExercicios in listaMeusExercicios) {
-            if (meusExercicios.title
-                .startsWith(searchController.toUpperCase())) {
-              showResults
-                  .add(meusExercicios); //adiciona apenas os procurados na lista
+            if (meusExercicios.title!.startsWith(searchController.toUpperCase())) {
+              showResults.add(meusExercicios); //adiciona apenas os procurados na lista
             }
           }
         } else {
-          if (title.startsWith(searchController.toUpperCase()) &&
-              muscleId == selectedType.toUpperCase()) {
-            showResults
-                .add(tripSnapshot); //adiciona apenas os procurados na lista
+          if (title.startsWith(searchController.toUpperCase()) && muscleId == selectedType.toUpperCase()) {
+            showResults.add(tripSnapshot); //adiciona apenas os procurados na lista
           }
         }
       }
@@ -91,7 +81,7 @@ class ExercisesManager extends ChangeNotifier {
     } else if (selectedType == "home_exe") {
       //se o tipo for "home_exe"
       for (var tripSnapshot in listaExercicios) {
-        var homeExe = tripSnapshot.isHomeExercise;
+        var homeExe = tripSnapshot.isHomeExercise!;
         if (homeExe) {
           showResults.add(tripSnapshot);
         }
@@ -113,46 +103,35 @@ class ExercisesManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadMyListExercises({@required String idUser}) async {
+  Future<void> loadMyListExercises({required String idUser}) async {
     Map<String, dynamic> data = {};
     listaMeusExercicios = [];
     try {
-      var queryWorksheet = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(idUser)
-          .collection("exercicios")
-          .orderBy('title')
-          .get();
+      var queryWorksheet = await FirebaseFirestore.instance.collection("users").doc(idUser).collection("exercicios").orderBy('title').get();
 
       queryWorksheet.docs.forEach((element) {
-        debugPrint(element.data.toString());
+        log(element.data.toString());
         data = element.data();
         data['id'] = element.id;
         listaMeusExercicios.add(Exercise.fromMap(data));
       });
 
-      debugPrint('MY LIST EXERCISE LOAD SUCESS');
+      log('MY LIST EXERCISE LOAD SUCESS');
     } catch (e) {
       listaMeusExercicios = [];
-      debugPrint('ERROR LOADING: ' + e.toString());
+      log('ERROR LOADING: ' + e.toString());
     }
     notifyListeners();
   }
 
-  Future<String> deleteMyExercise(
-      {@required int index, @required String userId}) async {
+  Future<String?> deleteMyExercise({required int index, required String userId}) async {
     try {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(userId)
-          .collection("exercicios")
-          .doc(listaMeusExercicios[index].id)
-          .delete();
+      await FirebaseFirestore.instance.collection("users").doc(userId).collection("exercicios").doc(listaMeusExercicios[index].id).delete();
       listaMeusExercicios.removeAt(index);
       notifyListeners();
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }

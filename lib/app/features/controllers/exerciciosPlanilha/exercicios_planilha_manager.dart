@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
+import 'package:flutter/cupertino.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/biset_exercicio.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 
 class ExerciciosPlanilhaManager extends ChangeNotifier {
-  Auth.User firebaseUser;
+  late Auth.User firebaseUser;
 
   //! BI SET EXERCICES
   List<ExerciciosPlanilha> listaExerciciosBiSet = [];
@@ -20,11 +22,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> addNewExerciseUniSet(
-      {@required String planilhaId,
-      @required String idUser,
-      @required ExerciciosPlanilha exercicio}) async {
-    String id;
+  Future<String?> addNewExerciseUniSet(
+      {required String planilhaId,
+      required String idUser,
+      required ExerciciosPlanilha exercicio}) async {
+    String id = '';
     try {
       await FirebaseFirestore.instance
           .collection("users")
@@ -37,12 +39,12 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       exercicio.id = id;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
 
-  bool validarStringsIds({String planilhaId, String idUser}) {
+  bool validarStringsIds({String? planilhaId, String? idUser}) {
     if ((idUser != null && idUser.isNotEmpty) &&
         (planilhaId != null && planilhaId.isNotEmpty))
       return true;
@@ -50,10 +52,10 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       return false;
   }
 
-  Future<String> reorganizarListaExercicios(
-      {List<dynamic> listaExercicios,
-      @required String planilhaId,
-      @required String idUser}) async {
+  Future<String?> reorganizarListaExercicios(
+      {required List<dynamic> listaExercicios,
+      required String planilhaId,
+      required String idUser}) async {
     loading = true;
 
     CollectionReference ref = FirebaseFirestore.instance
@@ -73,19 +75,19 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
   }
 
-  void adicionarExercicioBiSetLista({ExerciciosPlanilha exercise}) {
+  void adicionarExercicioBiSetLista({required ExerciciosPlanilha exercise}) {
     listaExerciciosBiSet.add(exercise);
     isFirstExerciseSelected = true;
     notifyListeners();
   }
 
-  void removerExercicioBiSetLista({int index}) {
+  void removerExercicioBiSetLista({required int index}) {
     listaExerciciosBiSet.removeAt(index);
     isFirstExerciseSelected = false;
     notifyListeners();
@@ -97,16 +99,16 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void substituirExercicio({int index, ExerciciosPlanilha exerciciosPlanilha}) {
+  void substituirExercicio({required int index, required ExerciciosPlanilha exerciciosPlanilha}) {
     listaExerciciosBiSet[index] = exerciciosPlanilha;
     notifyListeners();
   }
 
-  Future<String> editExerciseUniSet(
-      {@required String planilhaId,
-      @required String idUser,
-      @required String idExercicio,
-      @required ExerciciosPlanilha exercicio}) async {
+  Future<String?> editExerciseUniSet(
+      {required String planilhaId,
+      required String idUser,
+      required String idExercicio,
+      required ExerciciosPlanilha exercicio}) async {
     loading = true;
     try {
       await FirebaseFirestore.instance
@@ -125,19 +127,19 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
 
       loading = false;
       return e.toString();
     }
   }
 
-  Future<String> editExerciseBiSet(
-      {@required String planilhaId,
-      @required String idUser,
-      @required String idExercicio,
-      @required String idBiSet,
-      @required ExerciciosPlanilha exercicio}) async {
+  Future<void> editExerciseBiSet(
+      {required String planilhaId,
+      required String idUser,
+      required String idExercicio,
+      required String idBiSet,
+      required ExerciciosPlanilha exercicio}) async {
     loading = true;
     try {
       await FirebaseFirestore.instance
@@ -156,29 +158,26 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
         "series": exercicio.series
       });
       loading = false;
-      return null;
     } catch (e) {
-      debugPrint(e.toString());
-
+      log(e.toString());
       loading = false;
-      return e.toString();
     }
   }
 
-  Future<String> addNewExerciseBiSet(
-      {@required String planilhaId,
-      @required String idUser,
-      @required int pos}) async {
+  Future<String?> addNewExerciseBiSet(
+      {required String planilhaId,
+      required String idUser,
+      required int pos}) async {
     loading = true;
-    String id;
+    String? id;
 
     try {
       listaExerciciosBiSet[0].position = 0;
       listaExerciciosBiSet[1].position = 1;
 
       BiSetExercise biSetExercise = BiSetExercise(
-          firstExercise: listaExerciciosBiSet[0].title,
-          secondExercise: listaExerciciosBiSet[1].title,
+          firstExercise: listaExerciciosBiSet[0].title!,
+          secondExercise: listaExerciciosBiSet[1].title!,
           setType: 'biset',
           position: pos,
           exercicios: listaExerciciosBiSet);
@@ -205,7 +204,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
           .collection("sets")
           .add(listaExerciciosBiSet[0].toMap())
           .then((value) => id = value.id);
-      biSetExercise.exercicios[0].id = id;
+      biSetExercise.exercicios![0].id = id!;
 
       //* SEGUNDO EXERCICIO BI SET
       await FirebaseFirestore.instance
@@ -218,24 +217,24 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
           .collection("sets")
           .add(listaExerciciosBiSet[1].toMap())
           .then((value) => id = value.id);
-      biSetExercise.exercicios[1].id = id;
+      biSetExercise.exercicios![1].id = id!;
       listaExerciciosBiSet.clear();
       isFirstExerciseSelected = false;
       loading = false;
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
 
-  Future<String> deleteExerciseUniSet(
-      {List<dynamic> listaExercicios,
-      @required String planilhaId,
-      @required String idExercise,
-      @required String idUser,
-      @required int index}) async {
+  Future<String?> deleteExerciseUniSet(
+      {required List<dynamic> listaExercicios,
+      required String planilhaId,
+      required String idExercise,
+      required String idUser,
+      required int index}) async {
     loading = true;
     try {
       await FirebaseFirestore.instance
@@ -257,18 +256,18 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
   }
 
-  Future<String> deleteExerciseBiSet({
-    @required String planilhaId,
-    @required String idExercise,
-    @required String idUser,
-    @required int index,
-    @required List<dynamic> listaExercicios,
+  Future<String?> deleteExerciseBiSet({
+    required String planilhaId,
+    required String idExercise,
+    required String idUser,
+    required int index,
+    required List<dynamic> listaExercicios,
   }) async {
     loading = true;
 
@@ -286,7 +285,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
     try {
       //* DELETANDO EXERCÍCIOS SET
       queryBiSet.docs.forEach((element) async {
-        debugPrint('deletando ' + element.id);
+        log('deletando ' + element.id);
         await FirebaseFirestore.instance
             .collection("users")
             .doc(idUser)
@@ -301,7 +300,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
 
       //* DELETANDO SET
 
-      debugPrint('deletando ' + idExercise);
+      log('deletando ' + idExercise);
       await FirebaseFirestore.instance
           .collection("users")
           .doc(idUser)
@@ -321,7 +320,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }

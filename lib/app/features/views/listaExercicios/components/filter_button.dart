@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class FilterButton extends StatelessWidget {
-  final Function onTap;
+  final VoidCallback onTap;
   final String selectedType;
   final String filter;
   final String title;
 
   const FilterButton({
-    this.onTap,
-    this.selectedType,
-    this.filter,
-    this.title,
+    required this.onTap,
+    required this.selectedType,
+    required this.filter,
+    required this.title,
   });
 
   @override
@@ -38,7 +37,7 @@ class FilterButton extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          "$title",
+          title,
           style: TextStyle(fontFamily: AppFonts.gothamBook, fontSize: 16),
           textAlign: TextAlign.center,
         ),

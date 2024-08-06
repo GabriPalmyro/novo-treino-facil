@@ -23,11 +23,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
 
   Future<void> loadPersonal() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context
-          .read<PersonalManager>()
-          .loadMyPersonal(idUser: context.read<UserManager>().user.id);
-      await context.read<PersonalManager>().loadMyPersonalRequestList(
-          idUser: context.read<UserManager>().user.id);
+      await context.read<PersonalManager>().loadMyPersonal(idUser: context.read<UserManager>().user.id!);
+      await context.read<PersonalManager>().loadMyPersonalRequestList(idUser: context.read<UserManager>().user.id!);
       setState(() {
         loading = false;
       });
@@ -36,52 +33,48 @@ class _PersonalScreenState extends State<PersonalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.home, (route) => false);
-        return true;
+    return PopScope(
+      onPopInvoked: (_) {
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
       },
       child: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-              drawer: CustomDrawer(
-                pageNow: 4,
-              ),
-              appBar: AppBar(
-                title: Text(
-                  "Meu Personal",
-                  style:
-                      TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 20),
+        length: 2,
+        child: Scaffold(
+          drawer: CustomDrawer(
+            pageNow: 4,
+          ),
+          appBar: AppBar(
+            title: Text(
+              "Meu Personal",
+              style: TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 20),
+            ),
+            centerTitle: true,
+            bottom: TabBar(indicatorColor: Colors.white, overlayColor: MaterialStateProperty.all(AppColors.grey300), tabs: [
+              Tab(
+                icon: Icon(
+                  Icons.person_outline,
+                  size: 30,
                 ),
-                centerTitle: true,
-                bottom: TabBar(
-                    indicatorColor: Colors.white,
-                    overlayColor: MaterialStateProperty.all(AppColors.grey300),
-                    tabs: [
-                      Tab(
-                        icon: Icon(
-                          Icons.person_outline,
-                          size: 30,
-                        ),
-                      ),
-                      Tab(
-                        icon: Icon(
-                          Icons.list,
-                          size: 30,
-                        ),
-                      )
-                    ]),
               ),
-              backgroundColor: Color(0xff313131),
-              body: TabBarView(
-                children: [
-                  //TAB 1
-                  MeuPersonalPage(),
-                  //TAB 2
-                  RequestListPage()
-                ],
-              ))),
+              Tab(
+                icon: Icon(
+                  Icons.list,
+                  size: 30,
+                ),
+              )
+            ]),
+          ),
+          backgroundColor: Color(0xff313131),
+          body: TabBarView(
+            children: [
+              //TAB 1
+              MeuPersonalPage(),
+              //TAB 2
+              RequestListPage()
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

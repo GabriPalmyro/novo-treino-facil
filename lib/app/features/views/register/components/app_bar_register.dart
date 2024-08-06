@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 class AppBarRegister extends StatelessWidget {

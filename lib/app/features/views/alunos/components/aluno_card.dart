@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
-
 import 'package:tabela_treino/app/features/models/aluno/aluno.dart';
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 class CardAluno extends StatelessWidget {
   final Aluno aluno;
-  final Function excluirAluno;
-  final Function acessarPlanilhas;
+  final VoidCallback excluirAluno;
+  final VoidCallback acessarPlanilhas;
 
-  const CardAluno({this.aluno, this.excluirAluno, this.acessarPlanilhas});
+  const CardAluno({required this.aluno, required this.excluirAluno, required this.acessarPlanilhas});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
-      decoration: BoxDecoration(
-          border: Border(
-              top: BorderSide(
-                  color: AppColors.black.withOpacity(0.3), width: 2))),
+      decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.black.withOpacity(0.3), width: 2))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(
             padding: EdgeInsets.symmetric(vertical: 18.0),
@@ -29,26 +24,35 @@ class CardAluno extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                      child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      height: 60,
-                      child: Image.network(aluno.alunoPhoto, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-                        return Center(
-                            child: ClipRRect(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        height: 60,
+                        child: Image.network(
+                          aluno.alunoPhoto!,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (_, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Center(
+                              child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Shimmer.fromColors(
-                                    baseColor: AppColors.lightGrey,
-                                    highlightColor: AppColors.grey300,
-                                    child: Skeleton(height: 60, width: 60))));
-                      }),
+                                  baseColor: AppColors.lightGrey,
+                                  highlightColor: AppColors.grey300,
+                                  child: Skeleton(
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  )),
+                  ),
                   Expanded(
                     flex: 4,
                     child: Padding(
@@ -58,18 +62,12 @@ class CardAluno extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              aluno.alunoName,
-                              style: TextStyle(
-                                  fontFamily: AppFonts.gotham,
-                                  fontSize: 24,
-                                  color: AppColors.black),
+                              aluno.alunoName ?? 'Nome do Aluno',
+                              style: TextStyle(fontFamily: AppFonts.gotham, fontSize: 24, color: AppColors.black),
                             ),
                             Text(
-                              aluno.alunoEmail,
-                              style: TextStyle(
-                                  fontFamily: AppFonts.gothamLight,
-                                  fontSize: 14,
-                                  color: AppColors.black),
+                              aluno.alunoEmail ?? 'Email do Aluno',
+                              style: TextStyle(fontFamily: AppFonts.gothamLight, fontSize: 14, color: AppColors.black),
                             ),
                           ],
                         ),
@@ -82,17 +80,8 @@ class CardAluno extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CustomButton(
-                text: 'Excluir Aluno',
-                color: Colors.red,
-                textColor: AppColors.white,
-                onTap: excluirAluno),
-            CustomButton(
-                width: 140,
-                text: 'Acessar Planilhas',
-                color: AppColors.grey,
-                textColor: AppColors.white,
-                onTap: acessarPlanilhas)
+            CustomButton(text: 'Excluir Aluno', color: Colors.red, textColor: AppColors.white, onTap: excluirAluno),
+            CustomButton(width: 140, text: 'Acessar Planilhas', color: AppColors.grey, textColor: AppColors.white, onTap: acessarPlanilhas)
           ],
         )
       ]),

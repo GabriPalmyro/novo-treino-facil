@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:brasil_fields/util/util_brasil_fields.dart';
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/helpers/numer_format.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,68 +17,52 @@ class MeuPersonalPage extends StatefulWidget {
 }
 
 class _MeuPersonalPageState extends State<MeuPersonalPage> {
-  Future<void> sendWhatsAppMessage({@required String phoneOld}) async {
+  Future<void> sendWhatsAppMessage({required String phoneOld}) async {
     String phone = UtilBrasilFields.removeCaracteres(phoneOld);
 
     String message = "Olá, estou com dúvidas, você pode me ajudar?";
-    //var whatsappUrl = "whatsapp://send?phone=$phone=$message";
-    String url() {
-      if (Platform.isAndroid) {
-        // add the [https]
-        return "https://wa.me/$phone/?text=${Uri.parse(message)}"; // new line
-      } else {
-        // add the [https]
-        return "https://api.whatsapp.com/send?phone=$phone=${Uri.parse(message)}"; // new line
-      }
+    String whatsappUrl;
+    if (Platform.isAndroid) {
+      // add the [https]
+      whatsappUrl = "https://wa.me/$phone/?text=${Uri.parse(message)}"; // new line
+    } else {
+      // add the [https]
+      whatsappUrl = "https://api.whatsapp.com/send?phone=$phone=${Uri.parse(message)}"; // new line
     }
 
-    await launch(url());
+    await launchUrl(Uri.tryParse(whatsappUrl)!);
   }
 
   int _calcTime(dateTime) {
     return DateTime.now().difference(dateTime).inDays;
   }
 
-  Future<void> showCustomDialogOpt({Function function, String message}) async {
+  Future<void> showCustomDialogOpt({required VoidCallback VoidCallBack, required String message,}) async {
     await showCustomAlertDialog(
         title: Text(
           'Deseja se desconectar?',
-          style: TextStyle(
-              fontFamily: AppFonts.gothamBold, color: AppColors.mainColor),
+          style: TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.mainColor),
         ),
         androidActions: [
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
+              child: Text('Cancelar', style: TextStyle(fontFamily: AppFonts.gotham, color: Colors.white))),
+          TextButton(onPressed: VoidCallBack, child: Text('Ok', style: TextStyle(fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
         ],
         iosActions: [
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancelar',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: Colors.white))),
-          TextButton(
-              onPressed: function,
-              child: Text('Ok',
-                  style: TextStyle(
-                      fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
+              child: Text('Cancelar', style: TextStyle(fontFamily: AppFonts.gotham, color: Colors.white))),
+          TextButton(onPressed: VoidCallBack, child: Text('Ok', style: TextStyle(fontFamily: AppFonts.gotham, color: AppColors.mainColor)))
         ],
         context: context,
         content: Text(
           message,
-          style: TextStyle(
-              height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
+          style: TextStyle(height: 1.1, fontFamily: AppFonts.gotham, color: Colors.white),
         ));
   }
 
@@ -92,19 +77,14 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.sentiment_dissatisfied_rounded,
-                size: 52, color: AppColors.mainColor),
+            Icon(Icons.sentiment_dissatisfied_rounded, size: 52, color: AppColors.mainColor),
             SizedBox(
               height: 5,
             ),
             Text(
               "Você não possui nenhum\nPersonal Trainer ativo",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 22,
-                  fontFamily: AppFonts.gothamBook,
-                  color: Colors.white,
-                  height: 1.2),
+              style: TextStyle(fontSize: 22, fontFamily: AppFonts.gothamBook, color: Colors.white, height: 1.2),
             ),
           ],
         );
@@ -130,16 +110,12 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                               color: Colors.black.withOpacity(0.2),
                               spreadRadius: 1,
                               blurRadius: 2,
-                              offset:
-                                  Offset(0, 2), // changes position of shadow
+                              offset: Offset(0, 2), // changes position of shadow
                             ),
                           ],
                         ),
-                        child: Image.network(
-                            personalManager.personal.personalPhoto,
-                            fit: BoxFit.cover, loadingBuilder:
-                                (BuildContext context, Widget child,
-                                    ImageChunkEvent loadingProgress) {
+                        child: Image.network(personalManager.personal.personalPhoto!, fit: BoxFit.cover,
+                            loadingBuilder: (_, child, loadingProgress) {
                           if (loadingProgress == null) {
                             return child;
                           }
@@ -152,13 +128,9 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                     height: 15,
                   ),
                   Text(
-                    personalManager.personal.personalName,
+                    personalManager.personal.personalName ?? '',
                     textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFonts.gothamThin,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                    style: TextStyle(color: Colors.white, fontFamily: AppFonts.gothamThin, fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                   SizedBox(
                     height: 12,
@@ -169,18 +141,12 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                       Text(
                         "Vocês estão conectados há",
                         textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: AppFonts.gothamThin,
-                            fontSize: 18),
+                        style: TextStyle(color: Colors.white, fontFamily: AppFonts.gothamThin, fontSize: 18),
                       ),
                       Text(
                         " ${_calcTime(personalManager.personal.connectionDate)} dias",
                         textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: Colors.green,
-                            fontFamily: AppFonts.gothamThin,
-                            fontSize: 18),
+                        style: TextStyle(color: Colors.green, fontFamily: AppFonts.gothamThin, fontSize: 18),
                       ),
                     ],
                   ),
@@ -197,21 +163,15 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                   Text(
                     "E-mail",
                     textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontFamily: AppFonts.gotham,
-                        fontSize: 24),
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontFamily: AppFonts.gotham, fontSize: 24),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
-                    personalManager.personal.personalEmail,
+                    personalManager.personal.personalEmail?? '',
                     textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFonts.gothamThin,
-                        fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontFamily: AppFonts.gothamThin, fontSize: 20),
                   ),
                 ],
               ),
@@ -223,21 +183,15 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                   Text(
                     "Número",
                     textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontFamily: AppFonts.gotham,
-                        fontSize: 24),
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontFamily: AppFonts.gotham, fontSize: 24),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Text(
-                    showNumber(personalManager.personal.personalPhone),
+                    showNumber(personalManager.personal.personalPhone ?? ''),
                     textAlign: TextAlign.start,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFonts.gothamThin,
-                        fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontFamily: AppFonts.gothamThin, fontSize: 20),
                   ),
                 ],
               ),
@@ -251,8 +205,7 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
               children: [
                 InkWell(
                   onTap: () async {
-                    await sendWhatsAppMessage(
-                        phoneOld: personalManager.personal.personalPhone);
+                    await sendWhatsAppMessage(phoneOld: personalManager.personal.personalPhone ?? '');
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.4,
@@ -261,40 +214,28 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                       child: Text(
                         "Enviar Mensagem",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: AppFonts.gothamBook,
-                            fontSize: 12),
+                        style: TextStyle(color: Colors.white, fontFamily: AppFonts.gothamBook, fontSize: 12),
                       ),
                     ),
                     decoration: BoxDecoration(
                         color: Colors.green,
                         borderRadius: BorderRadius.all(Radius.circular(20)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 2,
-                              offset: Offset(0, 4))
-                        ]),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), spreadRadius: 3, blurRadius: 2, offset: Offset(0, 4))]),
                   ),
                 ),
                 InkWell(
                   onTap: () async {
                     await showCustomDialogOpt(
                       message:
-                          'Desconectar de ${personalManager.personal.personalName.split(' ')[0]} irá resultar na perda do controle sobre suas planilhas e treinos.',
-                      function: () async {
-                        String response = await context
+                          'Desconectar de ${personalManager.personal.personalName!.split(' ')[0]} irá resultar na perda do controle sobre suas planilhas e treinos.',
+                      VoidCallBack: () async {
+                        final response = await context
                             .read<UserManager>()
-                            .deletePersonalAlunoConnection(
-                                personalId: context.read<UserManager>().user.id,
-                                userId: personalManager.personal.personalId);
+                            .deletePersonalAlunoConnection(personalId: context.read<UserManager>().user.id!, userId: personalManager.personal.personalId!);
 
                         if (response != null) {
                           Navigator.pop(context);
-                          mostrarSnackBar(
-                              message: response, color: AppColors.red);
+                          mostrarSnackBar(message: response, color: AppColors.red, context: context);
                         } else {
                           personalManager.disconectPersonal();
                           Navigator.pop(context);
@@ -309,22 +250,13 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
                       child: Text(
                         "Desconectar",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: AppFonts.gothamBook,
-                            fontSize: 12),
+                        style: TextStyle(color: Colors.white, fontFamily: AppFonts.gothamBook, fontSize: 12),
                       ),
                     ),
                     decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.all(Radius.circular(20)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 2,
-                              offset: Offset(0, 4))
-                        ]),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), spreadRadius: 3, blurRadius: 2, offset: Offset(0, 4))]),
                   ),
                 ),
               ],
@@ -333,15 +265,5 @@ class _MeuPersonalPageState extends State<MeuPersonalPage> {
         ),
       );
     });
-  }
-
-  void mostrarSnackBar({String message, Color color}) {
-    SnackBar snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: color,
-    );
-
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

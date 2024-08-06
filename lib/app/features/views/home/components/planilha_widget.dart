@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 class PlanilhaContainer extends StatelessWidget {
-  final Function onTap;
+  final VoidCallback onTap;
   final String title;
   final String description;
 
   const PlanilhaContainer({
-    this.onTap,
-    this.title,
-    this.description,
+    required this.onTap,
+    required this.title,
+    required this.description,
   });
 
   @override

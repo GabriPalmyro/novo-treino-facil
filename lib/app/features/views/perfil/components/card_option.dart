@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
-
 import 'package:tabela_treino/app/core/core.dart';
 
 class CardOption extends StatelessWidget {
   final String title;
-  final Function onTap;
+  final VoidCallback onTap;
 
   const CardOption({
-    this.title,
-    this.onTap,
+    required this.title,
+    required this.onTap,
   });
 
   @override

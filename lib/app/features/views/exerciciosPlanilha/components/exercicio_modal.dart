@@ -2,17 +2,12 @@ import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
-import 'package:tabela_treino/app/core/app_colors.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
-import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
-import 'package:firebase_admob/firebase_admob.dart';
-import '../exercicios_planilha_screen.dart';
 
 class ExercicioViewModal extends StatefulWidget {
   final ExerciciosPlanilha exercicio;
@@ -23,50 +18,30 @@ class ExercicioViewModal extends StatefulWidget {
   final int tamPlan;
   final String idUser;
   final bool isBiSet;
-  final String idBiSet;
+  final String? idBiSet;
   final bool isSecondExercise;
   final bool isPersonalManag;
+  final VoidCallback refetchExercises;
 
   ExercicioViewModal(
-      {@required this.exercicio,
+      {required this.exercicio,
       this.isFriendAcess = false,
-      @required this.idExercicio,
-      @required this.idPlanilha,
-      @required this.titlePlanilha,
-      @required this.tamPlan,
-      @required this.idUser,
+      required this.idExercicio,
+      required this.idPlanilha,
+      required this.titlePlanilha,
+      required this.tamPlan,
+      required this.idUser,
+      required this.refetchExercises,
       this.idBiSet,
       this.isBiSet = false,
       this.isSecondExercise = false,
-      @required this.isPersonalManag});
+      required this.isPersonalManag});
 
   @override
   _ExercicioViewModalState createState() => _ExercicioViewModalState();
 }
 
 class _ExercicioViewModalState extends State<ExercicioViewModal> {
-  //* ADS
-  InterstitialAd interstitialAdMuscle;
-  bool isInterstitialReady = false;
-
-  void _loadInterstitialAd() {
-    interstitialAdMuscle.load();
-  }
-
-  void _onInterstitialAdEvent(MobileAdEvent event) {
-    switch (event) {
-      case MobileAdEvent.loaded:
-        isInterstitialReady = true;
-        break;
-      case MobileAdEvent.failedToLoad:
-        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-        isInterstitialReady = false;
-        break;
-      default:
-      // do nothing
-    }
-  }
-
   TextEditingController _seriesController = TextEditingController();
   TextEditingController _repsController = TextEditingController();
   TextEditingController _cargaController = TextEditingController();
@@ -82,31 +57,23 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
   @override
   void initState() {
     super.initState();
-    _seriesController.text = widget.exercicio.series;
-    _repsController.text = widget.exercicio.reps;
+    _seriesController.text = widget.exercicio.series!;
+    _repsController.text = widget.exercicio.reps!;
     _cargaController.text = widget.exercicio.carga.toString();
-    _obsController.text = widget.exercicio.comments;
-
-    interstitialAdMuscle = InterstitialAd(
-      adUnitId: interstitialAdUnitId(),
-      listener: _onInterstitialAdEvent,
-    );
-    _loadInterstitialAd();
+    _obsController.text = widget.exercicio.comments!;
   }
 
   void resetFields() {
     setState(() {
-      _seriesController.text = widget.exercicio.series;
-      _repsController.text = widget.exercicio.reps;
+      _seriesController.text = widget.exercicio.series!;
+      _repsController.text = widget.exercicio.reps!;
       _cargaController.text = widget.exercicio.carga.toString();
-      _obsController.text = widget.exercicio.comments;
+      _obsController.text = widget.exercicio.comments!;
     });
   }
 
   String _calculateProgress(ImageChunkEvent loadingProgress) {
-    return ((loadingProgress.cumulativeBytesLoaded * 100) /
-            loadingProgress.expectedTotalBytes)
-        .toStringAsFixed(2);
+    return ((loadingProgress.cumulativeBytesLoaded * 100) / loadingProgress.expectedTotalBytes!).toStringAsFixed(2);
   }
 
   bool _isEnable = false;
@@ -124,10 +91,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
         child: Container(
             height: height * 0.75,
             decoration: new BoxDecoration(
-                color: AppColors.grey,
-                borderRadius: new BorderRadius.only(
-                    topLeft: const Radius.circular(25.0),
-                    topRight: const Radius.circular(25.0))),
+                color: AppColors.grey, borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0))),
             child: Padding(
               padding: EdgeInsets.only(top: 18.0, right: 18, left: 18),
               child: Form(
@@ -143,12 +107,9 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                           Expanded(
                             flex: 80,
                             child: AutoSizeText(
-                              widget.exercicio.title.toUpperCase(),
+                              widget.exercicio.title!.toUpperCase(),
                               maxLines: 2,
-                              style: TextStyle(
-                                  fontFamily: AppFonts.gothamBold,
-                                  color: AppColors.white,
-                                  fontSize: 22.0),
+                              style: TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.white, fontSize: 22.0),
                             ),
                           ),
                           Expanded(
@@ -206,10 +167,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                 child: Text(
                                   "Erro ao carregar exercício",
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontFamily: AppFonts.gothamLight),
+                                  style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: AppFonts.gothamLight),
                                 ),
                               ),
                               loadingBuilder: (_, loadingProgress) => Center(
@@ -219,32 +177,22 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                   Text(
                                     "Carregando exercício: ",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontFamily: "Gotham"),
+                                    style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: "Gotham"),
                                   ),
                                   SizedBox(
                                     height: 25,
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 40),
+                                    padding: const EdgeInsets.symmetric(horizontal: 40),
                                     child: Text(
-                                      loadingProgress == null
-                                          ? "0.00%"
-                                          : "${_calculateProgress(loadingProgress)}%",
+                                      loadingProgress == null ? "0.00%" : "${_calculateProgress(loadingProgress)}%",
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.amber,
-                                          fontSize: 30,
-                                          fontFamily: AppFonts.gothamBold),
+                                      style: TextStyle(color: Colors.amber, fontSize: 30, fontFamily: AppFonts.gothamBold),
                                     ),
                                   ),
                                 ],
                               )),
-                              imageProvider:
-                                  NetworkImage(widget.exercicio.video),
+                              imageProvider: NetworkImage(widget.exercicio.video!),
                               initialScale: PhotoViewComputedScale.contained,
                               minScale: PhotoViewComputedScale.covered * 0.5,
                             ),
@@ -258,15 +206,13 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: FormField<String>(
                                       initialValue: '',
                                       validator: (text) {
                                         if (_seriesController.text.isEmpty) {
                                           setState(() {
-                                            errorMessage =
-                                                'Séries não pode ser vazia';
+                                            errorMessage = 'Séries não pode ser vazia';
                                           });
                                           return 'Séries não pode ser vazia';
                                         }
@@ -275,50 +221,32 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                       builder: (state) {
                                         return Container(
                                             child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text('Séries',
                                                 style: TextStyle(
-                                                    fontFamily:
-                                                        AppFonts.gothamBook,
-                                                    color: state.hasError
-                                                        ? Colors.red
-                                                        : AppColors.white,
-                                                    fontSize: 18)),
+                                                    fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 18)),
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0),
+                                              padding: const EdgeInsets.only(top: 8.0),
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: AppColors.lightGrey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
+                                                  borderRadius: BorderRadius.circular(5),
                                                 ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10.0),
+                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                                 child: TextFormField(
                                                   enabled: _isEnable,
                                                   controller: _seriesController,
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  cursorColor:
-                                                      AppColors.mainColor,
+                                                  keyboardType: TextInputType.text,
+                                                  cursorColor: AppColors.mainColor,
                                                   showCursor: true,
                                                   textAlign: TextAlign.center,
                                                   focusNode: _seriesFocus,
                                                   onFieldSubmitted: (text) {
                                                     _repsFocus.requestFocus();
                                                   },
-                                                  textInputAction:
-                                                      TextInputAction.next,
-                                                  style: TextStyle(
-                                                      fontFamily:
-                                                          AppFonts.gothamBook,
-                                                      color: state.hasError
-                                                          ? Colors.red
-                                                          : AppColors.white),
+                                                  textInputAction: TextInputAction.next,
+                                                  style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                                   decoration: InputDecoration(
                                                     border: InputBorder.none,
                                                   ),
@@ -332,15 +260,13 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                               ),
                               Expanded(
                                   child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: FormField<String>(
                                     initialValue: '',
                                     validator: (text) {
                                       if (_repsController.text.isEmpty) {
                                         setState(() {
-                                          errorMessage =
-                                              'Repetições não pode ser vazia';
+                                          errorMessage = 'Repetições não pode ser vazia';
                                         });
                                         return 'Repetições não pode ser vazia';
                                       }
@@ -349,37 +275,25 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                     builder: (state) {
                                       return Container(
                                           child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           AutoSizeText('Repetições',
                                               maxLines: 1,
                                               style: TextStyle(
-                                                  fontFamily:
-                                                      AppFonts.gothamBook,
-                                                  color: state.hasError
-                                                      ? Colors.red
-                                                      : AppColors.white,
-                                                  fontSize: 18)),
+                                                  fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 18)),
                                           Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
+                                            padding: const EdgeInsets.only(top: 8.0),
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 color: AppColors.lightGrey,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
+                                                borderRadius: BorderRadius.circular(5),
                                               ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10.0),
+                                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                               child: TextFormField(
                                                 enabled: _isEnable,
                                                 controller: _repsController,
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                cursorColor:
-                                                    AppColors.mainColor,
+                                                keyboardType: TextInputType.text,
+                                                cursorColor: AppColors.mainColor,
                                                 showCursor: true,
                                                 maxLines: null,
                                                 textAlign: TextAlign.center,
@@ -388,14 +302,8 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                                   _repsFocus.unfocus();
                                                   _cargaFocus.requestFocus();
                                                 },
-                                                textInputAction:
-                                                    TextInputAction.next,
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        AppFonts.gothamBook,
-                                                    color: state.hasError
-                                                        ? Colors.red
-                                                        : AppColors.white),
+                                                textInputAction: TextInputAction.next,
+                                                style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
@@ -408,23 +316,19 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                               )),
                               Expanded(
                                   child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: FormField<String>(
                                     initialValue: '',
                                     validator: (text) {
                                       RegExp regExp = new RegExp(r'(^[0-9]*$)');
                                       if (_cargaController.text.isEmpty) {
                                         setState(() {
-                                          errorMessage =
-                                              'Carga não pode ser vazia';
+                                          errorMessage = 'Carga não pode ser vazia';
                                         });
                                         return 'Carga não pode ser vazia';
-                                      } else if (!regExp
-                                          .hasMatch(_cargaController.text)) {
+                                      } else if (!regExp.hasMatch(_cargaController.text)) {
                                         setState(() {
-                                          errorMessage =
-                                              'Carga não pode contar letras ou símbolos';
+                                          errorMessage = 'Carga não pode contar letras ou símbolos';
                                         });
                                         return 'Carga não pode contar letras ou símbolos';
                                       }
@@ -433,37 +337,25 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                     builder: (state) {
                                       return Container(
                                           child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           AutoSizeText('Carga',
                                               maxLines: 1,
                                               style: TextStyle(
-                                                  fontFamily:
-                                                      AppFonts.gothamBook,
-                                                  color: state.hasError
-                                                      ? Colors.red
-                                                      : AppColors.white,
-                                                  fontSize: 18)),
+                                                  fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 18)),
                                           Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
+                                            padding: const EdgeInsets.only(top: 8.0),
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 color: AppColors.lightGrey,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
+                                                borderRadius: BorderRadius.circular(5),
                                               ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10.0),
+                                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                               child: TextFormField(
                                                 enabled: _isEnable,
                                                 controller: _cargaController,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                cursorColor:
-                                                    AppColors.mainColor,
+                                                keyboardType: TextInputType.number,
+                                                cursorColor: AppColors.mainColor,
                                                 showCursor: true,
                                                 maxLines: null,
                                                 textAlign: TextAlign.center,
@@ -472,20 +364,11 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                                   _cargaFocus.unfocus();
                                                   _obsFocus.requestFocus();
                                                 },
-                                                textInputAction:
-                                                    TextInputAction.next,
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        AppFonts.gothamBook,
-                                                    color: state.hasError
-                                                        ? Colors.red
-                                                        : AppColors.white),
+                                                textInputAction: TextInputAction.next,
+                                                style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                                 decoration: InputDecoration(
                                                   suffixText: 'kg',
-                                                  suffixStyle: TextStyle(
-                                                      fontFamily:
-                                                          AppFonts.gothamBook,
-                                                      color: AppColors.white),
+                                                  suffixStyle: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white),
                                                   border: InputBorder.none,
                                                 ),
                                               ),
@@ -505,12 +388,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AutoSizeText('Observações',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    fontFamily: AppFonts.gothamBook,
-                                    color: AppColors.white,
-                                    fontSize: 18)),
+                            AutoSizeText('Observações', maxLines: 1, style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white, fontSize: 18)),
                             Padding(
                               padding: const EdgeInsets.only(top: 5.0),
                               child: Container(
@@ -518,8 +396,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                   color: AppColors.lightGrey,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                 child: TextFormField(
                                   enabled: _isEnable,
                                   controller: _obsController,
@@ -528,9 +405,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                   showCursor: true,
                                   maxLines: null,
                                   focusNode: _obsFocus,
-                                  style: TextStyle(
-                                      fontFamily: AppFonts.gothamBook,
-                                      color: AppColors.white),
+                                  style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
@@ -542,17 +417,14 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                       ),
                       if (!widget.isFriendAcess) ...[
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 12.0, left: 8, right: 8, bottom: 12.0),
+                          padding: const EdgeInsets.only(top: 12.0, left: 8, right: 8, bottom: 12.0),
                           child: Container(
                             width: width * 0.9,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CustomButton(
-                                    text: _isEnable
-                                        ? 'Confirmar'
-                                        : 'Editar Exercício',
+                                    text: _isEnable ? 'Confirmar' : 'Editar Exercício',
                                     color: AppColors.mainColor,
                                     textColor: AppColors.black,
                                     onTap: () async {
@@ -561,100 +433,44 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                           _isEnable = true;
                                         });
                                       } else {
-                                        var adsManager =
-                                            context.read<AdsManager>();
-
-                                        if (_formKey.currentState.validate()) {
-                                          if (isInterstitialReady) {
-                                            //* VALIDAR ANÚNCIO INTERCALADO
-                                            if (await adsManager
-                                                .getIsAvaliableToShowAdEditExercise()) {
-                                              await interstitialAdMuscle.show();
-                                              await adsManager
-                                                  .setIsAvaliableToShowAdEditExercise(
-                                                      false);
-                                            } else
-                                              await adsManager
-                                                  .setIsAvaliableToShowAdEditExercise(
-                                                      true);
-                                          }
-
-                                          if (widget.isBiSet) {
-                                            ExerciciosPlanilha exercicio =
-                                                ExerciciosPlanilha(
+                                        if (_formKey.currentState!.validate()) {
+                                          if (widget.isBiSet && widget.idBiSet != null) {
+                                            ExerciciosPlanilha exercicio = ExerciciosPlanilha(
                                               series: _seriesController.text,
                                               reps: _repsController.text,
-                                              carga: int.tryParse(
-                                                  _cargaController.text),
+                                              carga: int.tryParse(_cargaController.text),
                                               comments: _obsController.text,
                                             );
 
-                                            String response = await context
-                                                .read<
-                                                    ExerciciosPlanilhaManager>()
-                                                .editExerciseBiSet(
-                                                    planilhaId:
-                                                        widget.idPlanilha,
-                                                    idUser: widget.idUser,
-                                                    idExercicio:
-                                                        widget.idExercicio,
-                                                    idBiSet: widget.idBiSet,
-                                                    exercicio: exercicio);
-                                            if (response == null) {
-                                              Navigator.pushReplacementNamed(
-                                                  context,
-                                                  AppRoutes.exerciciosPlanilha,
-                                                  arguments:
-                                                      ExerciciosPlanilhaArguments(
-                                                    title: widget.titlePlanilha,
-                                                    idPlanilha:
-                                                        widget.idPlanilha,
-                                                    idUser: widget.idUser,
-                                                    isFriendAcess:
-                                                        widget.isFriendAcess,
-                                                    isPersonalAcess:
-                                                        widget.isPersonalManag,
-                                                  ));
-                                            } else {
-                                              debugPrint('Erro $response');
-                                            }
+                                            await context.read<ExerciciosPlanilhaManager>().editExerciseBiSet(
+                                                planilhaId: widget.idPlanilha,
+                                                idUser: widget.idUser,
+                                                idExercicio: widget.idExercicio,
+                                                idBiSet: widget.idBiSet!,
+                                                exercicio: exercicio);
+
+                                            Navigator.pop(context);
+                                            widget.refetchExercises.call();
                                           } else {
-                                            ExerciciosPlanilha exercicio =
-                                                ExerciciosPlanilha(
+                                            ExerciciosPlanilha exercicio = ExerciciosPlanilha(
                                               series: _seriesController.text,
                                               reps: _repsController.text,
-                                              carga: int.tryParse(
-                                                  _cargaController.text),
+                                              carga: int.tryParse(_cargaController.text),
                                               comments: _obsController.text,
                                             );
 
-                                            String response = await context
-                                                .read<
-                                                    ExerciciosPlanilhaManager>()
-                                                .editExerciseUniSet(
-                                                    planilhaId:
-                                                        widget.idPlanilha,
-                                                    idUser: widget.idUser,
-                                                    idExercicio:
-                                                        widget.idExercicio,
-                                                    exercicio: exercicio);
+                                            final response = await context.read<ExerciciosPlanilhaManager>().editExerciseUniSet(
+                                                  planilhaId: widget.idPlanilha,
+                                                  idUser: widget.idUser,
+                                                  idExercicio: widget.idExercicio,
+                                                  exercicio: exercicio,
+                                                );
+
                                             if (response == null) {
-                                              Navigator.pushReplacementNamed(
-                                                  context,
-                                                  AppRoutes.exerciciosPlanilha,
-                                                  arguments:
-                                                      ExerciciosPlanilhaArguments(
-                                                    title: widget.titlePlanilha,
-                                                    idPlanilha:
-                                                        widget.idPlanilha,
-                                                    idUser: widget.idUser,
-                                                    isFriendAcess:
-                                                        widget.isFriendAcess,
-                                                    isPersonalAcess:
-                                                        widget.isPersonalManag,
-                                                  ));
+                                              Navigator.pop(context);
+                                              widget.refetchExercises.call();
                                             } else {
-                                              debugPrint('Erro $response');
+                                              log('Erro $response');
                                             }
                                           }
                                         }
@@ -663,12 +479,8 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                 if (_isEnable) ...[
                                   CustomButton(
                                     text: 'Cancelar',
-                                    color: _isEnable
-                                        ? AppColors.black
-                                        : AppColors.mainColor,
-                                    textColor: _isEnable
-                                        ? AppColors.white
-                                        : AppColors.black,
+                                    color: _isEnable ? AppColors.black : AppColors.mainColor,
+                                    textColor: _isEnable ? AppColors.white : AppColors.black,
                                     onTap: () async {
                                       setState(() {
                                         _isEnable = false;
@@ -688,13 +500,10 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                             ),
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: AppColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(8)),
+                              decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(8)),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   Icon(
                                     Icons.error_outline,
@@ -702,9 +511,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                   ),
                                   Text(
                                     errorMessage,
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: Colors.red),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: Colors.red),
                                   ),
                                 ],
                               ),

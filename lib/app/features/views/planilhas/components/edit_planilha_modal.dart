@@ -1,11 +1,6 @@
-import 'dart:developer';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/ads/ads_model.dart';
-
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
@@ -13,7 +8,6 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/select_diasemana.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 
 class EditPlanilhaModal extends StatefulWidget {
   final Planilha planilha;
@@ -22,10 +16,10 @@ class EditPlanilhaModal extends StatefulWidget {
   final bool isPersonalAcess;
 
   const EditPlanilhaModal(
-      {@required this.planilha,
-      @required this.index,
-      @required this.userId,
-      @required this.isPersonalAcess});
+      {required this.planilha,
+      required this.index,
+      required this.userId,
+      required this.isPersonalAcess});
 
   @override
   _EditPlanilhaModalState createState() => _EditPlanilhaModalState();
@@ -40,46 +34,46 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
   List<DiaDaSemana> _diasDaSemana = [];
 
   //* ADS
-  InterstitialAd interstitialAdMuscle;
+  // InterstitialAd interstitialAdMuscle;
   bool isInterstitialReady = false;
 
-  void _loadInterstitialAd() {
-    interstitialAdMuscle.load();
-  }
+  // void _loadInterstitialAd() {
+  //   interstitialAdMuscle.load();
+  // }
 
-  void _onInterstitialAdEvent(MobileAdEvent event) {
-    switch (event) {
-      case MobileAdEvent.loaded:
-        isInterstitialReady = true;
-        break;
-      case MobileAdEvent.failedToLoad:
-        log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-        isInterstitialReady = false;
-        break;
-      default:
-      // do nothing
-    }
-  }
+  // void _onInterstitialAdEvent(MobileAdEvent event) {
+  //   switch (event) {
+  //     case MobileAdEvent.loaded:
+  //       isInterstitialReady = true;
+  //       break;
+  //     case MobileAdEvent.failedToLoad:
+  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
+  //       isInterstitialReady = false;
+  //       break;
+  //     default:
+  //     // do nothing
+  //   }
+  // }
 
   void resetCampos() {
     setState(() {
-      _titleController.text = widget.planilha.title;
-      _descriptionController.text = widget.planilha.description;
+      _titleController.text = widget.planilha.title!;
+      _descriptionController.text = widget.planilha.description!;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _titleController.text = widget.planilha.title;
-    _descriptionController.text = widget.planilha.description;
-    _diasDaSemana = widget.planilha.diasDaSemana;
+    _titleController.text = widget.planilha.title!;
+    _descriptionController.text = widget.planilha.description!;
+    _diasDaSemana = widget.planilha.diasDaSemana!;
 
-    interstitialAdMuscle = InterstitialAd(
-      adUnitId: interstitialAdUnitId(),
-      listener: _onInterstitialAdEvent,
-    );
-    _loadInterstitialAd();
+    // interstitialAdMuscle = InterstitialAd(
+    //   adUnitId: interstitialAdUnitId(),
+    //   listener: _onInterstitialAdEvent,
+    // );
+    // _loadInterstitialAd();
   }
 
   @override
@@ -118,9 +112,9 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                           ),
                           InkWell(
                             onTap: () async {
-                              String response =
+                              final response =
                                   await planilhaManager.deletarPlanilhaCompleta(
-                                      planilhaId: widget.planilha.id,
+                                      planilhaId: widget.planilha.id!,
                                       userId: widget.userId,
                                       index: widget.index,
                                       isPersonalAcess: widget.isPersonalAcess);
@@ -332,7 +326,7 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                 color: AppColors.mainColor,
                                 textColor: AppColors.black,
                                 onTap: () async {
-                                  if (_formKey.currentState.validate()) {
+                                  if (_formKey.currentState!.validate()) {
                                     Planilha planilha = Planilha(
                                         id: widget.planilha.id,
                                         title: _titleController.text,
@@ -346,9 +340,8 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                         index: widget.index,
                                         isPersonalAcess:
                                             widget.isPersonalAcess);
-                                    if (isInterstitialReady) {
-                                      await interstitialAdMuscle.show();
-                                    }
+                                    // 
+                                    
                                     Navigator.pop(context);
                                   }
                                 },

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
@@ -27,7 +28,7 @@ class AmigosProcuradosManager extends ChangeNotifier {
     return File("${directory.path}/procurados.json");
   }
 
-  Future<void> inserirAmigoNaLista({@required User user}) async {
+  Future<void> inserirAmigoNaLista({required User user}) async {
     if (!amigosProcurados.contains(user)) {
       amigosProcurados.remove(user);
       amigosProcurados.add(user);
@@ -61,7 +62,6 @@ class AmigosProcuradosManager extends ChangeNotifier {
       loading = false;
     } catch (e) {
       loading = false;
-      return 'Read local storage fail!';
     }
   }
 }

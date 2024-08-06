@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'custom_alert_dialog.dart';
 
 Future<void> showCustomAlertDialog(
-    {BuildContext context,
-    Widget title,
-    Widget content,
-    List<Widget> androidActions,
-    List<Widget> iosActions,
+    {required BuildContext context,
+    required Widget title,
+    required Widget content,
+    required List<Widget> androidActions,
+    required List<Widget> iosActions,
     bool barrierDismissible = false}) async {
   if (Platform.isAndroid) {
     await showDialog(

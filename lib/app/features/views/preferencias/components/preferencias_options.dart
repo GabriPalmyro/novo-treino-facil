@@ -4,12 +4,13 @@ import 'package:tabela_treino/app/core/core.dart';
 class PreferenciasOptions extends StatelessWidget {
   final String labelText;
   final bool isActive;
-  final Function onTap;
+  final VoidCallback onTap;
 
-  const PreferenciasOptions(
-      {@required this.labelText,
-      @required this.isActive,
-      @required this.onTap});
+  const PreferenciasOptions({
+    required this.labelText,
+    required this.isActive,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +21,7 @@ class PreferenciasOptions extends StatelessWidget {
             flex: 65,
             child: Text(
               labelText,
-              style: TextStyle(
-                  fontFamily: AppFonts.gothamBook,
-                  color: AppColors.white,
-                  fontSize: 16),
+              style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white, fontSize: 16),
             )),
         Expanded(
             flex: 35,
@@ -35,24 +33,13 @@ class PreferenciasOptions extends StatelessWidget {
                     width: width * 0.13,
                     height: 30,
                     decoration: BoxDecoration(
-                        color: !isActive
-                            ? AppColors.mainColor
-                            : Colors.transparent,
-                        border: Border.all(
-                            color: isActive
-                                ? AppColors.mainColor
-                                : Colors.transparent,
-                            width: 2),
+                        color: !isActive ? AppColors.mainColor : Colors.transparent,
+                        border: Border.all(color: isActive ? AppColors.mainColor : Colors.transparent, width: 2),
                         borderRadius: BorderRadius.circular(5.0)),
                     child: Center(
                       child: Text(
                         'Não',
-                        style: TextStyle(
-                            fontFamily: AppFonts.gothamBook,
-                            color: !isActive
-                                ? AppColors.grey
-                                : AppColors.mainColor,
-                            fontSize: 12.0),
+                        style: TextStyle(fontFamily: AppFonts.gothamBook, color: !isActive ? AppColors.grey : AppColors.mainColor, fontSize: 12.0),
                       ),
                     ),
                   ),
@@ -65,24 +52,13 @@ class PreferenciasOptions extends StatelessWidget {
                       width: width * 0.13,
                       height: 30,
                       decoration: BoxDecoration(
-                          color: isActive
-                              ? AppColors.mainColor
-                              : Colors.transparent,
-                          border: Border.all(
-                              color: !isActive
-                                  ? AppColors.mainColor
-                                  : Colors.transparent,
-                              width: 2),
+                          color: isActive ? AppColors.mainColor : Colors.transparent,
+                          border: Border.all(color: !isActive ? AppColors.mainColor : Colors.transparent, width: 2),
                           borderRadius: BorderRadius.circular(5.0)),
                       child: Center(
                         child: Text(
                           'Sim',
-                          style: TextStyle(
-                              fontFamily: AppFonts.gothamBook,
-                              color: isActive
-                                  ? AppColors.grey
-                                  : AppColors.mainColor,
-                              fontSize: 12.0),
+                          style: TextStyle(fontFamily: AppFonts.gothamBook, color: isActive ? AppColors.grey : AppColors.mainColor, fontSize: 12.0),
                         ),
                       ),
                     ),

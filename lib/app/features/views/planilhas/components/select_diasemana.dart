@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import 'package:tabela_treino/app/core/app_colors.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 
@@ -9,7 +7,7 @@ import 'custom_button.dart';
 class SelectDiaSemanaModal extends StatefulWidget {
   final List<DiaDaSemana> diasDaSemana;
 
-  const SelectDiaSemanaModal({this.diasDaSemana});
+  const SelectDiaSemanaModal({required this.diasDaSemana});
 
   @override
   _SelectDiaSemanaModalState createState() => _SelectDiaSemanaModalState();
