@@ -176,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Olá, ${capitalizeString(userManager.user.name!)}",
+                                "Olá, ${capitalizeString(userManager.user.name ?? '')}",
                                 style: TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 33, color: AppColors.mainColor),
                               ),
                               Text(

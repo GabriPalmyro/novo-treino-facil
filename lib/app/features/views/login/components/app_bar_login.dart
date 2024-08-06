@@ -16,7 +16,7 @@ class AppBarLogin extends StatelessWidget {
       elevation: 25,
       centerTitle: true,
       title: Image.asset(
-        'images/logo.png',
+        AppImages.logo,
         height: 120,
       ),
       backgroundColor: AppColors.mainColor,

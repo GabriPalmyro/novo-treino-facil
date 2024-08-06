@@ -50,26 +50,26 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/
+    - assets/images/
 
   fonts:
     - family: Gotham
       fonts:
-        - asset: assets/GothamMedium.ttf
-        - asset: assets/GothamMediumItalic.ttf
+        - asset: assets/fonts/GothamMedium.ttf
+        - asset: assets/fonts/GothamMediumItalic.ttf
           style: italic
     - family: GothamBold
       fonts:
-        - asset: assets/GothamBold.ttf
-        - asset: assets/GothamBoldItalic.ttf
+        - asset: assets/fonts/GothamBold.ttf
+        - asset: assets/fonts/GothamBoldItalic.ttf
     - family: GothamBook
       fonts:
-        - asset: assets/GothamBook.ttf
-        - asset: assets/GothamBookItalic.ttf
+        - asset: assets/fonts/GothamBook.ttf
+        - asset: assets/fonts/GothamBookItalic.ttf
     - family: GothamLight
       fonts:
-        - asset: assets/GothamLight.ttf
+        - asset: assets/fonts/GothamLight.ttf
     - family: GothamThin
       fonts:
-        - asset: assets/Gotham-Thin.otf
+        - asset: assets/fonts/Gotham-Thin.otf
   
