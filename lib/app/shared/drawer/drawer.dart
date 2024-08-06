@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
-import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
-import 'package:tabela_treino/app/shared/dialogs/show_custom_alert_dialog.dart';
+import 'package:tabela_treino/app/shared/drawer/components/logout_button.dart';
 import 'package:tabela_treino/app/shared/shimmer/drawer/drawer_shimmer.dart';
 
 import 'components/header_drawer.dart';
@@ -22,37 +21,41 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserManager>(builder: (_, userManager, __) {
-      if (isLoading) {
-        return DrawerLoading();
-      } else {
+    return Consumer<UserManager>(
+      builder: (_, userManager, __) {
+        if (isLoading) {
+          return DrawerLoading();
+        }
+
         return Drawer(
           child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
             color: AppColors.grey,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HeaderDrawer(
-                    fullName: userManager.user.fullName(),
-                    photoURL: userManager.user.photoURL!,
-                    isPersonal: userManager.user.isPersonal!,
-                    onTap: () {
-                      if (widget.pageNow != 5) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, AppRoutes.meuPerfil, (route) => false);
-                      }
-                    },
-                  ),
-                  Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HeaderDrawer(
+                  fullName: userManager.user.fullName(),
+                  photoURL: userManager.user.photoURL!,
+                  isPersonal: userManager.user.isPersonal!,
+                  onTap: () {
+                    if (widget.pageNow != 5) {
+                      Navigator.pushNamed(context, AppRoutes.meuPerfil);
+                    }
+                  },
+                ),
+                Expanded(
+                  child: Container(
                     padding: const EdgeInsets.only(left: 24.0),
                     child: Column(
                       children: [
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 0) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, AppRoutes.home, (route) => false);
+                              Navigator.pushNamed(context, AppRoutes.home);
+                            } else {
+                              Navigator.pop(context);
                             }
                           },
                           child: Container(
@@ -82,9 +85,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 1) {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  AppRoutes.planilhas, (route) => false,
-                                  arguments: userManager.user.id);
+                              Navigator.pushNamed(context, AppRoutes.planilhas, arguments: userManager.user.id);
                             }
                           },
                           child: Container(
@@ -115,8 +116,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 2) {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  AppRoutes.listaExercicios, (route) => false);
+                              Navigator.pushNamed(context, AppRoutes.listaExercicios);
                             }
                           },
                           child: Container(
@@ -144,17 +144,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             ),
                           ),
                         ),
-                        if (context
-                            .read<CoreAppController>()
-                            .coreInfos
-                            .mostrarTreinosFaceis!) ...[
+                        if (context.read<CoreAppController>().coreInfos.mostrarTreinosFaceis!) ...[
                           InkWell(
                             onTap: () {
                               if (widget.pageNow != 3) {}
                             },
                             child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              padding: const EdgeInsets.symmetric(vertical: 12.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -183,11 +179,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           onTap: () {
                             if (widget.pageNow != 4) {
                               if (userManager.user.isPersonal!) {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    AppRoutes.alunos, (route) => false);
+                                Navigator.pushNamed(context, AppRoutes.alunos);
                               } else {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    AppRoutes.personal, (route) => false);
+                                Navigator.pushNamed(context, AppRoutes.personal);
                               }
                             }
                           },
@@ -198,17 +192,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
-                                  userManager.user.isPersonal!
-                                      ? Icons.people_rounded
-                                      : Icons.live_help,
+                                  userManager.user.isPersonal! ? Icons.people_rounded : Icons.live_help,
                                   size: 30,
                                   color: AppColors.mainColor,
                                 ),
                                 SizedBox(width: 32),
                                 Text(
-                                  userManager.user.isPersonal!
-                                      ? "Alunos"
-                                      : "Personal\nTrainer",
+                                  userManager.user.isPersonal! ? "Alunos" : "Personal\nTrainer",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: AppFonts.gothamLight,
@@ -223,8 +213,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 5) {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  AppRoutes.meuPerfil, (route) => false);
+                              Navigator.pushNamed(context, AppRoutes.meuPerfil);
                             }
                           },
                           child: Container(
@@ -252,105 +241,25 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () async {
-                            await showCustomAlertDialog(
-                                title: Text(
-                                  'Aviso',
-                                  style: TextStyle(
-                                      fontFamily: AppFonts.gothamBold,
-                                      color: Colors.red),
-                                ),
-                                androidActions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Não',
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gotham,
-                                              color: Colors.white))),
-                                  TextButton(
-                                      onPressed: () async {
-                                        isLoading = true;
-                                        await userManager.logout();
-
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            AppRoutes.login,
-                                            (route) => false);
-                                      },
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  AppColors.red)),
-                                      child: Text('Sim',
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gotham,
-                                              color: AppColors.white)))
-                                ],
-                                iosActions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Não',
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gotham,
-                                              color: Colors.white))),
-                                  TextButton(
-                                      onPressed: () async {
-                                        isLoading = true;
-                                        await userManager.logout();
-                                        await context
-                                            .read<AmigosProcuradosManager>()
-                                            .deleteHistorico();
-
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            AppRoutes.login,
-                                            (route) => false);
-                                      },
-                                      child: Text('Sim',
-                                          style: TextStyle(
-                                              fontFamily: AppFonts.gotham,
-                                              color: AppColors.mainColor)))
-                                ],
-                                context: context,
-                                content: Text(
-                                  'Você deseja mesmo desconectar da sua conta?',
-                                  style: TextStyle(
-                                      height: 1.1,
-                                      fontFamily: AppFonts.gotham,
-                                      color: Colors.white),
-                                ));
+                        Expanded(child: SizedBox()),
+                        LogoutButtonWidget(
+                          isLoading: isLoading,
+                          changeLoading: (value) {
+                            setState(() {
+                              isLoading = value;
+                            });
                           },
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 24.0, bottom: 24.0, left: 2.0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Sair",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontFamily: AppFonts.gotham,
-                                  fontSize: 24,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ),
-                          ),
                         ),
+                        const SizedBox(height: 24),
                       ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
         );
-      }
-    });
+      },
+    );
   }
 }

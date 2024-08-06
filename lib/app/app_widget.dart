@@ -15,7 +15,12 @@ import '/app/core/core.dart';
 import '/app/features/controllers/user/user_controller.dart';
 import 'features/controllers/planilha/planilha_manager.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

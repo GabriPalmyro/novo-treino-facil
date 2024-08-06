@@ -332,11 +332,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               iconePath: AppImages.personal,
                               onTap: () {
                                 if (userManager.user.isPersonal ?? false) {
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      AppRoutes.alunos, (route) => false);
+                                  Navigator.pushNamed(context,
+                                      AppRoutes.alunos);
                                 } else {
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      AppRoutes.personal, (route) => false);
+                                  Navigator.pushNamed(context,
+                                      AppRoutes.personal);
                                 }
                               },
                             ),

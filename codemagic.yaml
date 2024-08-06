@@ -3,16 +3,21 @@ workflows:
     name: Android workflow
     max_build_duration: 60
     environment:
+      groups:
+        - firebase_credentials
       vars:
         PACKAGE_NAME: "br.com.palmyro.treino_facil"
       flutter: 3.19.3
     scripts:
+      - name: Set up local.properties
+        script: | 
+            echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
       - name: Get Flutter packages
         script: |
           flutter pub get
       - name: Build Android Version
         script: |
-          flutter build appbundle --release
+          flutter build appbundle --release --build-name=3  .0.$PROJECT_BUILD_NUMBER --build-number=$PROJECT_BUILD_NUMBER
     artifacts:
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt

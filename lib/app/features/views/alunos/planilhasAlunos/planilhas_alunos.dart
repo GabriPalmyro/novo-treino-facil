@@ -50,120 +50,114 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (_) {
-        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.alunos, (route) => false);
-      },
-      child: Consumer<PlanilhaManager>(
-        builder: (_, planilhas, __) {
-          return Scaffold(
-            appBar: AppBar(
-              iconTheme: IconThemeData(
-                color: AppColors.mainColor,
-              ),
-              toolbarHeight: 60,
-              // shadowColor: Colors.grey[850],
-              elevation: 0,
-              centerTitle: false,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.add_circle_outline,
-                      color: AppColors.mainColor,
-                      size: 28,
-                    ),
-                    tooltip: 'Adicionar Nova Planiha',
-                    onPressed: () {
-                      showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (_) => NovaPlanilhaModal(
-                                idUser: widget.arguments.idUser,
-                                isPersonalAcess: true,
-                              ));
-                    },
-                  ),
-                ),
-              ],
-              title: AutoSizeText(
-                "Planilhas de ${widget.arguments.nomeUser}",
-                maxLines: 2,
-                style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 18),
-              ),
-              backgroundColor: AppColors.grey,
+    return Consumer<PlanilhaManager>(
+      builder: (_, planilhas, __) {
+        return Scaffold(
+          appBar: AppBar(
+            iconTheme: IconThemeData(
+              color: AppColors.mainColor,
             ),
-            backgroundColor: AppColors.grey,
-            body: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 70.0),
-                child: FutureBuilder<List<Planilha>>(
-                  future: loadPlanilha(),
-                  builder: (context, snapshot) {
-                    return snapshot.connectionState == ConnectionState.waiting
-                        ? ExerciciosPlanilhaShimmer()
-                        : snapshot.data!.isEmpty
-                            ? PlanilhasVazia(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      context: context,
-                                      builder: (_) => NovaPlanilhaModal(
-                                            idUser: widget.arguments.idUser,
-                                            isPersonalAcess: true,
-                                          ));
-                                },
-                              )
-                            : SingleChildScrollView(
-                                physics: BouncingScrollPhysics(),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 70.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: List.generate(
-                                      snapshot.data!.length,
-                                      (index) {
-                                        final planilha = snapshot.data![index];
-                                        return Padding(
-                                          padding: EdgeInsets.only(top: index != 0 ? 24.0 : 8),
-                                          child: CardPlanilha(
-                                            onTap: () {
-                                              Navigator.pushNamed(
-                                                context,
-                                                AppRoutes.exerciciosPlanilha,
-                                                arguments: ExerciciosPlanilhaArguments(
-                                                  title: planilha.title!,
-                                                  idPlanilha: planilha.id!,
-                                                  idUser: widget.arguments.idUser,
-                                                  isPersonalAcess: true,
-                                                  isFriendAcess: false,
-                                                  nomeAluno: widget.arguments.nomeUser,
-                                                ),
-                                              );
-                                            },
-                                            userId: widget.arguments.idUser,
-                                            planilha: planilha,
-                                            index: index,
-                                            isPersonalAcess: true,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              );
+            toolbarHeight: 60,
+            // shadowColor: Colors.grey[850],
+            elevation: 0,
+            centerTitle: false,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    color: AppColors.mainColor,
+                    size: 28,
+                  ),
+                  tooltip: 'Adicionar Nova Planiha',
+                  onPressed: () {
+                    showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (_) => NovaPlanilhaModal(
+                              idUser: widget.arguments.idUser,
+                              isPersonalAcess: true,
+                            ));
                   },
                 ),
               ),
+            ],
+            title: AutoSizeText(
+              "Planilhas de ${widget.arguments.nomeUser}",
+              maxLines: 2,
+              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 18),
             ),
-          );
-        },
-      ),
+            backgroundColor: AppColors.grey,
+          ),
+          backgroundColor: AppColors.grey,
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 70.0),
+              child: FutureBuilder<List<Planilha>>(
+                future: loadPlanilha(),
+                builder: (context, snapshot) {
+                  return snapshot.connectionState == ConnectionState.waiting
+                      ? ExerciciosPlanilhaShimmer()
+                      : snapshot.data!.isEmpty
+                          ? PlanilhasVazia(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (_) => NovaPlanilhaModal(
+                                          idUser: widget.arguments.idUser,
+                                          isPersonalAcess: true,
+                                        ));
+                              },
+                            )
+                          : SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 70.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: List.generate(
+                                    snapshot.data!.length,
+                                    (index) {
+                                      final planilha = snapshot.data![index];
+                                      return Padding(
+                                        padding: EdgeInsets.only(top: index != 0 ? 24.0 : 8),
+                                        child: CardPlanilha(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              AppRoutes.exerciciosPlanilha,
+                                              arguments: ExerciciosPlanilhaArguments(
+                                                title: planilha.title!,
+                                                idPlanilha: planilha.id!,
+                                                idUser: widget.arguments.idUser,
+                                                isPersonalAcess: true,
+                                                isFriendAcess: false,
+                                                nomeAluno: widget.arguments.nomeUser,
+                                              ),
+                                            );
+                                          },
+                                          userId: widget.arguments.idUser,
+                                          planilha: planilha,
+                                          index: index,
+                                          isPersonalAcess: true,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
