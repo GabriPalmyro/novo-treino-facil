@@ -295,10 +295,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                               padding: const EdgeInsets.only(left: 12.0),
                               child: FormField<String>(
                                   initialValue: '',
-                                  validator: (text) {
-                                    if (_passController.text.isEmpty) return 'Senha não pode ser vazia';
-                                    return null;
-                                  },
                                   builder: (state) {
                                     return CustomTextFormField(
                                       width: width * 0.8,

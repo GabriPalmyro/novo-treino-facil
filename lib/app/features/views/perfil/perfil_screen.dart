@@ -178,12 +178,13 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: width * 0.35, vertical: 18.0),
                       child: CustomButton(
-                          text: 'Editar Perfil',
-                          color: AppColors.grey300,
-                          textColor: AppColors.white,
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.editarPerfil);
-                          }),
+                        text: 'Editar Perfil',
+                        color: AppColors.grey300,
+                        textColor: AppColors.white,
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.editarPerfil);
+                        },
+                      ),
                     )
                   ],
                 ),

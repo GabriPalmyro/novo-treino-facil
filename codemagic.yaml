@@ -29,3 +29,9 @@ workflows:
         notify:
           success: true
           failure: false
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: 1:999959493758:android:77a1ae7e13b756b0da2c2f
+          groups: 
+            - android-testers

@@ -85,6 +85,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 1) {
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, AppRoutes.planilhas, arguments: userManager.user.id);
                             }
                           },
@@ -116,6 +117,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 2) {
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, AppRoutes.listaExercicios);
                             }
                           },
@@ -178,6 +180,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 4) {
+                              Navigator.pop(context);
                               if (userManager.user.isPersonal!) {
                                 Navigator.pushNamed(context, AppRoutes.alunos);
                               } else {
@@ -213,6 +216,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 5) {
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, AppRoutes.meuPerfil);
                             }
                           },
