@@ -17,7 +17,7 @@ workflows:
           flutter pub get
       - name: Build Android Version
         script: |
-          flutter build appbundle --release --build-name=3  .0.$PROJECT_BUILD_NUMBER --build-number=$PROJECT_BUILD_NUMBER
+          flutter build appbundle --release --build-name=3.0.$PROJECT_BUILD_NUMBER --build-number=$PROJECT_BUILD_NUMBER
     artifacts:
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
