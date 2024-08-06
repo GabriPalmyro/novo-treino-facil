@@ -3,6 +3,8 @@ workflows:
     name: Android workflow
     max_build_duration: 60
     environment:
+      android_signing:
+        - Treino Facil Key
       groups:
         - firebase_credentials
       vars:
