@@ -1,0 +1,26 @@
+workflows:
+  android-workflow:
+    name: Android workflow
+    max_build_duration: 60
+    environment:
+      vars:
+        PACKAGE_NAME: "br.com.palmyro.treino_facil"
+      flutter: 3.19.3
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Build Android Version
+        script: |
+          flutter build appbundle --release
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - gabripalmyro13579@gmail.com
+        notify:
+          success: true
+          failure: false
