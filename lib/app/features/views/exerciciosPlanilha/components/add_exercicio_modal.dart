@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -430,7 +429,6 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     color: AppColors.mainColor,
                                     textColor: AppColors.black,
                                     onTap: () async {
-                                      SharedPreferences prefs = await SharedPreferences.getInstance();
 
                                       if (_formKey.currentState!.validate()) {
                                         // //* VALIDAR ANÚNCIO INTERCALADO 2

@@ -75,7 +75,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           splashColor: Colors.redAccent,
           onPressed: () {
             setState(() {
-              widget.controller!.clear();
+              widget.controller.clear();
               searchText = "";
             });
           });

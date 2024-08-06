@@ -184,7 +184,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSubmitted: (text) {
                                       _lastNameFocus.requestFocus();
                                     },
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_nameController.text.isEmpty)
+                                        return 'Nome não pode ser vazio';
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -268,7 +272,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSubmitted: (text) {
                                       _numberFocus.requestFocus();
                                     },
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_emailController.text.isEmpty) {
+                                        _emailFocus.requestFocus();
+                                        return "E-mail não pode ser vazio!";
+                                      } else if (!emailValid(
+                                          _emailController.text)) {
+                                        _emailFocus.requestFocus();
+                                        {
+                                          return 'E-mail Inválido!';
+                                        }
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -320,7 +336,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     inputFormatters: [
                                       celFormatter,
                                     ],
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_numberController.text.isEmpty) {
+                                        _numberFocus.requestFocus();
+                                        return 'Número não pode ser vazia';
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -380,7 +402,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             : Icons.visibility),
                                       ),
                                     ),
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_passController.text.isEmpty) {
+                                        _passFocus.requestFocus();
+                                        return 'Senha não pode ser vazia';
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),
@@ -442,7 +470,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             : Icons.visibility),
                                       ),
                                     ),
-                                    validator: (text) {},
+                                    validator: (text) {
+                                      if (_passConfirmController.text.isEmpty) {
+                                        _passConfirmFocus.requestFocus();
+                                        return 'Confirmar Senha não pode ser vazio';
+                                      } else if (_passConfirmController.text !=
+                                          _passController.text) {
+                                        _passConfirmFocus.requestFocus();
+                                        return 'Senhas não coincidem';
+                                      }
+                                      return null;
+                                    },
                                   );
                                 }),
                           ),

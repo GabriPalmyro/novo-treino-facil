@@ -109,7 +109,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
         IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () {
-            if (_searchController == null || _searchController.text.isEmpty) {
+            if (_searchController.text.isEmpty) {
               setState(() {
                 _isSearching = false;
               });
@@ -167,145 +167,139 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ExercisesManager>(builder: (_, exercicios, __) {
-      return WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-          return Future.value(true);
-        },
-        child: Scaffold(
-          drawer: CustomDrawer(pageNow: 2),
-          appBar: AppBar(
-            iconTheme: IconThemeData(
-              color: AppColors.mainColor,
-            ),
-            elevation: 0,
-            backgroundColor: AppColors.grey,
-            title: _isSearching
-                ? _buildSearchField()
-                : Text(
-                    "Exercícios",
-                    style: TextStyle(
-                        fontFamily: AppFonts.gothamBold,
-                        color: AppColors.mainColor,
-                        fontSize: 30),
-                    maxLines: 2,
-                  ),
-            actions: _buildActions(),
-            //leading: (addMode && exeId != null) ? Container() : null,
-            centerTitle: true,
+      return Scaffold(
+        drawer: CustomDrawer(pageNow: 2),
+        appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: AppColors.mainColor,
           ),
+          elevation: 0,
           backgroundColor: AppColors.grey,
-          body: Column(
-            children: [
-              Container(
-                  margin: EdgeInsets.only(top: 20, bottom: 10),
-                  height: 60,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12.0),
-                      child: Row(
-                        children: List.generate(filters.length, (index) {
-                          return FilterButton(
-                            onTap: () {
-                              setState(() {
-                                _selTypeSearch = filters[index];
-                                exercicios.searchResultList(
-                                    searchController: _searchController.text,
-                                    selectedType: _selTypeSearch);
-                              });
-                            },
-                            filter: filters[index],
-                            selectedType: _selTypeSearch,
-                            title: titles[index],
-                          );
-                        }),
-                      ),
+          title: _isSearching
+              ? _buildSearchField()
+              : Text(
+                  "Exercícios",
+                  style: TextStyle(
+                      fontFamily: AppFonts.gothamBold,
+                      color: AppColors.mainColor,
+                      fontSize: 30),
+                  maxLines: 2,
+                ),
+          actions: _buildActions(),
+          //leading: (addMode && exeId != null) ? Container() : null,
+          centerTitle: true,
+        ),
+        backgroundColor: AppColors.grey,
+        body: Column(
+          children: [
+            Container(
+                margin: EdgeInsets.only(top: 20, bottom: 10),
+                height: 60,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Row(
+                      children: List.generate(filters.length, (index) {
+                        return FilterButton(
+                          onTap: () {
+                            setState(() {
+                              _selTypeSearch = filters[index];
+                              exercicios.searchResultList(
+                                  searchController: _searchController.text,
+                                  selectedType: _selTypeSearch);
+                            });
+                          },
+                          filter: filters[index],
+                          selectedType: _selTypeSearch,
+                          title: titles[index],
+                        );
+                      }),
                     ),
-                  )),
-              Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: exercicios.resultList.length,
-                    itemBuilder: (_, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                            bottom: (index + 1) == exercicios.resultList.length
-                                ? 60.0
-                                : 0),
-                        child: Column(
-                          children: [
-                            // if (index % 8 == 0 && index != 0) ...[
-                            //   Container(
-                            //     height: 90,
-                            //     padding: EdgeInsets.all(10),
-                            //     child: NativeAdmob(
-                            //       adUnitID: nativeAdUnitId(),
-                            //       loading: Center(
-                            //         child: CircularProgressIndicator(
-                            //           strokeWidth: 1.5,
-                            //           color: AppColors.mainColor,
-                            //           backgroundColor:
-                            //               AppColors.mainColor.withOpacity(0.5),
-                            //         ),
-                            //       ),
-                            //       error: Center(
-                            //         child: Text(
-                            //           "Falha ao carregar anúncio...",
-                            //           style: TextStyle(
-                            //               fontFamily: AppFonts.gothamLight,
-                            //               color: AppColors.mainColor
-                            //                   .withOpacity(0.6),
-                            //               fontSize: 14),
-                            //         ),
-                            //       ),
-                            //       numberAds: 3,
-                            //       controller: _controller,
-                            //       type: NativeAdmobType.banner,
-                            //     ),
-                            //   ),
-                            // ],
-                            CardExercicio(
-                              index: index,
-                              onTap: () async {
-                                // if (isInterstitialReady) {
-                                //   SharedPreferences prefs =
-                                //       await SharedPreferences.getInstance();
-
-                                //   //* VALIDAR ANÚNCIO INTERCALADO 3
-                                //   int adSeenTimes =
-                                //       prefs.getInt('view_exercicio') ?? 0;
-                                //   if (adSeenTimes < 3) {
-                                //     await prefs.setInt(
-                                //         'view_exercicio', adSeenTimes + 1);
-                                //   } else {
-                                //     await interstitialAdMuscle.show();
-                                //     await prefs.setInt('view_exercicio', 0);
-                                //   }
-
-                                //   await interstitialAdMuscle.load();
-                                // }
-
-                                showModalBottomSheet(
-                                    backgroundColor: Colors.transparent,
-                                    isScrollControlled: true,
-                                    enableDrag: false,
-                                    context: context,
-                                    builder: (_) => ExercicioInfoModal(
-                                        exercicio:
-                                            exercicios.resultList[index]));
-                              },
-                              exercise: exercicios.resultList[index],
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-              )
-            ],
-          ),
+                  ),
+                )),
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: exercicios.resultList.length,
+                  itemBuilder: (_, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          bottom: (index + 1) == exercicios.resultList.length
+                              ? 60.0
+                              : 0),
+                      child: Column(
+                        children: [
+                          // if (index % 8 == 0 && index != 0) ...[
+                          //   Container(
+                          //     height: 90,
+                          //     padding: EdgeInsets.all(10),
+                          //     child: NativeAdmob(
+                          //       adUnitID: nativeAdUnitId(),
+                          //       loading: Center(
+                          //         child: CircularProgressIndicator(
+                          //           strokeWidth: 1.5,
+                          //           color: AppColors.mainColor,
+                          //           backgroundColor:
+                          //               AppColors.mainColor.withOpacity(0.5),
+                          //         ),
+                          //       ),
+                          //       error: Center(
+                          //         child: Text(
+                          //           "Falha ao carregar anúncio...",
+                          //           style: TextStyle(
+                          //               fontFamily: AppFonts.gothamLight,
+                          //               color: AppColors.mainColor
+                          //                   .withOpacity(0.6),
+                          //               fontSize: 14),
+                          //         ),
+                          //       ),
+                          //       numberAds: 3,
+                          //       controller: _controller,
+                          //       type: NativeAdmobType.banner,
+                          //     ),
+                          //   ),
+                          // ],
+                          CardExercicio(
+                            index: index,
+                            onTap: () async {
+                              // if (isInterstitialReady) {
+                              //   SharedPreferences prefs =
+                              //       await SharedPreferences.getInstance();
+      
+                              //   //* VALIDAR ANÚNCIO INTERCALADO 3
+                              //   int adSeenTimes =
+                              //       prefs.getInt('view_exercicio') ?? 0;
+                              //   if (adSeenTimes < 3) {
+                              //     await prefs.setInt(
+                              //         'view_exercicio', adSeenTimes + 1);
+                              //   } else {
+                              //     await interstitialAdMuscle.show();
+                              //     await prefs.setInt('view_exercicio', 0);
+                              //   }
+      
+                              //   await interstitialAdMuscle.load();
+                              // }
+      
+                              showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  enableDrag: false,
+                                  context: context,
+                                  builder: (_) => ExercicioInfoModal(
+                                      exercicio:
+                                          exercicios.resultList[index]));
+                            },
+                            exercise: exercicios.resultList[index],
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+            )
+          ],
         ),
       );
     });

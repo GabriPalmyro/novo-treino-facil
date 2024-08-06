@@ -265,7 +265,7 @@ class _BiSetCardState extends State<BiSetCard> {
                                       )
                                     ] else ...[
                                       AutoSizeText(
-                                        exerciciosBiset[1].title.toString().toUpperCase() ?? '',
+                                        exerciciosBiset[1].title.toString().toUpperCase(),
                                         textAlign: TextAlign.start,
                                         maxLines: 3,
                                         style: TextStyle(color: Colors.black, fontFamily: "GothamBold", fontSize: 20),

@@ -135,7 +135,10 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                                       labelColor: state.hasError ? Colors.red : AppColors.mainColor,
                                       labelText: 'Nome',
                                       enable: _isEnable,
-                                      validator: (text) {},
+                                      validator: (text) {
+                                        if (_nameController.text.isEmpty) return 'Nome não pode ser vazio';
+                                        return null;
+                                      },
                                     );
                                   }),
                             ),
@@ -156,7 +159,10 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                                       textColor: state.hasError ? Colors.red : AppColors.mainColor,
                                       labelColor: state.hasError ? Colors.red : AppColors.mainColor,
                                       labelText: 'Sobrenome',
-                                      validator: (text) {},
+                                      validator: (text) {
+                                        if (_lastNameController.text.isEmpty) return 'Sobrenome não pode ser vazio';
+                                        return null;
+                                      },
                                     );
                                   }),
                             )
@@ -189,7 +195,10 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                                       textColor: state.hasError ? Colors.red : AppColors.mainColor,
                                       labelColor: state.hasError ? Colors.red : AppColors.mainColor,
                                       labelText: 'Nickname',
-                                      validator: (text) {},
+                                      validator: (text) {
+                                        if (_nicknameController.text.isEmpty) return 'Nickname não pode ser vazio';
+                                        return null;
+                                      },
                                     );
                                   }),
                             ),

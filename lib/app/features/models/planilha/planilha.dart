@@ -7,12 +7,7 @@ class Planilha {
   bool? favorito;
   List<DiaDaSemana>? diasDaSemana;
 
-  Planilha(
-      {this.id,
-      this.title,
-      this.description,
-      this.diasDaSemana,
-      this.favorito});
+  Planilha({this.id, this.title, this.description, this.diasDaSemana, this.favorito});
 
   Map<String, dynamic> toMap() {
     return {
@@ -25,14 +20,18 @@ class Planilha {
 
   factory Planilha.fromMap(Map<String, dynamic> map) {
     return Planilha(
-        id: map['id'] as String,
-        title: map['title'] as String,
-        description: map['description'] as String,
-        favorito: map['favorito'] as bool ?? false,
-        diasDaSemana: map['diasDaSemana'] == null
-            ? listDiasDaSemana
-            : List<DiaDaSemana>.from(
-                map['diasDaSemana']?.map((x) => DiaDaSemana.fromMap(x))));
+      id: map['id'] as String,
+      title: map['title'] as String,
+      description: map['description'] as String,
+      favorito: map['favorito'] as bool? ?? false,
+      diasDaSemana: map['diasDaSemana'] == null
+          ? listDiasDaSemana
+          : List<DiaDaSemana>.from(
+              map['diasDaSemana']?.map(
+                (x) => DiaDaSemana.fromMap(x),
+              ),
+            ),
+    );
   }
 
   @override

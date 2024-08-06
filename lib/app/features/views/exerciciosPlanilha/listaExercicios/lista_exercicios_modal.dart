@@ -20,12 +20,7 @@ class ListaExerciciosModal extends StatefulWidget {
   final bool isBiSet;
 
   ListaExerciciosModal(
-      {required this.idPlanilha,
-      required this.titlePlanilha,
-      required this.tamPlan,
-      required this.idUser,
-      this.isPersonalAcess = false,
-      this.isBiSet = false});
+      {required this.idPlanilha, required this.titlePlanilha, required this.tamPlan, required this.idUser, this.isPersonalAcess = false, this.isBiSet = false});
 
   @override
   _ListaExerciciosModalState createState() => _ListaExerciciosModalState();
@@ -38,9 +33,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final idUser = context.read<UserManager>().user.id;
       if (context.read<ExercisesManager>().listaMeusExercicios.isEmpty) {
-        await context
-            .read<ExercisesManager>()
-            .loadMyListExercises(idUser: idUser!);
+        await context.read<ExercisesManager>().loadMyListExercises(idUser: idUser!);
       }
     });
   }
@@ -85,32 +78,27 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Consumer2<ExercisesManager, ExerciciosPlanilhaManager>(
-        builder: (_, exercicios, exerciciosPlanilha, __) {
-      return WillPopScope(
-        onWillPop: () async {
+    return Consumer2<ExercisesManager, ExerciciosPlanilhaManager>(builder: (_, exercicios, exerciciosPlanilha, __) {
+      return PopScope(
+        onPopInvoked: (_) {
           showCustomDialogOpt(
-              context: context,
-              title: 'Cancelar a adição desse(s) exercício(s)?',
-              VoidCallBack: () {
-                exerciciosPlanilha.limparExercicioBiSetLista();
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              message:
-                  'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.');
-          return true;
+            context: context,
+            title: 'Cancelar a adição desse(s) exercício(s)?',
+            VoidCallBack: () {
+              exerciciosPlanilha.limparExercicioBiSetLista();
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            message: 'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.',
+          );
         },
         child: Container(
           height: height * 0.95,
           child: Container(
             height: height * 0.95,
             decoration: new BoxDecoration(
-                color: AppColors.grey,
-                borderRadius: new BorderRadius.only(
-                    topLeft: const Radius.circular(15.0),
-                    topRight: const Radius.circular(15.0))),
+                color: AppColors.grey, borderRadius: new BorderRadius.only(topLeft: const Radius.circular(15.0), topRight: const Radius.circular(15.0))),
             child: Padding(
               padding: EdgeInsets.only(
                 top: 8.0,
@@ -120,8 +108,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                   Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 5, bottom: 8, left: 12.0, right: 12.0),
+                        padding: const EdgeInsets.only(top: 5, bottom: 8, left: 12.0, right: 12.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -131,17 +118,14 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                 onTap: () {
                                   showCustomDialogOpt(
                                       context: context,
-                                      title:
-                                          'Cancelar a adição desse(s) exercício(s)?',
+                                      title: 'Cancelar a adição desse(s) exercício(s)?',
                                       VoidCallBack: () {
-                                        exerciciosPlanilha
-                                            .limparExercicioBiSetLista();
+                                        exerciciosPlanilha.limparExercicioBiSetLista();
                                         Navigator.pop(context);
                                         Navigator.pop(context);
                                         Navigator.pop(context);
                                       },
-                                      message:
-                                          'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.');
+                                      message: 'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.');
                                 },
                                 child: Icon(
                                   Icons.cancel_rounded,
@@ -153,12 +137,9 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                               flex: 90,
                               child: AutoSizeText(
                                 widget.isBiSet
-                                    ? exerciciosPlanilha
-                                                .listaExerciciosBiSet.length ==
-                                            2
+                                    ? exerciciosPlanilha.listaExerciciosBiSet.length == 2
                                         ? 'Clique em concluir para adicionar:'
-                                        : exerciciosPlanilha
-                                                .isFirstExerciseSelected
+                                        : exerciciosPlanilha.isFirstExerciseSelected
                                             ? 'Selecione o segundo exercício:'
                                             : 'Selecione o primeiro exercício:'
                                     : 'Selecione o exercício a ser adicionado:',
@@ -185,16 +166,12 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Row(
-                                children:
-                                    List.generate(filters.length, (index) {
+                                children: List.generate(filters.length, (index) {
                                   return FilterButton(
                                     onTap: () {
                                       setState(() {
                                         _selTypeSearch = filters[index];
-                                        exercicios.searchResultList(
-                                            searchController:
-                                                _searchController.text,
-                                            selectedType: _selTypeSearch);
+                                        exercicios.searchResultList(searchController: _searchController.text, selectedType: _selTypeSearch);
                                       });
                                     },
                                     filter: filters[index],
@@ -214,8 +191,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                               itemBuilder: (_, index) {
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                      bottom: index + 1 ==
-                                              exercicios.resultList.length
+                                      bottom: index + 1 == exercicios.resultList.length
                                           ? widget.isBiSet
                                               ? 120.0
                                               : 65.0
@@ -228,11 +204,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
                                     tamPlan: widget.tamPlan,
                                     exercise: exercicios.resultList[index],
                                     isBiSet: widget.isBiSet,
-                                    showAddButton: exerciciosPlanilha
-                                                .listaExerciciosBiSet.length >=
-                                            2
-                                        ? false
-                                        : true,
+                                    showAddButton: exerciciosPlanilha.listaExerciciosBiSet.length >= 2 ? false : true,
                                   ),
                                 );
                               }),

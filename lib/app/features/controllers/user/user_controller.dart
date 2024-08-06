@@ -467,7 +467,7 @@ class UserManager extends ChangeNotifier {
           }).catchError((error) {
             print(error);
             loading = false;
-            return error.toString();
+            return ;
           });
         });
       }

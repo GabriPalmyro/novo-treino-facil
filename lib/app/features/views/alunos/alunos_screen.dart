@@ -67,161 +67,155 @@ class _AlunosScreenState extends State<AlunosScreen> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
-        return true;
-      },
-      child: Consumer<UserManager>(builder: (_, userManager, __) {
-        return Scaffold(
-          drawer: CustomDrawer(pageNow: 4),
-          appBar: AppBar(
-            toolbarHeight: 70,
-            // shadowColor: Colors.grey[850],
-            elevation: 0,
-            centerTitle: false,
-            iconTheme: IconThemeData(
-              color: AppColors.mainColor,
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    size: 28,
-                  ),
-                  tooltip: 'Adicionar Novo Aluno',
-                  onPressed: () {
-                    showModalBottomSheet(backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (_) => NovoAlunoModal());
-                  },
+    return Consumer<UserManager>(builder: (_, userManager, __) {
+      return Scaffold(
+        drawer: CustomDrawer(pageNow: 4),
+        appBar: AppBar(
+          toolbarHeight: 70,
+          // shadowColor: Colors.grey[850],
+          elevation: 0,
+          centerTitle: false,
+          iconTheme: IconThemeData(
+            color: AppColors.mainColor,
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.add_circle_outline,
+                  size: 28,
                 ),
+                tooltip: 'Adicionar Novo Aluno',
+                onPressed: () {
+                  showModalBottomSheet(backgroundColor: Colors.transparent, isScrollControlled: true, context: context, builder: (_) => NovoAlunoModal());
+                },
               ),
-            ],
-            title: Text(
-              "Meus Alunos",
-              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 30),
             ),
-            backgroundColor: AppColors.grey,
+          ],
+          title: Text(
+            "Meus Alunos",
+            style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 30),
           ),
           backgroundColor: AppColors.grey,
-          body: loading
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Align(alignment: Alignment.center, child: CircularProgressIndicator()),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 24.0),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Buscando informações de seus alunos',
-                          //textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBook, fontSize: 16),
-                        ),
+        ),
+        backgroundColor: AppColors.grey,
+        body: loading
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Align(alignment: Alignment.center, child: CircularProgressIndicator()),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Buscando informações de seus alunos',
+                        //textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBook, fontSize: 16),
                       ),
-                    )
-                  ],
-                )
-              : SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
-                        decoration: BoxDecoration(
-                            color: AppColors.mainColor,
-                            borderRadius: BorderRadius.circular(10.0),
-                            boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.3), blurRadius: 5, offset: Offset(0, 5))]),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  flex: 80,
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: AutoSizeText('Ver Lista de Alunos',
-                                        maxLines: 1, style: TextStyle(fontSize: 24, fontFamily: AppFonts.gothamBold, color: AppColors.black)),
+                    ),
+                  )
+                ],
+              )
+            : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+                      decoration: BoxDecoration(
+                          color: AppColors.mainColor,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.3), blurRadius: 5, offset: Offset(0, 5))]),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 80,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: AutoSizeText('Ver Lista de Alunos',
+                                      maxLines: 1, style: TextStyle(fontSize: 24, fontFamily: AppFonts.gothamBold, color: AppColors.black)),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 20,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        isExpanded = !isExpanded;
+                                        isExpanded ? animationController.forward() : animationController.reverse();
+    
+                                        _runExpandCheck();
+                                      });
+                                    },
+                                    child: Tooltip(
+                                        message: isExpanded ? 'Fechar' : 'Abrir',
+                                        child: AnimatedIcon(icon: AnimatedIcons.menu_close, progress: animationController)),
                                   ),
                                 ),
-                                Expanded(
-                                  flex: 20,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 18.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          isExpanded = !isExpanded;
-                                          isExpanded ? animationController.forward() : animationController.reverse();
-
-                                          _runExpandCheck();
-                                        });
-                                      },
-                                      child: Tooltip(
-                                          message: isExpanded ? 'Fechar' : 'Abrir',
-                                          child: AnimatedIcon(icon: AnimatedIcons.menu_close, progress: animationController)),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizeTransition(
-                              axisAlignment: 1.0,
-                              sizeFactor: animation,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10.0, left: 5.0),
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: List.generate(userManager.alunos.length, (index) {
-                                      final aluno = userManager.alunos[index];
-                                      return CardAluno(
-                                          acessarPlanilhas: () {
-                                            Navigator.pushNamed(context, AppRoutes.planilhasAluno,
-                                                arguments: PlanilhaAlunoArguments(nomeUser: aluno.alunoName!, idUser: aluno.alunoId!));
-                                          },
-                                          excluirAluno: () async {
-                                            await showCustomDialogOpt(
-                                                context: context,
-                                                VoidCallBack: () async {
-                                                  final response = await userManager.deletePersonalAlunoConnection(
-                                                      personalId: userManager.user.id!, userId: userManager.alunos[index].alunoId!);
-
-                                                  if (response != null) {
-                                                    Navigator.pop(context);
-                                                    mostrarSnackBar(context: context, message: response, color: AppColors.red);
-                                                  } else {
-                                                    userManager.removerPersonalAluno(index: index);
-
-                                                    Navigator.pop(context);
-                                                  }
-                                                },
-                                                isDeleteMessage: true,
-                                                title: 'Excluir Aluno?',
-                                                message: 'Essa ação irá excluir esse aluno permanentemente.');
-                                          },
-                                          aluno: userManager.alunos[index]);
-                                    }),
-                                  ),
+                              )
+                            ],
+                          ),
+                          SizeTransition(
+                            axisAlignment: 1.0,
+                            sizeFactor: animation,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10.0, left: 5.0),
+                              child: Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: List.generate(userManager.alunos.length, (index) {
+                                    final aluno = userManager.alunos[index];
+                                    return CardAluno(
+                                        acessarPlanilhas: () {
+                                          Navigator.pushNamed(context, AppRoutes.planilhasAluno,
+                                              arguments: PlanilhaAlunoArguments(nomeUser: aluno.alunoName!, idUser: aluno.alunoId!));
+                                        },
+                                        excluirAluno: () async {
+                                          await showCustomDialogOpt(
+                                              context: context,
+                                              VoidCallBack: () async {
+                                                final response = await userManager.deletePersonalAlunoConnection(
+                                                    personalId: userManager.user.id!, userId: userManager.alunos[index].alunoId!);
+    
+                                                if (response != null) {
+                                                  Navigator.pop(context);
+                                                  mostrarSnackBar(context: context, message: response, color: AppColors.red);
+                                                } else {
+                                                  userManager.removerPersonalAluno(index: index);
+    
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                              isDeleteMessage: true,
+                                              title: 'Excluir Aluno?',
+                                              message: 'Essa ação irá excluir esse aluno permanentemente.');
+                                        },
+                                        aluno: userManager.alunos[index]);
+                                  }),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 80.0,
-                      )
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 80.0,
+                    )
+                  ],
                 ),
-        );
-      }),
-    );
+              ),
+      );
+    });
   }
 }
