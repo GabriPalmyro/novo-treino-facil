@@ -63,7 +63,7 @@ class UserManager extends ChangeNotifier {
       await saveUserData(user.toMap());
       loading = false;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       onFailed();
       loading = false;
     }
@@ -99,7 +99,7 @@ class UserManager extends ChangeNotifier {
       loading = false;
       return loginErrorType(e.code);
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return 'Ocorreu um erro. Verifique seu e-mail e senha e tente novamente.';
     }
@@ -119,7 +119,7 @@ class UserManager extends ChangeNotifier {
     } catch (e) {
       user = userTemp;
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
     }
   }
 
@@ -128,9 +128,9 @@ class UserManager extends ChangeNotifier {
       this.user = User.fromMap(userData);
       await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).set(userData);
 
-      debugPrint('Usuário criado com sucesso!');
+      log('Usuário criado com sucesso!');
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
     }
   }
 
@@ -139,7 +139,7 @@ class UserManager extends ChangeNotifier {
       await _auth.sendPasswordResetEmail(email: email);
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -155,7 +155,7 @@ class UserManager extends ChangeNotifier {
           _userData['id'] = docUser.id;
           user = User.fromMap(_userData);
         } catch (e) {
-          debugPrint(e.toString());
+          log(e.toString());
         }
       }
     }
@@ -220,7 +220,7 @@ class UserManager extends ChangeNotifier {
       }
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -243,7 +243,7 @@ class UserManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -251,7 +251,7 @@ class UserManager extends ChangeNotifier {
   Future<List<User>> carregarAmigos({required String nickname}) async {
     Map<String, dynamic> data = {};
     friends = [];
-    debugPrint('LOADING FRIENDS');
+    log('LOADING FRIENDS');
     try {
       loading = true;
       var queryWorksheet = await FirebaseFirestore.instance.collection("users").where('nickname', isEqualTo: nickname).get();
@@ -262,12 +262,12 @@ class UserManager extends ChangeNotifier {
         friends.add(User.fromMap(data));
       });
 
-      debugPrint('AMIGOS LOAD SUCESS');
+      log('AMIGOS LOAD SUCESS');
       loading = false;
       return friends;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return friends;
     }
   }
@@ -281,7 +281,7 @@ class UserManager extends ChangeNotifier {
       if (followers.docs.isEmpty) return false;
       return true;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return false;
     }
   }
@@ -312,7 +312,7 @@ class UserManager extends ChangeNotifier {
 
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -340,7 +340,7 @@ class UserManager extends ChangeNotifier {
 
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -397,7 +397,7 @@ class UserManager extends ChangeNotifier {
   Future<String?> carregarAlunos() async {
     Map<String, dynamic> data = {};
     alunos = [];
-    debugPrint('LOADING ALUNOS');
+    log('LOADING ALUNOS');
     try {
       var queryWorksheet = await FirebaseFirestore.instance.collection("users").doc(_auth.currentUser!.uid).collection("alunos").orderBy('client_name').get();
 
@@ -407,12 +407,12 @@ class UserManager extends ChangeNotifier {
         alunos.add(Aluno.fromMap(data));
       });
 
-      debugPrint('ALUNOS LOAD SUCESS');
+      log('ALUNOS LOAD SUCESS');
       notifyListeners();
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -449,7 +449,7 @@ class UserManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -476,7 +476,7 @@ class UserManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }

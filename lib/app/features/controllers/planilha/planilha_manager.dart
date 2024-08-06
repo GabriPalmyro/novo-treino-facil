@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
@@ -24,7 +26,7 @@ class PlanilhaManager extends ChangeNotifier {
   Future<void> loadWorksheetList() async {
     Map<String, dynamic> data = {};
     listaPlanilhas = [];
-    debugPrint('LOADING LISTAS');
+    log('LOADING LISTAS');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
@@ -39,10 +41,10 @@ class PlanilhaManager extends ChangeNotifier {
         listaPlanilhas.add(Planilha.fromMap(data));
       });
 
-      debugPrint('PLAN LIST LOAD SUCESS');
+      log('PLAN LIST LOAD SUCESS');
     } catch (e) {
       listaPlanilhas = [];
-      debugPrint(e.toString());
+      log(e.toString());
     }
     notifyListeners();
   }
@@ -77,7 +79,7 @@ class PlanilhaManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -102,7 +104,7 @@ class PlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
@@ -122,7 +124,7 @@ class PlanilhaManager extends ChangeNotifier {
       notifyListeners();
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -143,7 +145,7 @@ class PlanilhaManager extends ChangeNotifier {
 
       if (docWorksheet.data()!.isEmpty) {
         //! PLANILHA VAZIA - APAGANDO
-        debugPrint('PLANILHA VAZIA - APAGANDO');
+        log('PLANILHA VAZIA - APAGANDO');
         await FirebaseFirestore.instance
             .collection("users")
             .doc(userId)
@@ -164,7 +166,7 @@ class PlanilhaManager extends ChangeNotifier {
       queryWorksheet.docs.forEach((element) async {
         if (element.data()["set_type"] == 'uniset') {
           //! APAGANDO EXERCICIO UNISET
-          debugPrint('APAGANDO EXERCICIO UNI SET ${element.id}');
+          log('APAGANDO EXERCICIO UNI SET ${element.id}');
           await FirebaseFirestore.instance
               .collection("users")
               .doc(userId)
@@ -187,7 +189,7 @@ class PlanilhaManager extends ChangeNotifier {
               .get();
 
           queryBiSet.docs.forEach((elementBiSet) async {
-            debugPrint(
+            log(
                 'APAGANDO EXERCICIO BI SET ${element.id} - ${elementBiSet.id}');
             await FirebaseFirestore.instance
                 .collection("users")
@@ -201,7 +203,7 @@ class PlanilhaManager extends ChangeNotifier {
                 .delete();
           });
 
-          debugPrint('APAGANDO SET ${element.id}');
+          log('APAGANDO SET ${element.id}');
           //* DELETANDO SET
           await FirebaseFirestore.instance
               .collection("users")
@@ -215,7 +217,7 @@ class PlanilhaManager extends ChangeNotifier {
       });
 
       //! PLANILHA VAZIA - APAGANDO
-      debugPrint('PLANILHA VAZIA - APAGANDO');
+      log('PLANILHA VAZIA - APAGANDO');
       await FirebaseFirestore.instance
           .collection("users")
           .doc(userId)
@@ -230,7 +232,7 @@ class PlanilhaManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }

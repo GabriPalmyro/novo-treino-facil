@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -6,8 +8,6 @@ import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
-
-import '../exercicios_planilha_screen.dart';
 
 class ExercicioViewModal extends StatefulWidget {
   final ExerciciosPlanilha exercicio;
@@ -21,6 +21,7 @@ class ExercicioViewModal extends StatefulWidget {
   final String? idBiSet;
   final bool isSecondExercise;
   final bool isPersonalManag;
+  final VoidCallback refetchExercises;
 
   ExercicioViewModal(
       {required this.exercicio,
@@ -30,6 +31,7 @@ class ExercicioViewModal extends StatefulWidget {
       required this.titlePlanilha,
       required this.tamPlan,
       required this.idUser,
+      required this.refetchExercises,
       this.idBiSet,
       this.isBiSet = false,
       this.isSecondExercise = false,
@@ -447,14 +449,8 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                                 idBiSet: widget.idBiSet!,
                                                 exercicio: exercicio);
 
-                                            Navigator.pushReplacementNamed(context, AppRoutes.exerciciosPlanilha,
-                                                arguments: ExerciciosPlanilhaArguments(
-                                                  title: widget.titlePlanilha,
-                                                  idPlanilha: widget.idPlanilha,
-                                                  idUser: widget.idUser,
-                                                  isFriendAcess: widget.isFriendAcess,
-                                                  isPersonalAcess: widget.isPersonalManag,
-                                                ));
+                                            Navigator.pop(context);
+                                            widget.refetchExercises.call();
                                           } else {
                                             ExerciciosPlanilha exercicio = ExerciciosPlanilha(
                                               series: _seriesController.text,
@@ -464,18 +460,17 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                                             );
 
                                             final response = await context.read<ExerciciosPlanilhaManager>().editExerciseUniSet(
-                                                planilhaId: widget.idPlanilha, idUser: widget.idUser, idExercicio: widget.idExercicio, exercicio: exercicio);
+                                                  planilhaId: widget.idPlanilha,
+                                                  idUser: widget.idUser,
+                                                  idExercicio: widget.idExercicio,
+                                                  exercicio: exercicio,
+                                                );
+
                                             if (response == null) {
-                                              Navigator.pushReplacementNamed(context, AppRoutes.exerciciosPlanilha,
-                                                  arguments: ExerciciosPlanilhaArguments(
-                                                    title: widget.titlePlanilha,
-                                                    idPlanilha: widget.idPlanilha,
-                                                    idUser: widget.idUser,
-                                                    isFriendAcess: widget.isFriendAcess,
-                                                    isPersonalAcess: widget.isPersonalManag,
-                                                  ));
+                                              Navigator.pop(context);
+                                              widget.refetchExercises.call();
                                             } else {
-                                              debugPrint('Erro $response');
+                                              log('Erro $response');
                                             }
                                           }
                                         }

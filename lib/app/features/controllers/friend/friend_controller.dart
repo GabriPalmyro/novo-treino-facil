@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
@@ -12,7 +14,7 @@ class FriendManager extends ChangeNotifier {
   Future<void> loadFriendPlanList({required String idFriend}) async {
     Map<String, dynamic> data = {};
     listaPlanilhasFriend = [];
-    debugPrint('LOADING LISTAS FRIEND');
+    log('LOADING LISTAS FRIEND');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
@@ -27,10 +29,10 @@ class FriendManager extends ChangeNotifier {
         listaPlanilhasFriend.add(Planilha.fromMap(data));
       });
 
-      debugPrint('PLAN LIST LOAD SUCESS');
+      log('PLAN LIST LOAD SUCESS');
     } catch (e) {
       listaPlanilhasFriend = [];
-      debugPrint(e.toString());
+      log(e.toString());
     }
     notifyListeners();
   }

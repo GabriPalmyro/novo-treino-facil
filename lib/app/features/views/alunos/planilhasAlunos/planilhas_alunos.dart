@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +45,7 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
       return listaPlanilhas;
     } catch (e) {
       listaPlanilhas = [];
-      debugPrint('Erro: ' + e.toString());
+      log('Erro: ' + e.toString());
       return listaPlanilhas;
     }
   }

@@ -24,6 +24,7 @@ class BiSetCard extends StatefulWidget {
   final VoidCallback? onDelete;
   final String titlePlanilha;
   final int tamPlan;
+  final VoidCallback refetchExercises;
 
   const BiSetCard(
       {required this.index,
@@ -31,6 +32,7 @@ class BiSetCard extends StatefulWidget {
       required this.idUser,
       required this.exercicio,
       required this.isChanging,
+      required this.refetchExercises,
       this.isFriendAcess = false,
       this.onDelete,
       required this.isEditing,
@@ -221,13 +223,14 @@ class _BiSetCardState extends State<BiSetCard> {
                                                       isPersonalManag: false,
                                                       tamPlan: widget.tamPlan,
                                                       titlePlanilha: widget.titlePlanilha,
+                                                      refetchExercises: widget.refetchExercises,
                                                       isBiSet: true,
                                                       isFriendAcess: widget.isFriendAcess,
                                                       idBiSet: widget.exercicio.id!,
                                                       isSecondExercise: false,
                                                     ));
                                           } catch (e) {
-                                            debugPrint(e.toString());
+                                            log(e.toString());
                                           }
                                         }
                                       }),
@@ -237,10 +240,9 @@ class _BiSetCardState extends State<BiSetCard> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: AutoSizeText(
-                              '+',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.black.withOpacity(0.4), fontFamily: "Gotham", fontSize: 20),
+                            child: Divider(
+                              color: Colors.black.withOpacity(0.4),
+                              thickness: 1,
                             ),
                           ),
                           Row(
@@ -299,13 +301,14 @@ class _BiSetCardState extends State<BiSetCard> {
                                                       isPersonalManag: false,
                                                       tamPlan: widget.tamPlan,
                                                       titlePlanilha: widget.titlePlanilha,
+                                                      refetchExercises: widget.refetchExercises,
                                                       isBiSet: true,
                                                       isFriendAcess: widget.isFriendAcess,
                                                       idBiSet: widget.exercicio.id!,
                                                       isSecondExercise: false,
                                                     ));
                                           } catch (e) {
-                                            debugPrint(e.toString());
+                                            log(e.toString());
                                           }
                                         }
                                       }),

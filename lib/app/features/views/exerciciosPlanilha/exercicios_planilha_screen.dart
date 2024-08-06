@@ -1,4 +1,5 @@
 import 'dart:developer' as dev;
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
       });
       return biSets;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return biSets;
     }
   }
@@ -154,8 +155,9 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<UserManager, ExerciciosPlanilhaManager>(builder: (_, userManager, exercicios, __) {
-      return Scaffold(
+    return Consumer2<UserManager, ExerciciosPlanilhaManager>(
+      builder: (_, userManager, exercicios, __) {
+        return Scaffold(
           appBar: AppBar(
             toolbarHeight: 70,
             // shadowColor: Colors.grey[850],
@@ -183,6 +185,9 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                         idPlanilha: widget.arguments.idPlanilha,
                         tamPlan: tamPlan,
                         isPersonalAcess: widget.arguments.isPersonalAcess,
+                        refetchExercicies: () {
+                          loadExerciciosPlanilha();
+                        },
                       ),
                     );
                   },
@@ -202,7 +207,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                         if (exercicios.validarStringsIds(planilhaId: widget.arguments.idPlanilha, idUser: widget.arguments.idUser)) {
                           final response = await exercicios.reorganizarListaExercicios(
                               listaExercicios: listaExerciciosTemp, planilhaId: widget.arguments.idPlanilha, idUser: widget.arguments.idUser);
-      
+
                           if (response != null) {
                             mostrarSnackBar(message: 'Ocorreu um erro. Tente novamente mais tarde.', color: AppColors.red, context: context);
                           } else {
@@ -262,16 +267,20 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                   ? ExerciciosPlanilhaVazia(
                       onTap: () {
                         showModalBottomSheet(
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (_) => SelectSetModal(
-                                  idUser: widget.arguments.idUser,
-                                  titlePlanilha: widget.arguments.title,
-                                  idPlanilha: widget.arguments.idPlanilha,
-                                  tamPlan: tamPlan,
-                                  isPersonalAcess: widget.arguments.isPersonalAcess,
-                                ));
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (_) => SelectSetModal(
+                            idUser: widget.arguments.idUser,
+                            titlePlanilha: widget.arguments.title,
+                            idPlanilha: widget.arguments.idPlanilha,
+                            tamPlan: tamPlan,
+                            isPersonalAcess: widget.arguments.isPersonalAcess,
+                            refetchExercicies: () {
+                              loadExerciciosPlanilha();
+                            },
+                          ),
+                        );
                       },
                     )
                   : _isEditing
@@ -281,7 +290,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                           physics: BouncingScrollPhysics(),
                           onReorder: (oldIndex, newIndex) => setState(() {
                             final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
-      
+
                             final exercicio = listaExerciciosTemp.removeAt(oldIndex);
                             listaExerciciosTemp.insert(index, exercicio);
                           }),
@@ -301,7 +310,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                           isFriendAcess: widget.arguments.isFriendAcess,
                                           onTap: () {},
                                           onDelete: () async {
-                                            debugPrint('apagando uniset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
+                                            log('apagando uniset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
                                             Navigator.pop(context);
                                             final response = await exercicios.deleteExerciseUniSet(
                                                 listaExercicios: listaExerciciosTemp,
@@ -309,10 +318,9 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                                 idUser: widget.arguments.idUser,
                                                 idExercise: listaExerciciosTemp[index].id,
                                                 index: index);
-      
+
                                             if (response != null) {
-                                              mostrarSnackBar(
-                                                  message: 'Ocorreu um erro. Tente novamente mais tarde.', color: AppColors.red, context: context);
+                                              mostrarSnackBar(message: 'Ocorreu um erro. Tente novamente mais tarde.', color: AppColors.red, context: context);
                                             } else {
                                               setState(() {
                                                 listaExercicios = listaExerciciosTemp;
@@ -335,8 +343,11 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                           tamPlan: tamPlan,
                                           titlePlanilha: widget.arguments.title,
                                           isFriendAcess: widget.arguments.isFriendAcess,
+                                          refetchExercises: () {
+                                            loadExerciciosPlanilha();
+                                          },
                                           onDelete: () async {
-                                            debugPrint('apagando biset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
+                                            log('apagando biset (${widget.arguments.idPlanilha} -> ${listaExerciciosTemp[index].id})...');
                                             Navigator.pop(context);
                                             final response = await exercicios.deleteExerciseBiSet(
                                                 planilhaId: widget.arguments.idPlanilha,
@@ -344,10 +355,9 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                                 idUser: widget.arguments.idUser,
                                                 listaExercicios: listaExerciciosTemp,
                                                 index: index);
-      
+
                                             if (response != null) {
-                                              mostrarSnackBar(
-                                                  message: 'Ocorreu um erro. Tente novamente mais tarde.', color: AppColors.red, context: context);
+                                              mostrarSnackBar(message: 'Ocorreu um erro. Tente novamente mais tarde.', color: AppColors.red, context: context);
                                             } else {
                                               setState(() {
                                                 listaExercicios = listaExerciciosTemp;
@@ -376,22 +386,26 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                         idUser: widget.arguments.idUser,
                                         onTap: () {
                                           showModalBottomSheet(
-                                              backgroundColor: Colors.transparent,
-                                              isScrollControlled: true,
-                                              enableDrag: false,
-                                              context: context,
-                                              builder: (_) => ExercicioViewModal(
-                                                    exercicio: listaExercicios[index],
-                                                    isFriendAcess: widget.arguments.isFriendAcess,
-                                                    idPlanilha: widget.arguments.idPlanilha,
-                                                    idExercicio: listaExercicios[index].id,
-                                                    idUser: widget.arguments.idUser,
-                                                    isPersonalManag: widget.arguments.isPersonalAcess,
-                                                    tamPlan: tamPlan,
-                                                    titlePlanilha: widget.arguments.title,
-                                                    isBiSet: false,
-                                                    isSecondExercise: false,
-                                                  ));
+                                            backgroundColor: Colors.transparent,
+                                            isScrollControlled: true,
+                                            enableDrag: false,
+                                            context: context,
+                                            builder: (_) => ExercicioViewModal(
+                                              exercicio: listaExercicios[index],
+                                              isFriendAcess: widget.arguments.isFriendAcess,
+                                              idPlanilha: widget.arguments.idPlanilha,
+                                              idExercicio: listaExercicios[index].id,
+                                              idUser: widget.arguments.idUser,
+                                              isPersonalManag: widget.arguments.isPersonalAcess,
+                                              tamPlan: tamPlan,
+                                              titlePlanilha: widget.arguments.title,
+                                              refetchExercises: () {
+                                                loadExerciciosPlanilha();
+                                              },
+                                              isBiSet: false,
+                                              isSecondExercise: false,
+                                            ),
+                                          );
                                         },
                                       )
                                     : BiSetCard(
@@ -404,11 +418,16 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                                         isEditing: _isEditing,
                                         tamPlan: tamPlan,
                                         titlePlanilha: widget.arguments.title,
+                                        refetchExercises: () {
+                                          loadExerciciosPlanilha();
+                                        },
                                       );
                               }),
                             ),
                           ),
-                        ));
-    });
+                        ),
+        );
+      },
+    );
   }
 }

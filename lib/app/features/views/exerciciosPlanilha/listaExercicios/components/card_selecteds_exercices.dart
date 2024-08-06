@@ -7,20 +7,20 @@ import 'package:tabela_treino/app/features/views/exerciciosPlanilha/listaExercic
 import 'package:tabela_treino/app/shared/buttons/custom_button.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
-import '../../exercicios_planilha_screen.dart';
-
 class CardSelectedsExercices extends StatefulWidget {
   final String idPlanilha;
   final int tamPlanilha;
   final String title;
   final String idUser;
   final bool isPersonalAcess;
+  final VoidCallback refetchExercicies;
 
   const CardSelectedsExercices({
     required this.idPlanilha,
     required this.tamPlanilha,
     required this.title,
     required this.idUser,
+    required this.refetchExercicies,
     this.isPersonalAcess = false,
   });
   @override
@@ -128,13 +128,8 @@ class _CardSelectedsExercicesState extends State<CardSelectedsExercices> with Si
                                     if (response != null) {
                                       mostrarSnackBar(message: response, color: AppColors.red, context: context);
                                     } else {
-                                      Navigator.pushReplacementNamed(context, AppRoutes.exerciciosPlanilha,
-                                          arguments: ExerciciosPlanilhaArguments(
-                                              idPlanilha: widget.idPlanilha,
-                                              idUser: widget.idUser,
-                                              isFriendAcess: false,
-                                              isPersonalAcess: widget.isPersonalAcess,
-                                              title: widget.title));
+                                      Navigator.pop(context);
+                                      widget.refetchExercicies();
                                     }
                                   },
                                 ),

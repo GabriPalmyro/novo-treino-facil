@@ -6,11 +6,15 @@ void mostrarSnackBar({
   required BuildContext context,
 }) {
   SnackBar snackBar = SnackBar(
-    content: Padding(
-      padding: const EdgeInsets.only(bottom: 60.0),
-      child: Text(message),
-    ),
+    content: Text(message),
     backgroundColor: color,
+    dismissDirection: DismissDirection.up,
+    behavior: SnackBarBehavior.floating,
+    margin: EdgeInsets.only(
+      bottom: MediaQuery.of(context).size.height - 150,
+      left: 10,
+      right: 10,
+    ),
   );
 
   ScaffoldMessenger.of(context).removeCurrentSnackBar();

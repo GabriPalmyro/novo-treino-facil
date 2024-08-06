@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
@@ -23,7 +25,7 @@ class PersonalManager extends ChangeNotifier {
   Future<void> loadMyPersonal({required String idUser}) async {
     loading = true;
     Map<String, dynamic> data = {};
-    debugPrint('LOADING PERSONAL');
+    log('LOADING PERSONAL');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
@@ -32,17 +34,17 @@ class PersonalManager extends ChangeNotifier {
           .get();
 
       data = queryWorksheet.docs[0].data();
-      debugPrint(data.toString());
+      log(data.toString());
       data['id'] = queryWorksheet.docs[0].id;
 
       personal = Personal.fromMap(data);
-      debugPrint('PERSONAL LOAD SUCESS');
+      log('PERSONAL LOAD SUCESS');
 
       loading = false;
       return null;
     } catch (e) {
       personal = Personal();
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
     }
     notifyListeners();
@@ -52,7 +54,7 @@ class PersonalManager extends ChangeNotifier {
     loading = true;
     Map<String, dynamic> data = {};
     personalRequestList = [];
-    debugPrint('LOADING PERSONAL REQUEST LIST');
+    log('LOADING PERSONAL REQUEST LIST');
     try {
       var queryWorksheet = await FirebaseFirestore.instance
           .collection("users")
@@ -66,12 +68,12 @@ class PersonalManager extends ChangeNotifier {
         personalRequestList.add(Personal.fromMap(data));
       });
 
-      debugPrint('PERSONAL REQUEST LIST LOAD SUCESS');
+      log('PERSONAL REQUEST LIST LOAD SUCESS');
       loading = false;
       return null;
     } catch (e) {
       personalRequestList = [];
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
@@ -146,7 +148,7 @@ class PersonalManager extends ChangeNotifier {
       }
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -167,7 +169,7 @@ class PersonalManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }

@@ -16,6 +16,7 @@ class CardExercicio extends StatefulWidget {
   final String idUser;
   final bool isBiSet;
   final bool showAddButton;
+  final VoidCallback refetchExercicies;
 
   const CardExercicio(
       {required this.index,
@@ -23,6 +24,7 @@ class CardExercicio extends StatefulWidget {
       required this.idUser,
       required this.titlePlanilha,
       required this.idPlanilha,
+      required this.refetchExercicies,
       this.isBiSet = false,
       required this.tamPlan,
       this.showAddButton = true});
@@ -197,9 +199,11 @@ class _CardExercicioState extends State<CardExercicio> with SingleTickerProvider
                                       idPlanilha: widget.idPlanilha,
                                       tamPlan: widget.tamPlan,
                                       exercicio: widget.exercise,
+                                      refetchExercicies: widget.refetchExercicies,
                                     ),
                                   );
                                 } else {
+                                  Navigator.of(context).pop();
                                   showModalBottomSheet(
                                     backgroundColor: Colors.transparent,
                                     isScrollControlled: true,
@@ -212,6 +216,7 @@ class _CardExercicioState extends State<CardExercicio> with SingleTickerProvider
                                       idPlanilha: widget.idPlanilha,
                                       tamPlan: widget.tamPlan,
                                       exercicio: widget.exercise,
+                                      refetchExercicies: widget.refetchExercicies,
                                     ),
                                   );
                                 }

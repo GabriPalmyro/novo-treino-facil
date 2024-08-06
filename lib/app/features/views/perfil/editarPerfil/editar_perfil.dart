@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
@@ -222,7 +224,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                                     if (_emailController.text.isEmpty)
                                       return "E-mail não pode ser vazio!";
                                     else if (!emailValid(_emailController.text)) {
-                                      debugPrint('email invalido');
+                                      log('email invalido');
                                       return 'E-mail Inválido!';
                                     }
 
@@ -337,7 +339,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                                   email: _emailController.text,
                                   phoneNumber: celFormatter.unmaskText(_numberController.text));
 
-                              // debugPrint(user.toString());
+                              // log(user.toString());
                               setState(() {
                                 _isEnable = false;
                               });

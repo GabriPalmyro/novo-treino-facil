@@ -58,8 +58,8 @@ class HeaderDrawer extends StatelessWidget {
                           //     imageUrl: photoURL,
                           //     fit: BoxFit.fitWidth,
                           //     // progressIndicatorBuilder: (_, url, download) {
-                          //     //   debugPrint(download.downloaded.toString());
-                          //     //   debugPrint(url.toString());
+                          //     //   log(download.downloaded.toString());
+                          //     //   log(url.toString());
                           //     //   return Center(child: CircularProgressIndicator());
                           //     // },
                           //     errorWidget: (context, url, error) =>

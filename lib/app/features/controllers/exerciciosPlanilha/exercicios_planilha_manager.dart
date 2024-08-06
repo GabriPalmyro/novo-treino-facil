@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
@@ -37,7 +39,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       exercicio.id = id;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -73,7 +75,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
@@ -125,7 +127,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
 
       loading = false;
       return e.toString();
@@ -157,7 +159,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       });
       loading = false;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
     }
   }
@@ -222,7 +224,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       return null;
     } catch (e) {
       loading = false;
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
@@ -254,7 +256,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }
@@ -283,7 +285,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
     try {
       //* DELETANDO EXERCÍCIOS SET
       queryBiSet.docs.forEach((element) async {
-        debugPrint('deletando ' + element.id);
+        log('deletando ' + element.id);
         await FirebaseFirestore.instance
             .collection("users")
             .doc(idUser)
@@ -298,7 +300,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
 
       //* DELETANDO SET
 
-      debugPrint('deletando ' + idExercise);
+      log('deletando ' + idExercise);
       await FirebaseFirestore.instance
           .collection("users")
           .doc(idUser)
@@ -318,7 +320,7 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       loading = false;
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       loading = false;
       return e.toString();
     }

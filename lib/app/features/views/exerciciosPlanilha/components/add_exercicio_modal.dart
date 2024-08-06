@@ -1,15 +1,14 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
-import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
-
-import '../exercicios_planilha_screen.dart';
 
 class ExercicioAddModal extends StatefulWidget {
   final Exercise exercicio;
@@ -20,6 +19,7 @@ class ExercicioAddModal extends StatefulWidget {
   final bool isBiSet;
   final bool isSecondExercise;
   final bool isPersonalManag;
+  final VoidCallback refetchExercicies;
 
   ExercicioAddModal(
       {required this.exercicio,
@@ -27,6 +27,7 @@ class ExercicioAddModal extends StatefulWidget {
       required this.titlePlanilha,
       required this.tamPlan,
       required this.idUser,
+      required this.refetchExercicies,
       this.isBiSet = false,
       this.isSecondExercise = false,
       required this.isPersonalManag});
@@ -429,7 +430,6 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     color: AppColors.mainColor,
                                     textColor: AppColors.black,
                                     onTap: () async {
-
                                       if (_formKey.currentState!.validate()) {
                                         // //* VALIDAR ANÚNCIO INTERCALADO 2
                                         // int adSeenTimes =
@@ -473,18 +473,10 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                           final response = await exerciseManager.addNewExerciseUniSet(
                                               planilhaId: widget.idPlanilha, exercicio: exercicio, idUser: widget.idUser);
                                           if (response == null) {
-                                            String userName = context.read<UserManager>().alunoNomeTemp;
-                                            Navigator.pushReplacementNamed(context, AppRoutes.exerciciosPlanilha,
-                                                arguments: ExerciciosPlanilhaArguments(
-                                                  title: widget.titlePlanilha,
-                                                  isPersonalAcess: widget.isPersonalManag,
-                                                  isFriendAcess: false,
-                                                  nomeAluno: userName,
-                                                  idPlanilha: widget.idPlanilha,
-                                                  idUser: widget.idUser,
-                                                ));
+                                            Navigator.of(context).pop();
+                                            widget.refetchExercicies();
                                           } else {
-                                            debugPrint('Erro $response');
+                                            log('Erro $response');
                                           }
                                         }
                                       }

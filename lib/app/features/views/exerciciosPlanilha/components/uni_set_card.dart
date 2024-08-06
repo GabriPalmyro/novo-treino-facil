@@ -40,20 +40,22 @@ class _UniSetCardState extends State<UniSetCard> {
         children: [
           if (widget.isEditing) ...[
             Expanded(
-                flex: 10,
-                child: Container(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.reorder,
-                      color: AppColors.white,
-                    ),
+              flex: 10,
+              child: Container(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Center(
+                  child: Icon(
+                    Icons.reorder,
+                    color: AppColors.white,
                   ),
-                )),
+                ),
+              ),
+            ),
           ],
           Expanded(
             flex: widget.isEditing ? 90 : 100,
             child: Container(
+              constraints: BoxConstraints(minHeight: 120),
               margin: EdgeInsets.fromLTRB(widget.isEditing ? 8.0 : 20.0, 12.0, 20.0, 12.0),
               width: width * 0.8,
               decoration: BoxDecoration(

@@ -17,7 +17,7 @@ class ExercisesManager extends ChangeNotifier {
   Future<void> loadListExercises() async {
     Map<String, dynamic> data = {};
     listaExercicios = [];
-    debugPrint('LOADING LIST EXERCISES');
+    log('LOADING LIST EXERCISES');
     try {
       var queryWorksheet = await FirebaseFirestore.instance.collection("musculos2").orderBy('title').get();
 
@@ -28,10 +28,10 @@ class ExercisesManager extends ChangeNotifier {
         resultList.add(Exercise.fromMap(data));
       });
 
-      debugPrint('EXERCICE LIST LOAD SUCESS');
+      log('EXERCICE LIST LOAD SUCESS');
     } catch (e) {
       listaExercicios = [];
-      debugPrint('ERROR LOADING: ' + e.toString());
+      log('ERROR LOADING: ' + e.toString());
     }
     notifyListeners();
   }
@@ -110,16 +110,16 @@ class ExercisesManager extends ChangeNotifier {
       var queryWorksheet = await FirebaseFirestore.instance.collection("users").doc(idUser).collection("exercicios").orderBy('title').get();
 
       queryWorksheet.docs.forEach((element) {
-        debugPrint(element.data.toString());
+        log(element.data.toString());
         data = element.data();
         data['id'] = element.id;
         listaMeusExercicios.add(Exercise.fromMap(data));
       });
 
-      debugPrint('MY LIST EXERCISE LOAD SUCESS');
+      log('MY LIST EXERCISE LOAD SUCESS');
     } catch (e) {
       listaMeusExercicios = [];
-      debugPrint('ERROR LOADING: ' + e.toString());
+      log('ERROR LOADING: ' + e.toString());
     }
     notifyListeners();
   }
@@ -131,7 +131,7 @@ class ExercisesManager extends ChangeNotifier {
       notifyListeners();
       return null;
     } catch (e) {
-      debugPrint(e.toString());
+      log(e.toString());
       return e.toString();
     }
   }
