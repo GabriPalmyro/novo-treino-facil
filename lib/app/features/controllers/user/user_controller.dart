@@ -52,14 +52,12 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<void> singUp(User user, String pass, VoidCallback onSucess,
-      VoidCallback onFailed) async {
+  Future<void> singUp(User user, String pass, VoidCallback onSucess, VoidCallback onFailed) async {
     loading = true;
 
     try {
       //await Future.delayed(Duration(seconds: 2));
-      Auth.UserCredential authUser = await _auth.createUserWithEmailAndPassword(
-          email: user.email!, password: pass);
+      Auth.UserCredential authUser = await _auth.createUserWithEmailAndPassword(email: user.email!, password: pass);
       firebaseUser = authUser.user;
       onSucess();
       await saveUserData(user.toMap());
@@ -91,8 +89,7 @@ class UserManager extends ChangeNotifier {
 
     try {
       // await Future.delayed(Duration(seconds: 1));
-      Auth.UserCredential authUser =
-          await _auth.signInWithEmailAndPassword(email: email, password: pass);
+      Auth.UserCredential authUser = await _auth.signInWithEmailAndPassword(email: email, password: pass);
       firebaseUser = authUser.user;
       await loadCurrentUser();
       loading = false;
@@ -129,10 +126,7 @@ class UserManager extends ChangeNotifier {
   Future<void> saveUserData(Map<String, dynamic> userData) async {
     try {
       this.user = User.fromMap(userData);
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .set(userData);
+      await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).set(userData);
 
       debugPrint('Usuário criado com sucesso!');
     } catch (e) {
@@ -156,10 +150,7 @@ class UserManager extends ChangeNotifier {
     if (firebaseUser != null) {
       if (user.name == null) {
         try {
-          DocumentSnapshot docUser = await FirebaseFirestore.instance
-              .collection("users")
-              .doc(firebaseUser!.uid)
-              .get();
+          DocumentSnapshot docUser = await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).get();
           Map<String, dynamic> _userData = docUser.data() as Map<String, dynamic>;
           _userData['id'] = docUser.id;
           user = User.fromMap(_userData);
@@ -173,16 +164,16 @@ class UserManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> changeUserInfos(
-      {required User newUser,
-      required String password,}) async {
+  Future<String?> changeUserInfos({
+    required User newUser,
+    required String password,
+  }) async {
     // ignore: await_only_futures
     if (firebaseUser == null) firebaseUser = await _auth.currentUser;
     loading = true;
     try {
-      Auth.UserCredential authResult = await firebaseUser!
-          .reauthenticateWithCredential(Auth.EmailAuthProvider.credential(
-              email: user.email!, password: password));
+      Auth.UserCredential authResult =
+          await firebaseUser!.reauthenticateWithCredential(Auth.EmailAuthProvider.credential(email: user.email!, password: password));
       authResult.user;
 
       if (user.email == newUser.email) {
@@ -199,10 +190,7 @@ class UserManager extends ChangeNotifier {
           "seguidores": user.seguidores,
           "seguindo": user.seguindo
         };
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(firebaseUser!.uid)
-            .update(newUserInfos);
+        await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(newUserInfos);
         log("PERFIL ATUALIZADO");
         user = User.fromMap(newUserInfos);
         loading = false;
@@ -224,10 +212,7 @@ class UserManager extends ChangeNotifier {
           "seguindo": user.seguindo
         };
 
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(firebaseUser!.uid)
-            .update(newUserInfos);
+        await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(newUserInfos);
         log("PERFIL ATUALIZADO");
         user = User.fromMap(newUserInfos);
         loading = false;
@@ -240,10 +225,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String?> changeUserPreferences(
-      {required bool mostrarPlanilhas,
-      required bool mostrarExercicios,
-      required bool mostrarPerfilPesquisa}) async {
+  Future<String?> changeUserPreferences({required bool mostrarPlanilhas, required bool mostrarExercicios, required bool mostrarPerfilPesquisa}) async {
     try {
       Map<String, dynamic> newUserInfos = {
         "mostrar_planilhas_perfil": mostrarPlanilhas,
@@ -251,10 +233,7 @@ class UserManager extends ChangeNotifier {
         "mostrar_perfil_pesquisa": mostrarPerfilPesquisa
       };
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .update(newUserInfos);
+      await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(newUserInfos);
 
       user.mostrarPlanilhasPerfil = mostrarPlanilhas;
       user.mostrarExerciciosPerfil = mostrarExercicios;
@@ -275,10 +254,7 @@ class UserManager extends ChangeNotifier {
     debugPrint('LOADING FRIENDS');
     try {
       loading = true;
-      var queryWorksheet = await FirebaseFirestore.instance
-          .collection("users")
-          .where('nickname', isEqualTo: nickname)
-          .get();
+      var queryWorksheet = await FirebaseFirestore.instance.collection("users").where('nickname', isEqualTo: nickname).get();
 
       queryWorksheet.docs.forEach((element) {
         data = element.data();
@@ -298,12 +274,8 @@ class UserManager extends ChangeNotifier {
 
   Future<bool> checkIsFollowing({required String friendId}) async {
     try {
-      var followers = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .collection('seguindo')
-          .where('followerId', isEqualTo: friendId)
-          .get();
+      var followers =
+          await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).collection('seguindo').where('followerId', isEqualTo: friendId).get();
 
       loading = false;
       if (followers.docs.isEmpty) return false;
@@ -317,41 +289,24 @@ class UserManager extends ChangeNotifier {
   Future<String?> adicionarSeguidor({required User friend}) async {
     try {
       var follower = Follower(
-          followerId: firebaseUser!.uid,
-          name: user.name! + ' ' + user.lastName!,
-          email: user.email!,
-          photoURL: user.photoURL!,);
+        followerId: firebaseUser!.uid,
+        name: user.name! + ' ' + user.lastName!,
+        email: user.email!,
+        photoURL: user.photoURL!,
+      );
 
-      var following = Follower(
-          followerId: friend.id!,
-          name: friend.name! + ' ' + friend.lastName!,
-          email: friend.email!,
-          photoURL: friend.photoURL!);
+      var following = Follower(followerId: friend.id!, name: friend.name! + ' ' + friend.lastName!, email: friend.email!, photoURL: friend.photoURL!);
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(friend.id)
-          .collection('seguidores')
-          .add(follower.toMap());
+      await FirebaseFirestore.instance.collection("users").doc(friend.id).collection('seguidores').add(follower.toMap());
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .collection('seguindo')
-          .add(following.toMap());
+      await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).collection('seguindo').add(following.toMap());
 
       user.seguindo = user.seguindo! + 1;
       friend.seguidores = friend.seguidores! + 1;
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(friend.id)
-          .update(friend.toMap());
+      await FirebaseFirestore.instance.collection("users").doc(friend.id).update(friend.toMap());
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .update(user.toMap());
+      await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(user.toMap());
 
       notifyListeners();
 
@@ -364,46 +319,22 @@ class UserManager extends ChangeNotifier {
 
   Future<String?> removerSeguidor({required User friend}) async {
     try {
-      var queryFollower = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(friend.id)
-          .collection('seguidores')
-          .where('followerId', isEqualTo: firebaseUser!.uid)
-          .get();
+      var queryFollower =
+          await FirebaseFirestore.instance.collection("users").doc(friend.id).collection('seguidores').where('followerId', isEqualTo: firebaseUser!.uid).get();
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(friend.id)
-          .collection('seguidores')
-          .doc(queryFollower.docs.first.id)
-          .delete();
+      await FirebaseFirestore.instance.collection("users").doc(friend.id).collection('seguidores').doc(queryFollower.docs.first.id).delete();
 
-      queryFollower = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .collection('seguindo')
-          .where('followerId', isEqualTo: friend.id)
-          .get();
+      queryFollower =
+          await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).collection('seguindo').where('followerId', isEqualTo: friend.id).get();
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .collection('seguindo')
-          .doc(queryFollower.docs.first.id)
-          .delete();
+      await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).collection('seguindo').doc(queryFollower.docs.first.id).delete();
 
       user.seguindo = user.seguindo! - 1;
       friend.seguidores = friend.seguidores! - 1;
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(friend.id)
-          .update(friend.toMap());
+      await FirebaseFirestore.instance.collection("users").doc(friend.id).update(friend.toMap());
 
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser!.uid)
-          .update(user.toMap());
+      await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(user.toMap());
 
       notifyListeners();
 
@@ -414,70 +345,50 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<String?> createNewExe(
-        {XFile? video,
-        String? muscleText,
-        String? title,
-        int? level,
-        bool? homeExe,
-        VoidCallback? onSuccess}) async {
-      loading = true;
+  Future<String?> createNewExe({XFile? video, String? muscleText, String? title, int? level, bool? homeExe, VoidCallback? onSuccess}) async {
+    loading = true;
 
     //! VERIFICAR QUANTOS EXERCÍCIOS POSSUI
-    var listExe = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user.id)
-        .collection("exercicios")
-        .get();
+    var listExe = await FirebaseFirestore.instance.collection("users").doc(user.id).collection("exercicios").get();
 
     if (listExe.docs.length > 10) {
       return "Limite máximo de exercícios personalizados atingido!";
     }
 
     File videoFile = File(video!.path);
+    try {
+      await FirebaseStorage.instance
+          .refFromURL("gs://treino-facil-22856.appspot.com/exercicios_compartilhados/${user.id}/exercicios/$muscleText")
+          .child("${title}_${DateTime.now().day}_${DateTime.now().month}")
+          .putFile(videoFile)
+          .then((value) async {
+        if (value.state == TaskState.success) {
+          await value.ref.getDownloadURL().then((value) {
+            String downloadUrl = value.toString();
 
-    await FirebaseStorage.instance
-        .refFromURL(
-            "gs://treino-facil-22856.appspot.com/exercicios_compartilhados/${user.id}/exercicios/$muscleText")
-        .child("${title}_${DateTime.now().day}_${DateTime.now().month}")
-        .putFile(videoFile)
-        .then((value) async {
-      if (value.state == TaskState.success) {
-        await value.ref.getDownloadURL().then((value) {
-          String downloadUrl = value.toString();
+            var data = {"title": title, "muscleId": muscleText, "level": level, "home_exe": homeExe, "video": downloadUrl};
 
-          var data = {
-            "title": title,
-            "muscleId": muscleText,
-            "level": level,
-            "home_exe": homeExe,
-            "video": downloadUrl
-          };
-
-          FirebaseFirestore.instance
-              .collection("users")
-              .doc(user.id)
-              .collection("exercicios")
-              .add(data)
-              .then((value) {
-            print("Succesfuly Uploaded");
-            onSuccess?.call();
-            loading = false;
-            return null;
-          }).catchError((error) {
-            print(error);
-            loading = false;
-            return ;
+            FirebaseFirestore.instance.collection("users").doc(user.id).collection("exercicios").add(data).then((value) {
+              print("Succesfuly Uploaded");
+              onSuccess?.call();
+              loading = false;
+              return null;
+            }).catchError((error) {
+              print(error);
+              loading = false;
+              return;
+            });
           });
-        });
-      }
+        }
 
-      loading = false;
-    }).catchError((error) {
+        loading = false;
+      });
+    } catch (error) {
       print(error);
       loading = false;
       return error.toString();
-    });
+    }
+
     return 'Ocorreu um erro.';
   }
 
@@ -488,12 +399,7 @@ class UserManager extends ChangeNotifier {
     alunos = [];
     debugPrint('LOADING ALUNOS');
     try {
-      var queryWorksheet = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(_auth.currentUser!.uid)
-          .collection("alunos")
-          .orderBy('client_name')
-          .get();
+      var queryWorksheet = await FirebaseFirestore.instance.collection("users").doc(_auth.currentUser!.uid).collection("alunos").orderBy('client_name').get();
 
       queryWorksheet.docs.forEach((element) {
         data = element.data();
@@ -514,10 +420,7 @@ class UserManager extends ChangeNotifier {
   Future<String?> sendAlunoRequest({required String emailAluno}) async {
     loading = true;
     try {
-      var getResponse = await FirebaseFirestore.instance
-          .collection("users")
-          .where("email", isEqualTo: emailAluno)
-          .get();
+      var getResponse = await FirebaseFirestore.instance.collection("users").where("email", isEqualTo: emailAluno).get();
 
       if (getResponse.docs.isEmpty) {
         loading = false;
@@ -526,19 +429,11 @@ class UserManager extends ChangeNotifier {
 
       String alunoId = getResponse.docs.first.id;
 
-      var alreadyRequest = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(alunoId)
-          .collection("request_list")
-          .where("personal_email", isEqualTo: user.email)
-          .get();
+      var alreadyRequest =
+          await FirebaseFirestore.instance.collection("users").doc(alunoId).collection("request_list").where("personal_email", isEqualTo: user.email).get();
 
       if (alreadyRequest.docs.isEmpty) {
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(alunoId)
-            .collection("request_list")
-            .add({
+        await FirebaseFirestore.instance.collection("users").doc(alunoId).collection("request_list").add({
           "personal_Id": user.id,
           "personal_name": user.name! + " " + user.lastName!,
           "personal_email": user.email,
@@ -565,36 +460,17 @@ class UserManager extends ChangeNotifier {
   }) async {
     loading = true;
     try {
-      var personalSnapshot = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(userId)
-          .collection("personal")
-          .where("personal_Id", isEqualTo: personalId)
-          .get();
+      var personalSnapshot =
+          await FirebaseFirestore.instance.collection("users").doc(userId).collection("personal").where("personal_Id", isEqualTo: personalId).get();
 
       for (var snapshot in personalSnapshot.docs) {
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(userId)
-            .collection("personal")
-            .doc(snapshot.id)
-            .delete();
+        await FirebaseFirestore.instance.collection("users").doc(userId).collection("personal").doc(snapshot.id).delete();
       }
 
-      var alunoSnapshot = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(personalId)
-          .collection("alunos")
-          .where("client_Id", isEqualTo: userId)
-          .get();
+      var alunoSnapshot = await FirebaseFirestore.instance.collection("users").doc(personalId).collection("alunos").where("client_Id", isEqualTo: userId).get();
 
       for (var snapshot in alunoSnapshot.docs) {
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(personalId)
-            .collection("alunos")
-            .doc(snapshot.id)
-            .delete();
+        await FirebaseFirestore.instance.collection("users").doc(personalId).collection("alunos").doc(snapshot.id).delete();
       }
 
       loading = false;
