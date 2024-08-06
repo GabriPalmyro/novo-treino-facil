@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 import 'components/card_exercicio.dart';
 import 'components/filter_button.dart';
@@ -168,7 +167,6 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   Widget build(BuildContext context) {
     return Consumer<ExercisesManager>(builder: (_, exercicios, __) {
       return Scaffold(
-        drawer: CustomDrawer(pageNow: 2),
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: AppColors.mainColor,

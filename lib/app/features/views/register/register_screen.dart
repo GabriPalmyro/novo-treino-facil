@@ -625,7 +625,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _onSucess() {
     mostrarSnackBar('Vamos lá!', Colors.green);
     Navigator.pushNamedAndRemoveUntil(
-        context, AppRoutes.home, (route) => false);
+        context, AppRoutes.tabs, (route) => false);
   }
 
   void _onFailed() {

@@ -8,7 +8,6 @@ import 'package:tabela_treino/app/features/controllers/user/user_controller.dart
 import 'package:tabela_treino/app/features/models/user/user.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/card_friend.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/components/search_bar_widget.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class BuscarAmigosScreen extends StatefulWidget {
   @override
@@ -41,9 +40,6 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
     return Consumer2<UserManager, AmigosProcuradosManager>(
         builder: (_, userManager, amigosProcurados, __) {
       return Scaffold(
-          drawer: CustomDrawer(
-            pageNow: 8,
-          ),
           appBar: AppBar(
             toolbarHeight: 60,
             // shadowColor: Colors.grey[850],

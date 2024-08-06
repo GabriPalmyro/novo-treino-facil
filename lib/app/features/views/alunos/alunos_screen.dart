@@ -8,7 +8,6 @@ import 'package:tabela_treino/app/features/views/alunos/components/novo_aluno_mo
 import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 import 'package:tabela_treino/app/shared/dialogs/show_dialog.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class AlunosScreen extends StatefulWidget {
   @override
@@ -69,7 +68,7 @@ class _AlunosScreenState extends State<AlunosScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Consumer<UserManager>(builder: (_, userManager, __) {
       return Scaffold(
-        drawer: CustomDrawer(pageNow: 4),
+        // drawer: CustomDrawer(pageNow: 4),
         appBar: AppBar(
           toolbarHeight: 70,
           // shadowColor: Colors.grey[850],

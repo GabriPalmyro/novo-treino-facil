@@ -45,7 +45,7 @@ class _LoginTextFormFieldState extends State<LoginTextFormField> {
     return Container(
       width: widget.width,
       decoration: BoxDecoration(color: AppColors.lightGrey.withOpacity(0.8), borderRadius: BorderRadius.circular(4)),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       child: TextFormField(
           keyboardType: widget.textInputType,
           controller: widget.textController,

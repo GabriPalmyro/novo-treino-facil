@@ -5,7 +5,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/meAjuda/ajudas_controller.dart';
 import 'package:tabela_treino/app/features/views/meAjuda/shimmer_ajuda.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 import 'ajuda_details.dart';
 
@@ -53,9 +52,9 @@ class _MeAjudaScreenState extends State<MeAjudaScreen> {
             centerTitle: true,
             backgroundColor: AppColors.grey,
           ),
-          drawer: CustomDrawer(
-            pageNow: 12,
-          ),
+          // drawer: CustomDrawer(
+          //   pageNow: 12,
+          // ),
           backgroundColor: AppColors.grey,
           body: SingleChildScrollView(
             physics: BouncingScrollPhysics(),

@@ -3,7 +3,8 @@ class AppRoutes {
   static const register = '/register';
   static const splash = '/splash';
 
-  static const home = '/home';
+  static const tabs = '/tabs';
+  // static const home = '/home';
   static const planilhas = '/planilhas';
   static const planilhasAluno = '/planilhas-aluno';
   static const listaExercicios = '/lista-exercicios';

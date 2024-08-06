@@ -4,7 +4,6 @@ import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/preferencias/components/preferencias_card.dart';
 import 'package:tabela_treino/app/features/views/preferencias/components/preferencias_options.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class PreferenciasScreen extends StatefulWidget {
   @override
@@ -30,7 +29,7 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
   Widget build(BuildContext context) {
     return Consumer<UserManager>(builder: (_, userManager, __) {
       return Scaffold(
-        drawer: CustomDrawer(pageNow: 8),
+        // drawer: CustomDrawer(pageNow: 8),
         appBar: AppBar(
           toolbarHeight: 60,
           shadowColor: Colors.grey[850],

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/card_planilha.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
 
 import 'components/info_dialog.dart';
@@ -12,9 +12,8 @@ import 'components/lista_planilha_vazia.dart';
 import 'components/nova_planilha_modal.dart';
 
 class PlanilhaScreen extends StatefulWidget {
-  final String idUser;
   final bool isPersonalAcess;
-  PlanilhaScreen({required this.idUser, this.isPersonalAcess = false});
+  PlanilhaScreen({this.isPersonalAcess = false});
   @override
   _PlanilhaScreenState createState() => _PlanilhaScreenState();
 }
@@ -27,7 +26,7 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
   Widget build(BuildContext context) {
     return Consumer<PlanilhaManager>(builder: (_, planilhas, __) {
       return Scaffold(
-        drawer: CustomDrawer(pageNow: 1),
+        // drawer: CustomDrawer(pageNow: 1),
         appBar: AppBar(
           toolbarHeight: 70,
           // shadowColor: Colors.grey[850],
@@ -65,7 +64,7 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                     isScrollControlled: true,
                     context: context,
                     builder: (_) => NovaPlanilhaModal(
-                      idUser: widget.idUser,
+                      idUser: context.read<UserManager>().user.id!,
                       isPersonalAcess: widget.isPersonalAcess,
                     ),
                   );
@@ -89,7 +88,7 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                         isScrollControlled: true,
                         context: context,
                         builder: (_) => NovaPlanilhaModal(
-                              idUser: widget.idUser,
+                              idUser: context.read<UserManager>().user.id!,
                               isPersonalAcess: widget.isPersonalAcess,
                             ));
                   })
@@ -136,11 +135,11 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                                         arguments: ExerciciosPlanilhaArguments(
                                             title: planilhas.listaPlanilhas[index].title!,
                                             idPlanilha: planilhas.listaPlanilhas[index].id!,
-                                            idUser: widget.idUser,
+                                            idUser: context.read<UserManager>().user.id!,
                                             isFriendAcess: false,
                                             isPersonalAcess: widget.isPersonalAcess));
                                   },
-                                  userId: widget.idUser,
+                                  userId: context.read<UserManager>().user.id!,
                                   planilha: planilhas.listaPlanilhas[index],
                                   index: index,
                                 ),

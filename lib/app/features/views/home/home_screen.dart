@@ -8,7 +8,7 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/home/components/home_button.dart';
 import 'package:tabela_treino/app/features/views/home/components/planilha_widget.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
+import 'package:tabela_treino/app/features/views/perfil/perfil_screen.dart';
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 import '/app/core/core.dart';
@@ -100,34 +100,34 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      drawer: CustomDrawer(pageNow: 0),
-      appBar: AppBar(
-        toolbarHeight: 60,
-        //shadowColor: Colors.grey[850],
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: AppColors.mainColor,
-        ),
-        title: Text(
-          "Início",
-          style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 30),
-        ),
-        actions: [
-          // Padding(
-          //   padding: const EdgeInsets.only(right: 12.0),
-          //   child: IconButton(
-          //     icon: const Icon(
-          //       Icons.notifications_none_outlined,
-          //       size: 28,
-          //     ),
-          //     tooltip: 'Notificações',
-          //     onPressed: () {},
-          //   ),
-          // ),
-        ],
-        backgroundColor: AppColors.grey,
-      ),
+      // drawer: CustomDrawer(pageNow: 0),
+      // appBar: AppBar(
+      //   toolbarHeight: 60,
+      //   //shadowColor: Colors.grey[850],
+      //   elevation: 0,
+      //   centerTitle: true,
+      //   iconTheme: IconThemeData(
+      //     color: AppColors.mainColor,
+      //   ),
+      //   title: Text(
+      //     "Início",
+      //     style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 30),
+      //   ),
+      //   actions: [
+      //     // Padding(
+      //     //   padding: const EdgeInsets.only(right: 12.0),
+      //     //   child: IconButton(
+      //     //     icon: const Icon(
+      //     //       Icons.notifications_none_outlined,
+      //     //       size: 28,
+      //     //     ),
+      //     //     tooltip: 'Notificações',
+      //     //     onPressed: () {},
+      //     //   ),
+      //     // ),
+      //   ],
+      //   backgroundColor: AppColors.grey,
+      // ),
       backgroundColor: AppColors.grey,
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
@@ -136,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: MediaQuery.of(context).padding.top),
                 if (userManager.loading || _isLoading) ...[
                   Shimmer.fromColors(
                     baseColor: AppColors.lightGrey,
@@ -167,26 +168,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ] else ...[
                   Container(
-                      padding: const EdgeInsets.only(top: 24),
-                      margin: const EdgeInsets.only(left: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Olá, ${capitalizeString(userManager.user.name ?? '')}",
-                                style: TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 33, color: AppColors.mainColor),
+                    padding: const EdgeInsets.only(top: 24),
+                    margin: const EdgeInsets.only(left: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Olá, ${capitalizeString(userManager.user.name ?? '')}",
+                              style: TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 33, color: AppColors.mainColor),
+                            ),
+                            Text(
+                              !dayHasTraining ? homeMessage() : 'Como você está hoje?',
+                              style: TextStyle(fontFamily: AppFonts.gothamLight, fontSize: 18, color: AppColors.white),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, AppRoutes.meuPerfil);
+                            },
+                            child: Hero(
+                              tag: 'userPhoto',
+                              child: UserPhotoWidget(
+                                photo: userManager.user.photoURL,
+                                size: Size(50, 50),
                               ),
-                              Text(
-                                !dayHasTraining ? homeMessage() : 'Como você está hoje?',
-                                style: TextStyle(fontFamily: AppFonts.gothamLight, fontSize: 18, color: AppColors.white),
-                              ),
-                            ],
+                            ),
                           ),
-                        ],
-                      )),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
                 if (userManager.loading || _isLoading) ...[
                   Shimmer.fromColors(

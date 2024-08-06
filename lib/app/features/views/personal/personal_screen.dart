@@ -5,7 +5,6 @@ import 'package:tabela_treino/app/features/controllers/personal/personal_manager
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/personal/meuPersonal/meu_personal_page.dart';
 import 'package:tabela_treino/app/features/views/personal/requests/request_list_page.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 
 class PersonalScreen extends StatefulWidget {
   @override
@@ -33,46 +32,41 @@ class _PersonalScreenState extends State<PersonalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (_) {
-        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
-      },
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          drawer: CustomDrawer(
-            pageNow: 4,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        // drawer: CustomDrawer(
+        //   pageNow: 4,
+        // ),
+        appBar: AppBar(
+          title: Text(
+            "Meu Personal",
+            style: TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 20),
           ),
-          appBar: AppBar(
-            title: Text(
-              "Meu Personal",
-              style: TextStyle(fontFamily: AppFonts.gothamBold, fontSize: 20),
-            ),
-            centerTitle: true,
-            bottom: TabBar(indicatorColor: Colors.white, overlayColor: MaterialStateProperty.all(AppColors.grey300), tabs: [
-              Tab(
-                icon: Icon(
-                  Icons.person_outline,
-                  size: 30,
-                ),
+          centerTitle: true,
+          bottom: TabBar(indicatorColor: Colors.white, overlayColor: MaterialStateProperty.all(AppColors.grey300), tabs: [
+            Tab(
+              icon: Icon(
+                Icons.person_outline,
+                size: 30,
               ),
-              Tab(
-                icon: Icon(
-                  Icons.list,
-                  size: 30,
-                ),
-              )
-            ]),
-          ),
-          backgroundColor: Color(0xff313131),
-          body: TabBarView(
-            children: [
-              //TAB 1
-              MeuPersonalPage(),
-              //TAB 2
-              RequestListPage()
-            ],
-          ),
+            ),
+            Tab(
+              icon: Icon(
+                Icons.list,
+                size: 30,
+              ),
+            )
+          ]),
+        ),
+        backgroundColor: Color(0xff313131),
+        body: TabBarView(
+          children: [
+            //TAB 1
+            MeuPersonalPage(),
+            //TAB 2
+            RequestListPage()
+          ],
         ),
       ),
     );

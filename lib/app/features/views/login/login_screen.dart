@@ -43,19 +43,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.only(top: 40.0),
                   child: Container(
                     child: LoginTextFormField(
-                      width: width * 0.85,
+                      width: width * 0.95,
                       textController: _emailController,
                       enable: _isEnable,
                       textInputType: TextInputType.text,
-                      textColor: AppColors.mainColor,
-                      labelColor: AppColors.mainColor,
+                      textColor: AppColors.white,
+                      labelColor: AppColors.white,
                       labelText: 'E-mail',
-                      prefixIcon: Padding(
-                          padding: EdgeInsets.only(right: 10.0),
-                          child: Icon(
-                            Icons.email_outlined,
-                            color: AppColors.white,
-                          )),
+                      prefixIcon: Icon(
+                        Icons.email_rounded,
+                        color: AppColors.mainColor,
+                      ),
                       onFieldSubmitted: (text) {
                         passNode.requestFocus();
                       },
@@ -65,48 +63,49 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 18.0),
                   child: Container(
-                      child: LoginTextFormField(
-                    width: width * 0.85,
-                    textController: _passController,
-                    enable: _isEnable,
-                    textInputType: TextInputType.text,
-                    textColor: AppColors.mainColor,
-                    labelColor: AppColors.mainColor,
-                    labelText: 'Senha',
-                    isObscure: _obscureTextPass,
-                    focusNode: passNode,
-                    onFieldSubmitted: (text) async {
-                      if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          _isEnable = false;
-                        });
-
-                        final response = await userManager.signIn(_emailController.text.trim(), _passController.text);
-                        if (response != null) {
-                          _onFailed(response);
+                    child: LoginTextFormField(
+                      width: width * 0.95,
+                      textController: _passController,
+                      enable: _isEnable,
+                      textInputType: TextInputType.text,
+                      textColor: AppColors.white,
+                      labelColor: AppColors.white,
+                      labelText: 'Senha',
+                      isObscure: _obscureTextPass,
+                      focusNode: passNode,
+                      onFieldSubmitted: (text) async {
+                        if (_formKey.currentState!.validate()) {
                           setState(() {
-                            _isEnable = true;
+                            _isEnable = false;
                           });
-                        } else {
-                          _onSucess();
+
+                          final response = await userManager.signIn(_emailController.text.trim(), _passController.text);
+                          if (response != null) {
+                            _onFailed(response);
+                            setState(() {
+                              _isEnable = true;
+                            });
+                          } else {
+                            _onSucess();
+                          }
                         }
-                      }
-                    },
-                    prefixIcon: Padding(
-                        padding: EdgeInsets.only(right: 10.0),
-                        child: Icon(
-                          Icons.enhanced_encryption_outlined,
-                          color: AppColors.white,
-                        )),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscureTextPass = !_obscureTextPass;
-                        });
                       },
-                      icon: Icon(_obscureTextPass ? Icons.visibility_off : Icons.visibility),
+                      prefixIcon: Icon(
+                        Icons.password_rounded,
+                        color: AppColors.mainColor,
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureTextPass = !_obscureTextPass;
+                          });
+                        },
+                        icon: Icon(
+                          _obscureTextPass ? Icons.visibility_off : Icons.visibility,
+                        ),
+                      ),
                     ),
-                  )),
+                  ),
                 ),
                 SizedBox(
                   height: 30,
@@ -132,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 350),
                     curve: Curves.ease,
-                    width: width * 0.85,
+                      width: width * 0.95,
                     height: 60,
                     child: Center(
                       child: userManager.loading
@@ -224,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSucess() {
     // await context.read<AdsManager>().resetAdsPreferences();
-    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.tabs, (route) => false);
   }
 
   void _onFailed(String error) {

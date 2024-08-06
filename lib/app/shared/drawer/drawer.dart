@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
-import 'package:tabela_treino/app/shared/drawer/components/logout_button.dart';
 import 'package:tabela_treino/app/shared/shimmer/drawer/drawer_shimmer.dart';
 
 import 'components/header_drawer.dart';
@@ -53,7 +53,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         InkWell(
                           onTap: () {
                             if (widget.pageNow != 0) {
-                              Navigator.pushNamed(context, AppRoutes.home);
+                              Navigator.pushNamed(context, AppRoutes.tabs);
                             } else {
                               Navigator.pop(context);
                             }
@@ -64,9 +64,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.home,
-                                  size: 30,
+                                FaIcon(
+                                  FontAwesomeIcons.house,
+                                  size: 25,
                                   color: AppColors.mainColor,
                                 ),
                                 SizedBox(width: 32),
@@ -95,9 +95,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.list_outlined,
-                                  size: 30,
+                                FaIcon(
+                                  FontAwesomeIcons.dumbbell,
+                                  size: 25,
                                   color: AppColors.mainColor,
                                 ),
                                 SizedBox(width: 32),
@@ -246,14 +246,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           ),
                         ),
                         Expanded(child: SizedBox()),
-                        LogoutButtonWidget(
-                          isLoading: isLoading,
-                          changeLoading: (value) {
-                            setState(() {
-                              isLoading = value;
-                            });
-                          },
-                        ),
+                        // LogoutButtonWidget(
+                        //   isLoading: isLoading,
+                        //   changeLoading: (value) {
+                        //     setState(() {
+                        //       isLoading = value;
+                        //     });
+                        //   },
+                        // ),
                         const SizedBox(height: 24),
                       ],
                     ),

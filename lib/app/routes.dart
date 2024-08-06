@@ -5,7 +5,6 @@ import 'package:tabela_treino/app/features/views/alunos/alunos_screen.dart';
 import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/buscar_amigo_screen.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
-import 'package:tabela_treino/app/features/views/home/home_screen.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/lista_exercicios.dart';
 import 'package:tabela_treino/app/features/views/meAjuda/meajuda_screen.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/meus_exercicios_screen.dart';
@@ -16,6 +15,7 @@ import 'package:tabela_treino/app/features/views/personal/personal_screen.dart';
 import 'package:tabela_treino/app/features/views/planilhas/planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/preferencias/preferencias_screen.dart';
 import 'package:tabela_treino/app/features/views/register/register_screen.dart';
+import 'package:tabela_treino/app/features/views/tabs/tabs_screen.dart';
 import 'package:tabela_treino/app/shared/splash/splash.dart';
 
 import 'features/views/login/login_screen.dart';
@@ -30,8 +30,10 @@ class Routes {
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case AppRoutes.register:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
-      case AppRoutes.home:
-        return MaterialPageRoute(builder: (_) => HomeScreen());
+      // case AppRoutes.home:
+      //   return MaterialPageRoute(builder: (_) => HomeScreen());
+      case AppRoutes.tabs:
+        return MaterialPageRoute(builder: (_) => TabsScreen());
       case AppRoutes.meuPerfil:
         return MaterialPageRoute(builder: (_) => MeuPerfiLScreen());
       case AppRoutes.preferencias:
@@ -43,7 +45,7 @@ class Routes {
       case AppRoutes.planilhas:
         return MaterialPageRoute(
           builder: (_) => PlanilhaScreen(
-            idUser: settings.arguments as String,
+            // idUser: settings.arguments as String,
           ),
         );
       case AppRoutes.planilhasAluno:

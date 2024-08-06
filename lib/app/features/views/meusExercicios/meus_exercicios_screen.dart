@@ -7,7 +7,6 @@ import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/p
 import 'package:tabela_treino/app/features/views/listaExercicios/components/info_exercicio_modal.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/adicionar_exercicio.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
-import 'package:tabela_treino/app/shared/drawer/drawer.dart';
 import 'package:tabela_treino/app/shared/shimmer/exerciciosPlanilha/exercicios_planilhas_shimmer.dart';
 
 import 'components/card_meu_exercicio.dart';
@@ -42,7 +41,7 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
   Widget build(BuildContext context) {
     return Consumer<ExercisesManager>(builder: (_, exerciciosManager, __) {
       return Scaffold(
-          drawer: CustomDrawer(pageNow: 8),
+          // drawer: CustomDrawer(pageNow: 8),
           appBar: AppBar(
             toolbarHeight: 70,
             // shadowColor: Colors.grey[850],
