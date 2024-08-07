@@ -72,6 +72,7 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.amber,
           primaryColor: AppColors.mainColor,
           useMaterial3: false,
+          fontFamily: AppFonts.gotham
         ),
         debugShowCheckedModeBanner: false,
         builder: (context, child) {

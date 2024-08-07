@@ -210,26 +210,20 @@ class _MeuPerfiLScreenState extends State<MeuPerfiLScreen> {
                 //       Navigator.pushNamed(context, AppRoutes.preferencias);
                 //     }),
                 // CardOption(title: 'Alterar Foto de Perfil', onTap: () {}),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: CardOption(
-                    title: 'Preferências',
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.preferencias);
-                    },
-                  ),
+                CardOption(
+                  title: 'Preferências',
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.preferencias);
+                  },
+                ),
+                CardOption(
+                  title: 'Me Ajuda',
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.meAjuda);
+                  },
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: CardOption(
-                    title: 'Me Ajuda',
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.meAjuda);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
+                  padding: const EdgeInsets.only(top: 12.0),
                   child: LogoutButtonWidget()
                 ),
               ],

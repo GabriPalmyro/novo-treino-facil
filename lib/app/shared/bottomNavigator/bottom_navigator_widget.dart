@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
+import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 class BottomNavigatorWidget extends StatelessWidget {
   const BottomNavigatorWidget({super.key, required this.selectedTab, required this.onItemTapped, this.isPersonal = false});
@@ -103,7 +106,20 @@ class BottomNavigatorWidget extends StatelessWidget {
               ),
             ),
           ),
-          if (isPersonal) ...[
+          if (context.watch<UserManager>().loading) ...[
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Skeleton(height: 20, width: 30),
+                    kSpacer,
+                    Skeleton(height: 10, width: 30),
+                  ],
+                ),
+              ),
+            ),
+          ] else if (isPersonal) ...[
             Expanded(
               child: Center(
                 child: InkWell(
@@ -143,13 +159,13 @@ class BottomNavigatorWidget extends StatelessWidget {
                     children: [
                       FaIcon(
                         FontAwesomeIcons.userPen,
-                        color: selectedTab == 3 ? AppColors.mainColor : AppColors.lightGrey,
+                        color: selectedTab == 4 ? AppColors.mainColor : AppColors.lightGrey,
                       ),
                       kSpacer,
                       Text(
                         'Personal',
                         style: TextStyle(
-                          color: selectedTab == 3 ? AppColors.mainColor : AppColors.lightGrey,
+                          color: selectedTab == 4 ? AppColors.mainColor : AppColors.lightGrey,
                           fontFamily: AppFonts.gothamLight,
                           fontSize: 10,
                         ),

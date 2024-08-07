@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
@@ -128,7 +129,9 @@ class _CardSelectedsExercicesState extends State<CardSelectedsExercices> with Si
                                     if (response != null) {
                                       mostrarSnackBar(message: response, color: AppColors.red, context: context);
                                     } else {
-                                      Navigator.pop(context);
+                                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                                        Navigator.of(context).pop();
+                                      });
                                       widget.refetchExercicies();
                                     }
                                   },
