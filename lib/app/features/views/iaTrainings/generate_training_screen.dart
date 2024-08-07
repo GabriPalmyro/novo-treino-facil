@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/views/iaTrainings/components/progress_bar_widget.dart';
+import 'package:tabela_treino/app/features/views/iaTrainings/components/steps/health_infos_step.dart';
 import 'package:tabela_treino/app/features/views/iaTrainings/components/steps/name_routine_step.dart';
+import 'package:tabela_treino/app/features/views/iaTrainings/components/steps/select_groups_step.dart';
 
 class GenerateTrainingScreen extends StatefulWidget {
   const GenerateTrainingScreen({super.key});
@@ -71,37 +73,30 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
           elevation: 0,
         ),
         backgroundColor: AppColors.grey,
-        body: Expanded(
-          child: Column(
-            children: [
-              ProgressBarWidget(
-                actualStep: page,
-                totalSteps: 5,
+        body: Column(
+          children: [
+            ProgressBarWidget(
+              actualStep: page,
+              totalSteps: 4,
+            ),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  NameRoutineStep(
+                    onContinue: goToNextPage,
+                  ),
+                  SelectGroupsStep(
+                    onContinue: goToNextPage,
+                  ),
+                  HealthInfosStep(
+                    onContinue: goToNextPage,
+                  ),
+                ],
               ),
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  children: [
-                    NameRoutineStep(
-                      onContinue: goToNextPage,
-                    ),
-                    NameRoutineStep(
-                      onContinue: goToNextPage,
-                    ),
-                    NameRoutineStep(
-                      onContinue: goToNextPage,
-                    ),
-                    NameRoutineStep(
-                      onContinue: goToNextPage,
-                    ),
-                    NameRoutineStep(
-                      onContinue: goToNextPage,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

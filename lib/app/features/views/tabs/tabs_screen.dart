@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/alunos/alunos_screen.dart';
 import 'package:tabela_treino/app/features/views/home/home_screen.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/lista_exercicios.dart';
@@ -45,7 +43,6 @@ class _TabsScreenState extends State<TabsScreen> {
                 });
               },
               selectedTab: selectedTab,
-              isPersonal: context.read<UserManager>().user.isPersonal ?? false,
             ),
           )
         ],

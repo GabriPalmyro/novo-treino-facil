@@ -6,16 +6,16 @@ import 'package:tabela_treino/app/features/controllers/user/user_controller.dart
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
 class BottomNavigatorWidget extends StatelessWidget {
-  const BottomNavigatorWidget({super.key, required this.selectedTab, required this.onItemTapped, this.isPersonal = false});
+  const BottomNavigatorWidget({super.key, required this.selectedTab, required this.onItemTapped});
 
   final int selectedTab;
   final Function(int) onItemTapped;
-  final bool isPersonal;
 
   static const kSpacer = const SizedBox(height: 6);
 
   @override
   Widget build(BuildContext context) {
+    bool isPersonal = context.watch<UserManager>().user.isPersonal ?? false;
     return Container(
       width: MediaQuery.sizeOf(context).width,
       height: 60,
