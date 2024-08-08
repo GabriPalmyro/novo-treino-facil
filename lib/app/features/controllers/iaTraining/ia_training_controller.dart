@@ -95,7 +95,6 @@ class IATrainingController extends ChangeNotifier {
     }
 
     // All validations passed, proceed with creating the IA training
-    // TODO: Implement the logic to create the IA training
     final apiKey = dotenv.env['GEMINI_API_KEY'];
     if (apiKey == null) {
       throw Exception("API key not found");
