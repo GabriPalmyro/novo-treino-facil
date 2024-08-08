@@ -76,6 +76,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
   //     // do nothing
   //   }
   // }
+  
 
   Future<List<ExerciciosPlanilha>> biSetExerciseList(String idSet, CollectionReference ref) async {
     Map<String, dynamic> data = {};
