@@ -21,7 +21,7 @@ workflows:
         script: echo "GEMINI_API_KEY=${GEMINI_API_KEY}" > .env
       - name: Build Android Version
         script: |
-          flutter build appbundle --release --build-name=3.0.0.$(($BUILD_NUMBER + 100)) --build-number=$(($BUILD_NUMBER + 100))
+          flutter build appbundle --release --build-name=3.1.0.$(($BUILD_NUMBER + 100)) --build-number=$(($BUILD_NUMBER + 100))
     artifacts:
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
