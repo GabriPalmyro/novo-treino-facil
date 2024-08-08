@@ -9,7 +9,7 @@ workflows:
         - firebase_credentials
       vars:
         PACKAGE_NAME: "br.com.palmyro.treino_facil"
-        GEMINI_API_KEY: AIzaSyCkw5Z1JiJ_Zwq1A5-k1lUfue1EvDGpB9k
+        GEMINI_API_KEY: $GEMINI_API_KEY
       flutter: 3.19.3
     scripts:
       - name: Set up local.properties
