@@ -29,7 +29,22 @@ class CoreApp {
       mostrarAjudas: map['ajudas'] ?? false,
       mostrarAlterarSenha: map['alterar_senha'] ?? false,
       mostrarTreinosFaceis: map['treinos_faceis'] ?? false,
-      mostrarIaTraining: map['ia_training'] ?? false,
+    );
+  }
+
+  CoreApp copyWith({
+    bool? mostrarAdicionarExercicios,
+    bool? mostrarAjudas,
+    bool? mostrarAlterarSenha,
+    bool? mostrarTreinosFaceis,
+    bool? mostrarIaTraining,
+  }) {
+    return CoreApp(
+      mostrarAdicionarExercicios: mostrarAdicionarExercicios ?? this.mostrarAdicionarExercicios,
+      mostrarAjudas: mostrarAjudas ?? this.mostrarAjudas,
+      mostrarAlterarSenha: mostrarAlterarSenha ?? this.mostrarAlterarSenha,
+      mostrarTreinosFaceis: mostrarTreinosFaceis ?? this.mostrarTreinosFaceis,
+      mostrarIaTraining: mostrarIaTraining ?? this.mostrarIaTraining,
     );
   }
 
