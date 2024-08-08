@@ -9,6 +9,7 @@ workflows:
         - firebase_credentials
       vars:
         PACKAGE_NAME: "br.com.palmyro.treino_facil"
+        GEMINI_API_KEY: AIzaSyCkw5Z1JiJ_Zwq1A5-k1lUfue1EvDGpB9k
       flutter: 3.19.3
     scripts:
       - name: Set up local.properties
@@ -17,6 +18,8 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+      - name: Load environment variables
+        script: echo "GEMINI_API_KEY=${GEMINI_API_KEY}" > .env
       - name: Build Android Version
         script: |
           flutter build appbundle --release --build-name=3.0.0.$(($BUILD_NUMBER + 100)) --build-number=$(($BUILD_NUMBER + 100))
