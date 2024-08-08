@@ -36,7 +36,7 @@ class ExercisesManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void searchResultList({required String searchController, required String selectedType}) {
+  List<Exercise> searchResultList({required String searchController, required String selectedType}) {
     List<Exercise> showResults = [];
 
     //se o controlador não estiver vazio
@@ -101,6 +101,8 @@ class ExercisesManager extends ChangeNotifier {
     }
     resultList = showResults;
     notifyListeners();
+
+    return showResults;
   }
 
   Future<void> loadMyListExercises({required String idUser}) async {

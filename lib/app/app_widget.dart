@@ -7,6 +7,7 @@ import 'package:tabela_treino/app/features/controllers/core/core_controller.dart
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/friend/friend_controller.dart';
+import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
 import 'package:tabela_treino/app/features/controllers/meAjuda/ajudas_controller.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/routes.dart';
@@ -63,7 +64,11 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (_) => MeAjudaController(),
-          lazy: false,
+          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => IATrainingController(),
+          lazy: true,
         ),
       ],
       child: MaterialApp(

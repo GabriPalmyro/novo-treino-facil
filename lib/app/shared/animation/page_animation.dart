@@ -8,7 +8,7 @@ const kDefaultBegin = Offset(-0.02, 0);
 
 
 extension PageAnimation on Widget {
-  Widget enterAnimation({int order = 1, bool enabled = true}) {
+  Widget enterAnimation({int order = 1, bool enabled = true, int duration = kDefaultAnimationDurationMs}) {
     if (!enabled) {
       return this;
     }

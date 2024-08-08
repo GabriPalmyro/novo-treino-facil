@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
 import 'package:tabela_treino/app/features/views/iaTrainings/components/button_continue.dart';
 import 'package:tabela_treino/app/shared/animation/page_animation.dart';
 import 'package:tabela_treino/app/shared/input/custom_input_widget.dart';
@@ -14,6 +16,10 @@ class HealthInfosStep extends StatefulWidget {
 }
 
 class _HealthInfosStepState extends State<HealthInfosStep> with AutomaticKeepAliveClientMixin {
+  
+  String? height;
+  String? weight;
+
   static List<String> condicaoFisica = [
     "Sedentário",
     "Iniciante",
@@ -44,13 +50,13 @@ class _HealthInfosStepState extends State<HealthInfosStep> with AutomaticKeepAli
           Text(
             'Isso ajuda a criar um treino mais personalizado, essas informações não serão salvas.',
             style: TextStyle(
-              color: AppColors.lightGrey,
+              color: AppColors.white.withOpacity(0.3),
               fontSize: 14,
             ),
           ).enterAnimation(order: 2),
           const SizedBox(height: 18),
           Text(
-            'Qual o seu peso? (kg)',
+            'Qual o seu peso?',
             style: TextStyle(
               color: AppColors.white,
               fontSize: 20,
@@ -68,10 +74,15 @@ class _HealthInfosStepState extends State<HealthInfosStep> with AutomaticKeepAli
             onTapOutside: (_) {
               FocusScope.of(context).unfocus();
             },
+            onChanged: (value) {
+              setState(() {
+                weight = value;
+              });
+            },
           ).enterAnimation(order: 4),
           const SizedBox(height: 12),
           Text(
-            'Qual sua altura? (cm)',
+            'Qual sua altura?',
             style: TextStyle(
               color: AppColors.white,
               fontSize: 20,
@@ -88,6 +99,11 @@ class _HealthInfosStepState extends State<HealthInfosStep> with AutomaticKeepAli
             textInputAction: TextInputAction.next,
             onTapOutside: (_) {
               FocusScope.of(context).unfocus();
+            },
+            onChanged: (value) {
+              setState(() {
+                height = value;
+              });
             },
           ).enterAnimation(order: 6),
           const SizedBox(height: 12),
@@ -119,21 +135,27 @@ class _HealthInfosStepState extends State<HealthInfosStep> with AutomaticKeepAli
                       setState(() {
                         if (value) {
                           condicaoFisicaSelecionada = condicaoFisica[i];
+                        } else {
+                          condicaoFisicaSelecionada = null;
                         }
                       });
                     },
                     selectedColor: AppColors.mainColor,
                     checkmarkColor: AppColors.black,
-                  ).enterAnimation(
-                    order: 8 + i,
-                  ),
+                  ).enterAnimation(order: 8 + i, duration: 200),
                 ),
             ],
           ),
           Expanded(child: SizedBox()),
           ButtonContinue(
-            title: 'Continuar',
-            onTap: widget.onContinue,
+            title: 'Gerar Treino',
+            onTap: () {
+              context.read<IATrainingController>().setWeight(weight!);
+              context.read<IATrainingController>().setHeight(height!);
+              context.read<IATrainingController>().setPhysicalCondition(condicaoFisicaSelecionada!);
+              widget.onContinue();
+            },
+            isEnable: condicaoFisicaSelecionada != null && height != null && weight != null,
           ).enterAnimation(order: 6),
           SizedBox(
             height: MediaQuery.of(context).padding.bottom + 24,

@@ -5,6 +5,7 @@ import 'package:tabela_treino/app/features/views/alunos/alunos_screen.dart';
 import 'package:tabela_treino/app/features/views/alunos/planilhasAlunos/planilhas_alunos.dart';
 import 'package:tabela_treino/app/features/views/buscarAmigos/buscar_amigo_screen.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
+import 'package:tabela_treino/app/features/views/iaTrainings/components/training_result_screen.dart';
 import 'package:tabela_treino/app/features/views/iaTrainings/generate_training_screen.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/lista_exercicios.dart';
 import 'package:tabela_treino/app/features/views/meAjuda/meajuda_screen.dart';
@@ -79,6 +80,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => MeAjudaScreen());
       case AppRoutes.generateIaTraining:
         return MaterialPageRoute(builder: (_) => GenerateTrainingScreen());
+      case AppRoutes.iaTrainingResult:
+        return MaterialPageRoute(builder: (_) => TrainingResultScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

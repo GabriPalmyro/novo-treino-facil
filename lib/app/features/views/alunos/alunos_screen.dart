@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -81,9 +82,9 @@ class _AlunosScreenState extends State<AlunosScreen> with TickerProviderStateMix
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: IconButton(
-                icon: const Icon(
-                  Icons.add_circle_outline,
-                  size: 28,
+                icon: FaIcon(
+                  FontAwesomeIcons.circlePlus,
+                  size: 25,
                 ),
                 tooltip: 'Adicionar Novo Aluno',
                 onPressed: () {

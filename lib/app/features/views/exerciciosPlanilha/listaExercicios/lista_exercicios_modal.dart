@@ -82,6 +82,7 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
     return Consumer2<ExercisesManager, ExerciciosPlanilhaManager>(
       builder: (_, exercicios, exerciciosPlanilha, __) {
         return PopScope(
+          canPop: false,
           onPopInvoked: (_) {
             showCustomDialogOpt(
               context: context,

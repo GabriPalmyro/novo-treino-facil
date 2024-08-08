@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/app_colors.dart';
+import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
 import 'package:tabela_treino/app/features/views/iaTrainings/components/button_continue.dart';
 import 'package:tabela_treino/app/shared/animation/page_animation.dart';
 import 'package:tabela_treino/app/shared/input/custom_input_widget.dart';
@@ -16,6 +18,8 @@ class NameRoutineStep extends StatefulWidget {
 class _NameRoutineStepState extends State<NameRoutineStep> with AutomaticKeepAliveClientMixin {
   TextEditingController nameController = TextEditingController();
   TextEditingController goalController = TextEditingController();
+
+  String? name;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +49,11 @@ class _NameRoutineStepState extends State<NameRoutineStep> with AutomaticKeepAli
             onTapOutside: (_) {
               FocusScope.of(context).unfocus();
             },
+            onChanged: (value) {
+              setState(() {
+                name = value;
+              });
+            },
           ).enterAnimation(order: 2),
           const SizedBox(height: 24),
           Text(
@@ -68,7 +77,12 @@ class _NameRoutineStepState extends State<NameRoutineStep> with AutomaticKeepAli
           Expanded(child: SizedBox()),
           ButtonContinue(
             title: 'Continuar',
-            onTap: widget.onContinue,
+            onTap: () {
+              context.read<IATrainingController>().setName(nameController.text);
+              context.read<IATrainingController>().setGoal(goalController.text);
+              widget.onContinue();
+            },
+            isEnable: name != null && name!.isNotEmpty,
           ).enterAnimation(order: 5),
           SizedBox(
             height: MediaQuery.of(context).padding.bottom + 24,

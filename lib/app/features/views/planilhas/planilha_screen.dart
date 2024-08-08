@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
@@ -37,25 +38,26 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
           centerTitle: false,
           actions: [
             IconButton(
-              icon: const Icon(
-                Icons.info,
-                size: 28,
+              icon: FaIcon(
+                FontAwesomeIcons.circleInfo,
+                size: 25,
               ),
               tooltip: 'Info',
               onPressed: () {
                 showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return InfoDialog();
-                    });
+                  context: context,
+                  builder: (BuildContext context) {
+                    return InfoDialog();
+                  },
+                );
               },
             ),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: IconButton(
-                icon: const Icon(
-                  Icons.add_circle_outline,
-                  size: 28,
+                icon: FaIcon(
+                  FontAwesomeIcons.circlePlus,
+                  size: 25,
                 ),
                 tooltip: 'Adicionar Nova Planiha',
                 onPressed: () {

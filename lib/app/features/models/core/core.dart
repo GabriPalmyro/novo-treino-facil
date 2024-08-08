@@ -3,12 +3,14 @@ class CoreApp {
   bool? mostrarAjudas;
   bool? mostrarAlterarSenha;
   bool? mostrarTreinosFaceis;
+  bool? mostrarIaTraining;
 
   CoreApp({
     this.mostrarAdicionarExercicios,
     this.mostrarAjudas,
     this.mostrarAlterarSenha,
     this.mostrarTreinosFaceis,
+    this.mostrarIaTraining,
   });
 
   Map<String, dynamic> toMap() {
@@ -17,6 +19,7 @@ class CoreApp {
       'ajudas': mostrarAjudas,
       'alterar_senha': mostrarAlterarSenha,
       'treinos_faceis': mostrarTreinosFaceis,
+      'ia_training': mostrarIaTraining,
     };
   }
 
@@ -26,11 +29,12 @@ class CoreApp {
       mostrarAjudas: map['ajudas'] ?? false,
       mostrarAlterarSenha: map['alterar_senha'] ?? false,
       mostrarTreinosFaceis: map['treinos_faceis'] ?? false,
+      mostrarIaTraining: map['ia_training'] ?? false,
     );
   }
 
   @override
   String toString() {
-    return 'CoreApp(mostrarAdicionarExercicios: $mostrarAdicionarExercicios, mostrarAjudas: $mostrarAjudas, mostrarAlterarSenha: $mostrarAlterarSenha, mostrarTreinosFaceis: $mostrarTreinosFaceis)';
+    return 'CoreApp(mostrarAdicionarExercicios: $mostrarAdicionarExercicios, mostrarAjudas: $mostrarAjudas, mostrarAlterarSenha: $mostrarAlterarSenha, mostrarTreinosFaceis: $mostrarTreinosFaceis, mostrarIaTraining: $mostrarIaTraining)';
   }
 }

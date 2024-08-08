@@ -19,4 +19,5 @@ class AppRoutes {
   static const preferencias = '/preferencias';
   static const meAjuda = '/me-ajuda';
   static const generateIaTraining = '/generate-ia-training';
+  static const iaTrainingResult = '/ia-training-result';
 }

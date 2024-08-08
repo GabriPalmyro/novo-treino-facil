@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
@@ -67,11 +68,10 @@ class _PlanilhaAlunoScreenState extends State<PlanilhaAlunoScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: IconButton(
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                    color: AppColors.mainColor,
-                    size: 28,
-                  ),
+                  icon: FaIcon(
+                  FontAwesomeIcons.circlePlus,
+                  size: 25,
+                ),
                   tooltip: 'Adicionar Nova Planiha',
                   onPressed: () {
                     showModalBottomSheet(

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tabela_treino/app/core/core.dart';
 
 class ExerciciosPlanilhaVazia extends StatelessWidget {
@@ -24,47 +25,38 @@ class ExerciciosPlanilhaVazia extends StatelessWidget {
           AutoSizeText(
             "Você ainda não possui nenhum exercício",
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 22,
-                fontFamily: AppFonts.gothamLight,
-                color: Colors.white,
-                height: 1.2),
+            style: TextStyle(fontSize: 22, fontFamily: AppFonts.gothamLight, color: Colors.white, height: 1.2),
           ),
           SizedBox(
             height: 12,
           ),
-          Icon(Icons.sentiment_dissatisfied_rounded,
-              size: 36, color: AppColors.mainColor),
+          Icon(Icons.sentiment_dissatisfied_rounded, size: 36, color: AppColors.mainColor),
           SizedBox(
             height: 32,
           ),
           AutoSizeText(
             "Clique no botão",
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 22,
-                fontFamily: AppFonts.gothamLight,
-                color: Colors.white,
-                height: 1.2),
+            style: TextStyle(fontSize: 22, fontFamily: AppFonts.gothamLight, color: Colors.white, height: 1.2),
           ),
           SizedBox(
             height: 12,
           ),
           IconButton(
-              onPressed: onTap,
-              icon: Icon(Icons.add_circle_outline,
-                  size: 36, color: AppColors.mainColor)),
+            onPressed: onTap,
+            icon: FaIcon(
+              FontAwesomeIcons.circlePlus,
+              size: 28,
+              color: AppColors.mainColor,
+            ),
+          ),
           SizedBox(
             height: 12,
           ),
           AutoSizeText(
             "Para adicionar um novo exercício",
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 22,
-                fontFamily: AppFonts.gothamLight,
-                color: Colors.white,
-                height: 1.2),
+            style: TextStyle(fontSize: 22, fontFamily: AppFonts.gothamLight, color: Colors.white, height: 1.2),
           ),
         ],
       ),

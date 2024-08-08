@@ -17,11 +17,12 @@ class Exercise {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'video': video,
       'muscleId': muscleId,
       'level': level,
-      'isHomeExercise': isHomeExercise,
+      'home_exe': isHomeExercise,
     };
   }
 

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
@@ -169,10 +170,10 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
             actions: [
               if (!widget.arguments.isFriendAcess && !_isEditing) ...[
                 IconButton(
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                    size: 28,
-                  ),
+                  icon: FaIcon(
+                  FontAwesomeIcons.circlePlus,
+                  size: 25,
+                ),
                   tooltip: 'Adicionar Novo Exercício',
                   onPressed: () {
                     showModalBottomSheet(

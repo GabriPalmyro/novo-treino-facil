@@ -319,18 +319,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ],
                           ),
-                          SizedBox(
-                            height: 14.0,
-                          ),
-                          HomeButtonMin(
-                            width: width * 0.9,
-                            title: 'Crie treinos com IA',
-                            icon: Icons.fitness_center,
-                            iconePath: AppImages.treinosFaceis,
-                            onTap: () {
-                              Navigator.pushNamed(context, AppRoutes.generateIaTraining);
-                            },
-                          )
+                          if (context.read<CoreAppController>().coreInfos.mostrarIaTraining ?? false) ...[
+                            SizedBox(
+                              height: 14.0,
+                            ),
+                            HomeButtonMin(
+                              width: width * 0.9,
+                              title: 'Crie treinos com IA',
+                              icon: Icons.fitness_center,
+                              iconePath: AppImages.treinosFaceis,
+                              onTap: () {
+                                Navigator.pushNamed(context, AppRoutes.generateIaTraining);
+                              },
+                            ),
+                          ],
                         ],
                       ),
                     ),

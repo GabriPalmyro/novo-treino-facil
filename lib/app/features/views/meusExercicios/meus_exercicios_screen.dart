@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
@@ -22,9 +23,7 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
   Future<void> loadMyExercises() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       String idUser = context.read<UserManager>().user.id!;
-      await context
-          .read<ExercisesManager>()
-          .loadMyListExercises(idUser: idUser);
+      await context.read<ExercisesManager>().loadMyListExercises(idUser: idUser);
       setState(() {
         loading = false;
       });
@@ -54,9 +53,9 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 12.0, bottom: 5.0),
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    size: 28,
+                  icon: FaIcon(
+                    FontAwesomeIcons.circlePlus,
+                    size: 25,
                   ),
                   tooltip: 'Adicionar Novo Exercício',
                   onPressed: () {
@@ -72,10 +71,7 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
             ],
             title: Text(
               "Meus Exercícios",
-              style: TextStyle(
-                  color: AppColors.mainColor,
-                  fontFamily: AppFonts.gothamBold,
-                  fontSize: 24),
+              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gothamBold, fontSize: 24),
             ),
             backgroundColor: AppColors.grey,
           ),
@@ -101,23 +97,15 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
                           index: index,
                           deleteExercise: () async {
                             String userId = context.read<UserManager>().user.id!;
-                            
-                            final response = await exerciciosManager
-                                .deleteMyExercise(index: index, userId: userId);
+
+                            final response = await exerciciosManager.deleteMyExercise(index: index, userId: userId);
 
                             if (response != null) {
                               Navigator.pop(context);
-                              mostrarSnackBar(
-                                  message:
-                                      'Não foi possível excluir esse exercício.',
-                                  color: AppColors.red,
-                                  context: context);
+                              mostrarSnackBar(message: 'Não foi possível excluir esse exercício.', color: AppColors.red, context: context);
                             } else {
                               Navigator.pop(context);
-                              mostrarSnackBar(
-                                  message: 'Exercício excluído com sucesso.',
-                                  color: Colors.green,
-                                  context: context);
+                              mostrarSnackBar(message: 'Exercício excluído com sucesso.', color: Colors.green, context: context);
                             }
                           },
                           onTap: () {
@@ -126,12 +114,9 @@ class _MeusExerciciosScreenState extends State<MeusExerciciosScreen> {
                                 isScrollControlled: true,
                                 enableDrag: false,
                                 context: context,
-                                builder: (_) => ExercicioInfoModal(
-                                    exercicio: exerciciosManager
-                                        .listaMeusExercicios[index]));
+                                builder: (_) => ExercicioInfoModal(exercicio: exerciciosManager.listaMeusExercicios[index]));
                           },
-                          exercise:
-                              exerciciosManager.listaMeusExercicios[index],
+                          exercise: exerciciosManager.listaMeusExercicios[index],
                         );
                       }));
     });

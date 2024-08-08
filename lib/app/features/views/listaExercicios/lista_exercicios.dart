@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
@@ -56,8 +57,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   }
 
   void _onSearchChanged() {
-    context.read<ExercisesManager>().searchResultList(
-        searchController: _searchController.text, selectedType: _selTypeSearch);
+    context.read<ExercisesManager>().searchResultList(searchController: _searchController.text, selectedType: _selTypeSearch);
   }
 
   Future<void> carregarMeusExercicios() async {
@@ -86,19 +86,22 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
       ),
       enableInteractiveSelection: true,
       decoration: InputDecoration(
-          contentPadding: EdgeInsets.only(bottom: 5),
-          hintText: _selTypeSearch == "mines"
-              ? "Meus Exercícios"
-              : _selTypeSearch == "title"
-                  ? "Procure um exercício"
-                  : _selTypeSearch == "home_exe"
-                      ? "Fazer em casa"
-                      : _selTypeSearch == "muscleId"
-                          ? "Procure um músculo"
-                          : "Procure em $_selTypeSearch",
-          border: InputBorder.none,
-          hintStyle: TextStyle(
-              fontSize: 18, color: AppColors.mainColor.withOpacity(0.8))),
+        contentPadding: EdgeInsets.only(bottom: 5),
+        hintText: _selTypeSearch == "mines"
+            ? "Meus Exercícios"
+            : _selTypeSearch == "title"
+                ? "Procure um exercício"
+                : _selTypeSearch == "home_exe"
+                    ? "Fazer em casa"
+                    : _selTypeSearch == "muscleId"
+                        ? "Procure um músculo"
+                        : "Procure em $_selTypeSearch",
+        border: InputBorder.none,
+        hintStyle: TextStyle(
+          fontSize: 18,
+          color: AppColors.mainColor.withOpacity(0.8),
+        ),
+      ),
     );
   }
 
@@ -124,9 +127,9 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
     return <Widget>[
       IconButton(
         padding: EdgeInsets.only(right: 30),
-        icon: const Icon(
-          Icons.search,
-          size: 30,
+        icon: FaIcon(
+          FontAwesomeIcons.magnifyingGlass,
+          size: 20,
         ),
         onPressed: () {
           setState(() {
@@ -177,10 +180,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
               ? _buildSearchField()
               : Text(
                   "Exercícios",
-                  style: TextStyle(
-                      fontFamily: AppFonts.gothamBold,
-                      color: AppColors.mainColor,
-                      fontSize: 30),
+                  style: TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.mainColor, fontSize: 30),
                   maxLines: 2,
                 ),
           actions: _buildActions(),
@@ -191,7 +191,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
         body: Column(
           children: [
             Container(
-                margin: EdgeInsets.only(top: 20, bottom: 10),
+                margin: EdgeInsets.only(bottom: 12),
                 height: 60,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -204,9 +204,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                           onTap: () {
                             setState(() {
                               _selTypeSearch = filters[index];
-                              exercicios.searchResultList(
-                                  searchController: _searchController.text,
-                                  selectedType: _selTypeSearch);
+                              exercicios.searchResultList(searchController: _searchController.text, selectedType: _selTypeSearch);
                             });
                           },
                           filter: filters[index],
@@ -224,10 +222,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                   itemCount: exercicios.resultList.length,
                   itemBuilder: (_, index) {
                     return Padding(
-                      padding: EdgeInsets.only(
-                          bottom: (index + 1) == exercicios.resultList.length
-                              ? 60.0
-                              : 0),
+                      padding: EdgeInsets.only(bottom: (index + 1) == exercicios.resultList.length ? 60.0 : 0),
                       child: Column(
                         children: [
                           // if (index % 8 == 0 && index != 0) ...[
@@ -266,7 +261,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                               // if (isInterstitialReady) {
                               //   SharedPreferences prefs =
                               //       await SharedPreferences.getInstance();
-      
+
                               //   //* VALIDAR ANÚNCIO INTERCALADO 3
                               //   int adSeenTimes =
                               //       prefs.getInt('view_exercicio') ?? 0;
@@ -277,18 +272,16 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                               //     await interstitialAdMuscle.show();
                               //     await prefs.setInt('view_exercicio', 0);
                               //   }
-      
+
                               //   await interstitialAdMuscle.load();
                               // }
-      
+
                               showModalBottomSheet(
                                   backgroundColor: Colors.transparent,
                                   isScrollControlled: true,
-                                  enableDrag: false,
+                                  enableDrag: true,
                                   context: context,
-                                  builder: (_) => ExercicioInfoModal(
-                                      exercicio:
-                                          exercicios.resultList[index]));
+                                  builder: (_) => ExercicioInfoModal(exercicio: exercicios.resultList[index]));
                             },
                             exercise: exercicios.resultList[index],
                           ),

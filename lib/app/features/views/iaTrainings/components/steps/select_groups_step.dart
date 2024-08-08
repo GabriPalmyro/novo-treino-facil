@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
 import 'package:tabela_treino/app/features/views/iaTrainings/components/button_continue.dart';
 import 'package:tabela_treino/app/shared/animation/page_animation.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
@@ -108,7 +110,7 @@ class _SelectGroupsStepState extends State<SelectGroupsStep> with AutomaticKeepA
               color: AppColors.white,
               fontSize: 24,
             ),
-          ).enterAnimation(order: 10),
+          ).enterAnimation(order: 1, duration: 200),
           const SizedBox(height: 6),
           Wrap(
             children: [
@@ -137,7 +139,8 @@ class _SelectGroupsStepState extends State<SelectGroupsStep> with AutomaticKeepA
                     selectedColor: AppColors.mainColor,
                     checkmarkColor: AppColors.black,
                   ).enterAnimation(
-                    order: 11 + i,
+                    order: 2 + i,
+                    duration: 200,
                   ),
                 ),
             ],
@@ -145,7 +148,11 @@ class _SelectGroupsStepState extends State<SelectGroupsStep> with AutomaticKeepA
           Expanded(child: SizedBox()),
           ButtonContinue(
             title: 'Continuar',
-            onTap: widget.onContinue,
+            onTap: () {
+              context.read<IATrainingController>().setGroups(selectedFilters);
+              context.read<IATrainingController>().setTime(selectedTime!);
+              widget.onContinue.call();
+            },
             isEnable: selectedFilters.isNotEmpty && selectedTime != null,
           ).enterAnimation(order: 2),
           SizedBox(

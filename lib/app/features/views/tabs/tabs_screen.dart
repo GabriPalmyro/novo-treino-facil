@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabela_treino/app/features/views/alunos/alunos_screen.dart';
 import 'package:tabela_treino/app/features/views/home/home_screen.dart';
 import 'package:tabela_treino/app/features/views/listaExercicios/lista_exercicios.dart';
@@ -38,6 +39,8 @@ class _TabsScreenState extends State<TabsScreen> {
             bottom: MediaQuery.paddingOf(context).bottom,
             child: BottomNavigatorWidget(
               onItemTapped: (int) {
+                HapticFeedback.lightImpact();
+                if (selectedTab == int) return;
                 setState(() {
                   selectedTab = int;
                 });
