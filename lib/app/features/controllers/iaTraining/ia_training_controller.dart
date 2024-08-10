@@ -70,10 +70,6 @@ class IATrainingController extends ChangeNotifier {
       throw Exception("Name is required");
     }
 
-    if (props.goal != null && props.goal!.isEmpty) {
-      throw Exception("Goal is required");
-    }
-
     if (props.groups == null || props.groups!.isEmpty) {
       throw Exception("At least one group is required");
     }

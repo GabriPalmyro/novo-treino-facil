@@ -59,8 +59,10 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
             duration: Duration(milliseconds: 250),
             curve: Curves.easeInOut,
           );
+          return;
         } else {
           Navigator.of(context).pop();
+          return;
         }
       },
       child: Scaffold(
@@ -98,12 +100,12 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
                   ),
                   HealthInfosStep(
                     onContinue: () async {
-                      final selectedGroups = context.read<IATrainingController>().props.groups;
+                      final selectedGroups = context.read<IATrainingController>().props.groups!..add('mines');
                       final gender = context.read<UserManager>().user.sex;
 
                       List<Exercise> exercises = [];
 
-                      for (var group in selectedGroups!) {
+                      for (var group in selectedGroups) {
                         exercises.addAll(
                           context.read<ExercisesManager>().searchResultList(searchController: '', selectedType: group),
                         );
@@ -114,7 +116,7 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
                               groupExercises: exercises,
                               sex: gender!,
                             );
-                        Navigator.of(context).pushNamed(AppRoutes.iaTrainingResult);
+                        Navigator.of(context).pushReplacementNamed(AppRoutes.iaTrainingResult);
                       } catch (e) {
                         mostrarSnackBar(message: e.toString(), color: AppColors.red, context: context);
                       }

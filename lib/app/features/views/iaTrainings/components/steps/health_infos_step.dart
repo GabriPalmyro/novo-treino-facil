@@ -155,6 +155,7 @@ class _HealthInfosStepState extends State<HealthInfosStep> with AutomaticKeepAli
               context.read<IATrainingController>().setPhysicalCondition(condicaoFisicaSelecionada!);
               widget.onContinue();
             },
+            isLoading: context.watch<IATrainingController>().getIsLoading,
             isEnable: condicaoFisicaSelecionada != null && height != null && weight != null,
           ).enterAnimation(order: 6),
           SizedBox(
