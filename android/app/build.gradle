@@ -28,6 +28,14 @@ def keystoreProperties = new Properties()
        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
    }
 
+    def getMyVersionCode = { ->
+        return project.hasProperty('versionCode') ? versionCode.toInteger() : 1
+    }
+    // get version name from the specified property argument `-PversionName` during the build call
+    def getMyVersionName = { ->
+        return project.hasProperty('versionName') ? versionName : "1.0.0"
+    }
+
    android {
     compileSdkVersion 34
 
@@ -51,8 +59,8 @@ def keystoreProperties = new Properties()
         targetSdkVersion 34
         versionCode 23
         versionName "3.1.0"
-        // versionCode flutterVersionCode.toInteger()
-        // versionName flutterVersionName
+        versionCode getMyVersionCode()
+        versionName getMyVersionName()
         multiDexEnabled true
     }
 
