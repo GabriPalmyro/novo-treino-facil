@@ -1,6 +1,6 @@
 workflows:
   android-workflow:
-    name: Android workflow
+    name: 🤖 Android workflow
     max_build_duration: 60
     environment:
       android_signing:
@@ -10,18 +10,29 @@ workflows:
       vars:
         PACKAGE_NAME: "br.com.palmyro.treino_facil"
       flutter: 3.19.3
+    inputs:
+      version:
+        description: ❔ Which version do you want to build?
+        type: string
+        default: "5.0.0"
+      changelog:
+        description: ❔ What's new in this version?
+        type: string
+        default: "Nothing new"
     scripts:
-      - name: Set up local.properties
+      - name: ⚒️ Set up local.properties
         script: | 
             echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-      - name: Get Flutter packages
+      - name: 🔎 Get Flutter packages
         script: |
           flutter pub get
-      - name: Load environment variables
+      - name: 📈 Load environment variables
         script: echo "GEMINI_API_KEY=${GEMINI_API_KEY}" > .env
-      - name: Build Android Version
+      - name: 🆕 Generate release notes
+        script: echo "${{ inputs.version }}" | tee release_notes.txt
+      - name: 🔨 Build Android Version
         script: |
-          flutter build appbundle --release --build-name=3.1.0.$(($BUILD_NUMBER + 100)) --build-number=$(($BUILD_NUMBER + 100))
+          flutter build appbundle --release --build-name=${{ inputs.version }}.$(($BUILD_NUMBER + 100)) --build-number=$(($BUILD_NUMBER + 100))
     artifacts:
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
