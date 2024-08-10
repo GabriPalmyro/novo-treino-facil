@@ -36,7 +36,7 @@ workflows:
           DATE=$(date +'%Y%m%d')
           
           # Calculate the version name and version number
-          VERSION_NAME="${{ inputs.version }}.${DATE}$((BUILD_NUMBER + 100))"
+          VERSION_NAME="${{ inputs.version }}.${DATE}$((BUILD_NUMBER + 10))"
           VERSION_NUMBER=${DATE}$((BUILD_NUMBER + 100))
 
           # Print out the versions for debugging
