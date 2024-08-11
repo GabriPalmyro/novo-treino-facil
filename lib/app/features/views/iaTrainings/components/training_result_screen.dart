@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
+import 'package:tabela_treino/app/features/models/exerciciosPlanilha/biset_exercicio.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/exercicio_modal.dart';
-import 'package:tabela_treino/app/features/views/exerciciosPlanilha/components/uni_set_card.dart';
+import 'package:tabela_treino/app/features/views/iaTrainings/components/button_continue.dart';
+import 'package:tabela_treino/app/features/views/iaTrainings/components/cards/bi_set_card_widget.dart';
+import 'package:tabela_treino/app/features/views/iaTrainings/components/cards/uni_set_card_widget.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
 class TrainingResultScreen extends StatelessWidget {
@@ -62,35 +66,38 @@ class TrainingResultScreen extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.start,
         // crossAxisAlignment: CrossAxisAlignment.start,
         slivers: [
-          // SliverToBoxAdapter(child: const SizedBox(height: 18)),
-          // SliverPadding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12),
-          //   sliver: Text(
-          //     'Descrição',
-          //     style: TextStyle(
-          //       fontSize: 24,
-          //       color: AppColors.mainColor,
-          //       fontFamily: AppFonts.gothamBold,
-          //     ),
-          //   ),
-          // ),
-          // SliverToBoxAdapter(child: const SizedBox(height: 4)),
-          // SliverPadding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12),
-          //   sliver: Text(
-          //     context.read<IATrainingController>().result!.description,
-          //     style: TextStyle(fontSize: 14, color: AppColors.white, fontFamily: AppFonts.gothamLight),
-          //   ),
-          // ),
-          // SliverToBoxAdapter(child: const SizedBox(width: 12)),
+          SliverToBoxAdapter(child: const SizedBox(height: 18)),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                'Descrição',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: AppColors.mainColor,
+                  fontFamily: AppFonts.gothamBold,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: const SizedBox(height: 4)),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                context.read<IATrainingController>().result!.description,
+                style: TextStyle(fontSize: 14, color: AppColors.white, fontFamily: AppFonts.gothamLight),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: const SizedBox(width: 12)),
           SliverList.builder(
             itemCount: context.read<IATrainingController>().result!.exercises.length,
             itemBuilder: (_, index) {
               final item = context.read<IATrainingController>().result!.exercises[index];
               return item.set_type == "uniset"
-                  ? UniSetCard(
+                  ? UniSetCardWidget(
                       index: index,
-                      isChanging: false,
                       exercicio: ExerciciosPlanilha(
                         id: '',
                         title: item.title,
@@ -102,7 +109,6 @@ class TrainingResultScreen extends StatelessWidget {
                         video: item.video,
                         series: item.series,
                       ),
-                      isEditing: false,
                       idUser: '',
                       onTap: () {
                         showModalBottomSheet(
@@ -126,9 +132,10 @@ class TrainingResultScreen extends StatelessWidget {
                             idPlanilha: '',
                             idExercicio: '',
                             idUser: '',
+                            enableEditing: false,
                             isPersonalManag: false,
                             tamPlan: 0,
-                            titlePlanilha: '',
+                            titlePlanilha: context.read<IATrainingController>().result!.title,
                             refetchExercises: () {},
                             isBiSet: false,
                             isSecondExercise: false,
@@ -136,67 +143,60 @@ class TrainingResultScreen extends StatelessWidget {
                         );
                       },
                     )
-
-                  // TODO - Implementar BiSetCard
-                  // : BiSetCard(
-                  //     index: index,
-                  //     idPlanilha: '',
-                  //     exercicio: BiSetExercise(
-                  //       setType: item.set_type!,
-                  //       firstExercise: item.title1!,
-                  //       secondExercise: item.title2!,
-                  //       exercicios:
-                  //       // List<ExerciciosPlanilha>.from(
-                  //       //   item.sets!.map(
-                  //       //     (item) => ExerciciosPlanilha(
-                  //       //       id: '',
-                  //       //       title: item.title,
-                  //       //       muscleId: item.muscleId,
-                  //       //       setType: item.set_type,
-                  //       //       reps: item.reps,
-                  //       //       carga: item.peso,
-                  //       //       comments: item.obs,
-                  //       //       video: item.video,
-                  //       //       series: item.series,
-                  //       //     ),
-                  //       //   ),
-                  //       // ),
-                  //       [
-                  //         ExerciciosPlanilha(
-                  //           id: '',
-                  //           title: item.sets![0].title,
-                  //           muscleId: item.sets![0].muscleId,
-                  //           setType: item.sets![0].set_type,
-                  //           reps: item.sets![0].reps,
-                  //           carga: item.sets![0].peso,
-                  //           comments: item.sets![0].obs,
-                  //           video: item.sets![0].video,
-                  //           series: item.sets![0].series,
-                  //         ),
-                  //         ExerciciosPlanilha(
-                  //           id: '',
-                  //           title: item.sets![1].title,
-                  //           muscleId: item.sets![1].muscleId,
-                  //           setType: item.sets![1].set_type,
-                  //           reps: item.sets![1].reps,
-                  //           carga: item.sets![1].peso,
-                  //           comments: item.sets![1].obs,
-                  //           video: item.sets![1].video,
-                  //           series: item.sets![1].series,
-                  //         ),
-                  //       ],
-                  //       position: 0,
-                  //     ),
-                  //     isChanging: false,
-                  //     idUser: '',
-                  //     isEditing: false,
-                  //     tamPlan: 0,
-                  //     titlePlanilha: '',
-                  //     refetchExercises: () {},
-                  //   );
-                  : SizedBox();
+                  : BiSetCardWidget(
+                      index: index,
+                      idPlanilha: '',
+                      exercicio: BiSetExercise(
+                        setType: item.set_type!,
+                        firstExercise: item.title1!,
+                        secondExercise: item.title2!,
+                        exercicios: [
+                          ExerciciosPlanilha(
+                            id: '',
+                            title: item.sets![0].title,
+                            muscleId: item.sets![0].muscleId,
+                            setType: item.sets![0].set_type,
+                            reps: item.sets![0].reps,
+                            carga: item.sets![0].peso,
+                            comments: item.sets![0].obs,
+                            video: item.sets![0].video,
+                            series: item.sets![0].series,
+                          ),
+                          ExerciciosPlanilha(
+                            id: '',
+                            title: item.sets![1].title,
+                            muscleId: item.sets![1].muscleId,
+                            setType: item.sets![1].set_type,
+                            reps: item.sets![1].reps,
+                            carga: item.sets![1].peso,
+                            comments: item.sets![1].obs,
+                            video: item.sets![1].video,
+                            series: item.sets![1].series,
+                          ),
+                        ],
+                        position: 0,
+                      ),
+                      idUser: context.read<UserManager>().user.id!,
+                      tamPlan: 0,
+                      titlePlanilha: context.read<IATrainingController>().result!.title,
+                      refetchExercises: () {},
+                    );
+              // : SizedBox();
             },
           ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              child: ButtonContinue(
+                title: 'Criar Treino',
+                onTap: () {
+                  context.read<IATrainingController>().createWorksheetFromIATraining();
+                },
+                isEnable: true,
+                isLoading: context.watch<IATrainingController>().getIsLoading,
+              ),
+            ),
+          )
         ],
       ),
     );

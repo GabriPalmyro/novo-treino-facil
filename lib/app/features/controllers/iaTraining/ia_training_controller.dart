@@ -65,6 +65,7 @@ class IATrainingController extends ChangeNotifier {
   Future<void> createIaTraining({
     required List<Exercise> groupExercises,
     required String sex,
+    // required String dateOfBirth,
   }) async {
     if (props.name != null && props.name!.isEmpty) {
       throw Exception("Name is required");
@@ -209,4 +210,6 @@ class IATrainingController extends ChangeNotifier {
       throw Exception("Failed to create the IA training: $e");
     }
   }
+
+  Future<void> createWorksheetFromIATraining() async {}
 }
