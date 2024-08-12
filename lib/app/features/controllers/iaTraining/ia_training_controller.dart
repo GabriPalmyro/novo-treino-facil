@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
@@ -138,6 +140,7 @@ class IATrainingController extends ChangeNotifier {
         "description": "Example description",
         "exercises": [
             {
+                "pos": 1,
                 "title": "Example Exercise 1",
                 "muscleId": "pernas",
                 "obs": "Example observation",
@@ -148,6 +151,7 @@ class IATrainingController extends ChangeNotifier {
                 "video": "video_from_selected_exercise"
             },
             {
+                "pos": 2,
                 "title": "Example Exercise 2",
                 "muscleId": "costas",
                 "obs": "Example observation",
@@ -158,11 +162,13 @@ class IATrainingController extends ChangeNotifier {
                 "video": "video_from_selected_exercise"
             },
             {
+                "pos": 3,
                 "title1": "Example Exercise 1 on Biset",
                 "title2": "Example Exercise 2 on Biset",
                 "set_type": "biset",
                 "sets": [
                     {
+                        "pos": 1,
                         "title": "Example Exercise 1 on Biset",
                         "muscleId": "costas",
                         "obs": "Example observation",
@@ -173,6 +179,7 @@ class IATrainingController extends ChangeNotifier {
                         "video": "video_from_selected_exercise"
                     },
                     {
+                        "pos": 2,
                         "title": "Example Exercise 2 on Biset",
                         "muscleId": "pernas",
                         "obs": "Example observation",
@@ -211,5 +218,72 @@ class IATrainingController extends ChangeNotifier {
     }
   }
 
-  Future<void> createWorksheetFromIATraining() async {}
+  Future<void> createWorksheetFromIATraining({
+    required String idUser,
+    required VoidCallback onSuccess,
+    required Function(String) onError,
+  }) async {
+    setLoading(true);
+    String? biSetExeId;
+
+    try {
+      final newWorksheet = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(idUser)
+          .collection(
+            "planilha",
+          )
+          .add(result!.toMap());
+
+      for (final item in result!.exercises) {
+        if (item.set_type == 'uniset') {
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .add(item.toMapUniSet());
+        } else {
+
+          //* ADICIONANDO BI SET
+          biSetExeId = (await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .add(item.toMapBiSet())).id;
+
+          //* PRIMEIRO EXERCICIO BI SET
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .doc(biSetExeId)
+              .collection("sets")
+              .add(item.sets![0].toMapUniSet());
+
+          //* SEGUNDO EXERCICIO BI SET
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .doc(biSetExeId)
+              .collection("sets")
+              .add(item.sets![1].toMapUniSet());
+        }
+      }
+
+      onSuccess.call();
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      onError.call(e.toString());
+    }
+  }
 }

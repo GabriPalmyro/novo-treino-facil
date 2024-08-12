@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
+import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/biset_exercicio.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
@@ -45,37 +45,37 @@ class TrainingResultScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.read<IATrainingController>().result!.title),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.copy),
-            onPressed: () async {
-              await Clipboard.setData(
-                ClipboardData(
-                  text: context.read<IATrainingController>().result!.toJson().toString(),
-                ),
-              );
-              mostrarSnackBar(message: 'Resultado copiado', color: AppColors.grey300, context: context);
-            },
-          ),
-        ],
-      ),
       backgroundColor: AppColors.grey,
       body: CustomScrollView(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        // crossAxisAlignment: CrossAxisAlignment.start,
         slivers: [
-          SliverToBoxAdapter(child: const SizedBox(height: 18)),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.of(context).padding.top + 18.0,
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                context.read<IATrainingController>().result!.title,
+                style: TextStyle(
+                  fontSize: 28,
+                  color: AppColors.mainColor,
+                  fontFamily: AppFonts.gothamBold,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: const SizedBox(height: 8)),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverToBoxAdapter(
               child: Text(
                 'Descrição',
                 style: TextStyle(
-                  fontSize: 24,
-                  color: AppColors.mainColor,
-                  fontFamily: AppFonts.gothamBold,
+                  fontSize: 20,
+                  color: AppColors.white,
+                  fontFamily: AppFonts.gotham,
                 ),
               ),
             ),
@@ -86,11 +86,13 @@ class TrainingResultScreen extends StatelessWidget {
             sliver: SliverToBoxAdapter(
               child: Text(
                 context.read<IATrainingController>().result!.description,
-                style: TextStyle(fontSize: 14, color: AppColors.white, fontFamily: AppFonts.gothamLight),
+                style: TextStyle(fontSize: 14, color: AppColors.white.withOpacity(0.8), fontFamily: AppFonts.gothamLight),
               ),
             ),
           ),
-          SliverToBoxAdapter(child: const SizedBox(width: 12)),
+          SliverToBoxAdapter(
+            child: const SizedBox(width: 24.0),
+          ),
           SliverList.builder(
             itemCount: context.read<IATrainingController>().result!.exercises.length,
             itemBuilder: (_, index) {
@@ -188,9 +190,18 @@ class TrainingResultScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               child: ButtonContinue(
-                title: 'Criar Treino',
+                title: 'Adicionar Treino',
                 onTap: () {
-                  context.read<IATrainingController>().createWorksheetFromIATraining();
+                  context.read<IATrainingController>().createWorksheetFromIATraining(
+                        idUser: context.read<UserManager>().user.id!,
+                        onError: (error) {
+                          mostrarSnackBar(message: error, color: AppColors.red, context: context);
+                        },
+                        onSuccess: () async {
+                          await context.read<PlanilhaManager>().loadWorksheetList();
+                          Navigator.of(context).pushReplacementNamed(AppRoutes.planilhas);
+                        },
+                      );
                 },
                 isEnable: true,
                 isLoading: context.watch<IATrainingController>().getIsLoading,
