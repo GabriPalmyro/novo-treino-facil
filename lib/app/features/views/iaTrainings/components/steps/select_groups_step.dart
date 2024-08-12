@@ -16,7 +16,7 @@ class SelectGroupsStep extends StatefulWidget {
 
 class _SelectGroupsStepState extends State<SelectGroupsStep> with AutomaticKeepAliveClientMixin {
   static List<String> filters = [
-    "mines",
+    // "mines",
     "home_exe",
     "abdomen",
     "biceps",
@@ -28,7 +28,7 @@ class _SelectGroupsStepState extends State<SelectGroupsStep> with AutomaticKeepA
   ];
 
   static List<String> titles = [
-    "Meus Exercícios",
+    // "Meus Exercícios",
     "Fazer em casa",
     "Abdômen",
     "Bíceps",
