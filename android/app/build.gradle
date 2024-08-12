@@ -33,7 +33,7 @@ def keystoreProperties = new Properties()
 
     lintOptions {
         disable 'InvalidPackage'
-        checkReleaseBuilds false //<- add this line
+        checkReleaseBuilds false
     }
 
     aaptOptions {
@@ -49,10 +49,8 @@ def keystoreProperties = new Properties()
         applicationId "br.com.palmyro.treino_facil"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 22
-        versionName "3.0.0"
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode project.hasProperty('versionCode') ? project.versionCode.toInteger() : flutterVersionCode.toInteger()
+        versionName project.hasProperty('versionName') ? project.versionName : flutterVersionName
         multiDexEnabled true
     }
 

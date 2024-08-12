@@ -62,6 +62,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
 
   Future<void> carregarMeusExercicios() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(Duration(milliseconds: 500));
       String id = context.read<UserManager>().user.id!;
       await context.read<ExercisesManager>().loadMyListExercises(idUser: id);
     });

@@ -22,6 +22,7 @@ class ExercicioViewModal extends StatefulWidget {
   final bool isSecondExercise;
   final bool isPersonalManag;
   final VoidCallback refetchExercises;
+  final bool enableEditing;
 
   ExercicioViewModal(
       {required this.exercicio,
@@ -35,6 +36,7 @@ class ExercicioViewModal extends StatefulWidget {
       this.idBiSet,
       this.isBiSet = false,
       this.isSecondExercise = false,
+      this.enableEditing = true,
       required this.isPersonalManag});
 
   @override
@@ -415,7 +417,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
                           ],
                         )),
                       ),
-                      if (!widget.isFriendAcess) ...[
+                      if (!widget.isFriendAcess && widget.enableEditing) ...[
                         Padding(
                           padding: const EdgeInsets.only(top: 12.0, left: 8, right: 8, bottom: 12.0),
                           child: Container(

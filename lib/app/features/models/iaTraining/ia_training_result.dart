@@ -17,6 +17,16 @@ class IATrainingResult {
     };
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'description': description,
+      'iaGenerated': true,
+      'favorito': false,
+      'diasDaSemana': null,
+    };
+  }
+
   factory IATrainingResult.fromJson(Map<String, dynamic> json) {
     return IATrainingResult(
       title: json['title'] as String? ?? '',
@@ -38,6 +48,7 @@ class ExerciseIA {
   String? set_type;
   String? video;
   List<ExerciseIA>? sets;
+  int? pos;
 
   ExerciseIA({
     required this.title,
@@ -51,6 +62,7 @@ class ExerciseIA {
     required this.set_type,
     required this.video,
     this.sets,
+    this.pos,
   });
 
   factory ExerciseIA.fromJson(Map<String, dynamic> json) {
@@ -65,6 +77,7 @@ class ExerciseIA {
       peso: json['peso'] is int? ? json['peso'] : int.parse(json['peso']),
       set_type: json['set_type'] as String?,
       video: json['video'] as String?,
+      pos: json['pos'] as int?,
       sets: json['sets'] != null
           ? List<ExerciseIA>.from(
               json['sets'].map((x) => ExerciseIA.fromJson(x)),
@@ -86,6 +99,29 @@ class ExerciseIA {
       'set_type': set_type,
       'video': video,
       'sets': sets?.map((exercise) => exercise.toJson()).toList(),
+    };
+  }
+
+  Map<String, dynamic> toMapUniSet() {
+    return {
+      'pos': pos,
+      'title': title,
+      'muscleId': muscleId,
+      'video': video,
+      'series': series,
+      'reps': reps,
+      'peso': peso,
+      'obs': obs,
+      'set_type': set_type,
+    };
+  }
+
+  Map<String, dynamic> toMapBiSet() {
+    return {
+      'pos': 0,
+      'set_type': set_type,
+      'title1': title1,
+      'title2': title2,
     };
   }
 }

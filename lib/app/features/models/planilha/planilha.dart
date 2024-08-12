@@ -5,9 +5,10 @@ class Planilha {
   String? title;
   String? description;
   bool? favorito;
+  bool? isIaGenerated;
   List<DiaDaSemana>? diasDaSemana;
 
-  Planilha({this.id, this.title, this.description, this.diasDaSemana, this.favorito});
+  Planilha({this.id, this.title, this.description, this.diasDaSemana, this.favorito, this.isIaGenerated});
 
   Map<String, dynamic> toMap() {
     return {
@@ -24,6 +25,7 @@ class Planilha {
       title: map['title'] as String,
       description: map['description'] as String,
       favorito: map['favorito'] as bool? ?? false,
+      isIaGenerated: map['iaGenerated'] as bool? ?? false,
       diasDaSemana: map['diasDaSemana'] == null
           ? listDiasDaSemana
           : List<DiaDaSemana>.from(
