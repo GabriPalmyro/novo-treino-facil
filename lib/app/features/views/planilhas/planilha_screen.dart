@@ -137,13 +137,15 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              child: AdWidget(
-                                ad: _bannerAd!,
+                            if (_bannerAd != null) ...[
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 50,
+                                child: AdWidget(
+                                  ad: _bannerAd!,
+                                ),
                               ),
-                            ),
+                            ],
                             ...List.generate(
                               planilhas.listaPlanilhas.length,
                               (index) {

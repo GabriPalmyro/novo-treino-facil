@@ -482,6 +482,14 @@ class UserManager extends ChangeNotifier {
     }
   }
 
+  Future<void> removeIAGenerationAvailable() async =>
+      FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(
+        {'ia_generations_available': user.availableIATrainingGenerations - 1},
+      ).then((_) {
+        user.availableIATrainingGenerations -= 1;
+        notifyListeners();
+      });
+
   removerPersonalAluno({required int index}) {
     alunos.removeAt(index);
     notifyListeners();

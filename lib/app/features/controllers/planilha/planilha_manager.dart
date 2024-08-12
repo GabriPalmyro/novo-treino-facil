@@ -58,7 +58,10 @@ class PlanilhaManager extends ChangeNotifier {
     loading = true;
     String? id;
     try {
-      if (listaPlanilhas.length < 7 || adView) {
+
+      final lengthOfPlanilhas = listaPlanilhas.where((item) => !(item.isIaGenerated ?? false)).length;
+
+      if (lengthOfPlanilhas < 7 || adView) {
         await FirebaseFirestore.instance
             .collection("users")
             .doc(idUser)
