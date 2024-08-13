@@ -212,34 +212,38 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                       child: InkWell(
                         onTap: () {
                           showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (_) => SelectDiaSemanaModal(
-                                    diasDaSemana: diasDaSemana,
-                                  ));
+                            backgroundColor: Colors.transparent,
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (_) => SelectDiaSemanaModal(
+                              diasDaSemana: diasDaSemana,
+                            ),
+                          );
                         },
                         child: Container(
-                            width: width * 0.8,
-                            decoration: BoxDecoration(
-                              color: AppColors.lightGrey,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Selecionar dias da semana',
-                                    style: TextStyle(
-                                      fontFamily: AppFonts.gothamBook,
-                                      color: AppColors.white,
-                                    )),
-                                Icon(
-                                  Icons.arrow_forward,
+                          width: width * 0.8,
+                          decoration: BoxDecoration(
+                            color: AppColors.lightGrey,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Selecionar dias da semana',
+                                style: TextStyle(
+                                  fontFamily: AppFonts.gothamBook,
                                   color: AppColors.white,
-                                )
-                              ],
-                            )),
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward,
+                                color: AppColors.white,
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                     Padding(

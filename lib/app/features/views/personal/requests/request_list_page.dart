@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -13,33 +17,48 @@ class RequestListPage extends StatefulWidget {
 }
 
 class _RequestListPageState extends State<RequestListPage> {
-  //*ADS
-  // RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
 
-  // Future<void> loadRewardedVideoAd() async {
-  //   rewardedVideoAd.load(adUnitId: rewardAdUnitId());
-  // }
+  RewardedAd? _rewardedAd;
 
-  // void listenerRewardedEvent() async {
-  //   rewardedVideoAd.listener = (RewardedVideoAdEvent event,
-  //       {String rewardType, int rewardAmount}) async {
-  //     if (event == RewardedVideoAdEvent.rewarded) {
-  //       await context
-  //           .read<PersonalManager>()
-  //           .loadMyPersonal(idUser: context.read<UserManager>().user.id);
-  //     } else if (event == RewardedVideoAdEvent.closed) {
-  //       await context
-  //           .read<PersonalManager>()
-  //           .loadMyPersonal(idUser: context.read<UserManager>().user.id);
-  //     }
-  //   };
-  // }
+  void _loadRewardedAd() {
+    RewardedAd.load(
+      adUnitId: AdHelper.rewardedAdUnitId,
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              setState(() {
+                ad.dispose();
+                _rewardedAd = null;
+              });
+              _loadRewardedAd();
+              log('Dismissed AD after rewarded');
+            },
+          );
+
+          setState(() {
+            _rewardedAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load a rewarded ad: ${err.message}');
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    // loadRewardedVideoAd();
+    _loadRewardedAd();
     // listenerRewardedEvent();
+  }
+
+  @override
+  void dispose() {
+    _rewardedAd?.dispose();
+    super.dispose();
   }
 
   @override
@@ -86,21 +105,34 @@ class _RequestListPageState extends State<RequestListPage> {
                         personal: personalManager.personalRequestList[index],
                         aceitarPedido: () async {
                           await showCustomDialogOpt(
-                              context: context,
-                              title: 'Aceitar Pedido?',
-                              VoidCallBack: () async {
-                                Navigator.pop(context);
-                                final response =
-                                    await personalManager.acceptPersonalRequest(personal: personalManager.personalRequestList[index], user: userManager.user);
+                            context: context,
+                            title: 'Aceitar Pedido?',
+                            VoidCallBack: () async {
+                              Navigator.pop(context);
+                              final response =
+                                  await personalManager.acceptPersonalRequest(personal: personalManager.personalRequestList[index], user: userManager.user);
 
-                                if (response != null) {
-                                  mostrarSnackBar(response, AppColors.red);
+                              if (response != null) {
+                                mostrarSnackBar(response, AppColors.red);
+                              } else {
+                                if (_rewardedAd != null) {
+                                  _rewardedAd?.show(
+                                    onUserEarnedReward: (_, __) async {
+                                      await context.read<PersonalManager>().loadMyPersonal(
+                                            idUser: context.read<UserManager>().user.id!,
+                                          );
+                                    },
+                                  );
                                 } else {
-                                  // rewardedVideoAd.show();
+                                  await context.read<PersonalManager>().loadMyPersonal(
+                                        idUser: context.read<UserManager>().user.id!,
+                                      );
                                 }
-                              },
-                              message:
-                                  'Ao realizar essa ação seus pedidos de conexão serão apagados e ${personalManager.personalRequestList[index].personalName!.split(" ")[0]} será seu atual Personal.');
+                              }
+                            },
+                            message:
+                                'Ao realizar essa ação seus pedidos de conexão serão apagados e ${personalManager.personalRequestList[index].personalName!.split(" ")[0]} será seu atual Personal.',
+                          );
                         },
                         excluirPedido: () async {
                           await showCustomDialogOpt(
