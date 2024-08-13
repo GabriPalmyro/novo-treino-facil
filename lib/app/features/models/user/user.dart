@@ -1,4 +1,5 @@
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/shared/constants.dart';
 
 class User {
   String? id;
@@ -13,6 +14,7 @@ class User {
   bool? isPayApp;
   int? seguidores;
   int? seguindo;
+  int availableIATrainingGenerations;
   //! PREFERENCIAS
   //* PLANILHAS
   bool? mostrarPlanilhasPerfil;
@@ -34,6 +36,7 @@ class User {
       this.isPayApp,
       this.seguidores,
       this.seguindo,
+      this.availableIATrainingGenerations = 0,
       this.mostrarExerciciosPerfil,
       this.mostrarPerfilPesquisa,
       this.mostrarPlanilhasPerfil});
@@ -94,6 +97,7 @@ class User {
       mostrarPlanilhasPerfil: map['mostrar_planilhas_perfil'] as bool? ?? true,
       mostrarExerciciosPerfil: map['mostrar_exercicios_perfil'] as bool? ?? true,
       mostrarPerfilPesquisa: map['mostrar_perfil_pesquisa'] as bool? ?? true,
+    availableIATrainingGenerations: map['ia_generations_available'] as int? ?? kDefaultIAGenerateAvailable,
     );
   }
 

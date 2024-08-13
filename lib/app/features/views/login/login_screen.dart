@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
@@ -23,12 +25,49 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureTextPass = true;
   bool _isEnable = true;
 
+  BannerAd? _bannerAd;
+
+  @override
+  void initState() {
+    _initAdUnit();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
+  void _initAdUnit() {
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: AdRequest(
+        keywords: [
+          'GYM', 'WORKOUT', 'MUSCLE'
+        ]
+      ),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserManager>(builder: (_, userManager, __) {
-      final width = MediaQuery.of(context).size.width;
+    return Consumer<UserManager>(
+      builder: (_, userManager, __) {
+        final width = MediaQuery.of(context).size.width;
 
-      return Scaffold(
+        return Scaffold(
           resizeToAvoidBottomInset: false,
           key: _scaffoldKey,
           appBar: PreferredSize(preferredSize: Size.fromHeight(130), child: AppBarLogin()),
@@ -131,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 350),
                     curve: Curves.ease,
-                      width: width * 0.95,
+                    width: width * 0.95,
                     height: 60,
                     child: Center(
                       child: userManager.loading
@@ -189,36 +228,51 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Expanded(
-                    child: Container(
-                  width: width,
-                  padding: const EdgeInsets.only(bottom: 70.0, right: 10, left: 10),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: GestureDetector(
+                  child: Container(
+                    width: width,
+                    padding: const EdgeInsets.only(bottom: 12.0, right: 10, left: 10),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, AppRoutes.register);
                         },
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AutoSizeText(
                               "Ainda não possui uma conta?",
                               maxLines: 1,
                               style: TextStyle(color: AppColors.white, fontFamily: AppFonts.gotham, fontSize: 12),
                             ),
+                            const SizedBox(width: 12.0),
                             AutoSizeText(
-                              "Registre-se aqui",
+                              "Criar Conta",
                               maxLines: 1,
-                              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gotham, fontSize: 16),
+                              style: TextStyle(color: AppColors.mainColor, fontFamily: AppFonts.gotham, fontSize: 16, decoration: TextDecoration.underline),
                             ),
                           ],
-                        )),
+                        ),
+                      ),
+                    ),
                   ),
-                ))
+                ),
+                if (_bannerAd != null) ...[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    child: AdWidget(
+                      ad: _bannerAd!,
+                    ),
+                  ),
+                  const SizedBox(height: 24.0)
+                ],
               ],
             ),
-          ));
-    });
+          ),
+        );
+      },
+    );
   }
 
   void _onSucess() {

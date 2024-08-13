@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/components/adicionar_video_page.dart';
 import 'package:tabela_treino/app/features/views/meusExercicios/adicionarExercicio/components/exercicios_info_page.dart';
@@ -115,32 +117,35 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
 
   late PageController _pageController;
 
-  //*ADS
-  // RewardedVideoAd rewardedVideoAd = RewardedVideoAd.instance;
-  // bool rewardedFailedToLoad = false;
+  InterstitialAd? _interstitialAd;
 
-  // Future<void> loadRewardedVideoAd() async {
-  //   rewardedVideoAd.load(adUnitId: rewardAdUnitId());
-  // }
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void listenerRewardedEvent() {
-  //   rewardedVideoAd.listener = (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
-  //     if (event == RewardedVideoAdEvent.failedToLoad) {
-  //       rewardedFailedToLoad = true;
-  //     } else if (event == RewardedVideoAdEvent.rewarded) {
-  //       adicionarNovoExercicio();
-  //     } else if (event == RewardedVideoAdEvent.closed) {
-  //       loadRewardedVideoAd();
-  //     }
-  //   };
-  // }
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-    // loadRewardedVideoAd();
-    // listenerRewardedEvent();
   }
 
   void navigationTapped(int page) {
@@ -151,6 +156,7 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
   void dispose() {
     super.dispose();
     _pageController.dispose();
+    _interstitialAd?.dispose();
   }
 
   @override
@@ -194,6 +200,10 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
                     pickVideo: pickVideo,
                     enviarExercicio: () async {
                       if (_titleController.text.isNotEmpty && _video != null) {
+                        _loadInterstitialAd();
+                        if (_interstitialAd != null) {
+                          await _interstitialAd?.show();
+                        }
                         adicionarNovoExercicio();
                       } else {
                         showCustomDialogOpt(

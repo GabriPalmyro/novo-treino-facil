@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
@@ -65,13 +67,10 @@ class IATrainingController extends ChangeNotifier {
   Future<void> createIaTraining({
     required List<Exercise> groupExercises,
     required String sex,
+    // required String dateOfBirth,
   }) async {
     if (props.name != null && props.name!.isEmpty) {
       throw Exception("Name is required");
-    }
-
-    if (props.goal != null && props.goal!.isEmpty) {
-      throw Exception("Goal is required");
     }
 
     if (props.groups == null || props.groups!.isEmpty) {
@@ -133,6 +132,9 @@ class IATrainingController extends ChangeNotifier {
       All the video links are available in the exercises, you can use them to show the user how to do the exercise.
 
       The "peso" field is the weight that the person should use for the exercise and should be returned as integer.
+      When "peso" field is nothing (no weight exercises), sent "peso": 0, and NOT null
+
+      The "pos" field is required for the sequencie list, all unisets and bisets needs to have
 
       This is the json format that I need to receive to create the training plan.
 
@@ -141,6 +143,7 @@ class IATrainingController extends ChangeNotifier {
         "description": "Example description",
         "exercises": [
             {
+                "pos": 1,
                 "title": "Example Exercise 1",
                 "muscleId": "pernas",
                 "obs": "Example observation",
@@ -151,6 +154,7 @@ class IATrainingController extends ChangeNotifier {
                 "video": "video_from_selected_exercise"
             },
             {
+                "pos": 2,
                 "title": "Example Exercise 2",
                 "muscleId": "costas",
                 "obs": "Example observation",
@@ -161,11 +165,13 @@ class IATrainingController extends ChangeNotifier {
                 "video": "video_from_selected_exercise"
             },
             {
+                "pos": 3,
                 "title1": "Example Exercise 1 on Biset",
                 "title2": "Example Exercise 2 on Biset",
                 "set_type": "biset",
                 "sets": [
                     {
+                        "pos": 1,
                         "title": "Example Exercise 1 on Biset",
                         "muscleId": "costas",
                         "obs": "Example observation",
@@ -176,6 +182,7 @@ class IATrainingController extends ChangeNotifier {
                         "video": "video_from_selected_exercise"
                     },
                     {
+                        "pos": 2,
                         "title": "Example Exercise 2 on Biset",
                         "muscleId": "pernas",
                         "obs": "Example observation",
@@ -211,6 +218,75 @@ class IATrainingController extends ChangeNotifier {
     } catch (e) {
       setLoading(false);
       throw Exception("Failed to create the IA training: $e");
+    }
+  }
+
+  Future<void> createWorksheetFromIATraining({
+    required String idUser,
+    required VoidCallback onSuccess,
+    required Function(String) onError,
+  }) async {
+    setLoading(true);
+    String? biSetExeId;
+
+    try {
+      final newWorksheet = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(idUser)
+          .collection(
+            "planilha",
+          )
+          .add(result!.toMap());
+
+      for (final item in result!.exercises) {
+        if (item.set_type == 'uniset') {
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .add(item.toMapUniSet());
+        } else {
+
+          //* ADICIONANDO BI SET
+          biSetExeId = (await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .add(item.toMapBiSet())).id;
+
+          //* PRIMEIRO EXERCICIO BI SET
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .doc(biSetExeId)
+              .collection("sets")
+              .add(item.sets![0].toMapUniSet());
+
+          //* SEGUNDO EXERCICIO BI SET
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(idUser)
+              .collection("planilha")
+              .doc(newWorksheet.id)
+              .collection("exercícios")
+              .doc(biSetExeId)
+              .collection("sets")
+              .add(item.sets![1].toMapUniSet());
+        }
+      }
+
+      onSuccess.call();
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      onError.call(e.toString());
     }
   }
 }

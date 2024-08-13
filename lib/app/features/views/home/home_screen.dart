@@ -8,6 +8,7 @@ import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/exerciciosPlanilha/exercicios_planilha_screen.dart';
 import 'package:tabela_treino/app/features/views/home/components/home_button.dart';
 import 'package:tabela_treino/app/features/views/home/components/planilha_widget.dart';
+import 'package:tabela_treino/app/features/views/home/components/update_to_premium_dialog.dart';
 import 'package:tabela_treino/app/features/views/perfil/perfil_screen.dart';
 import 'package:tabela_treino/app/shared/shimmer/skeleton.dart';
 
@@ -102,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.grey,
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
+          final isPayUser = userManager.user.isPayApp ?? false;
           return RefreshIndicator(
             onRefresh: () async {
               setState(() {
@@ -320,15 +322,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           if (context.read<CoreAppController>().coreInfos.mostrarIaTraining ?? false) ...[
-                            SizedBox(
-                              height: 14.0,
-                            ),
+                            SizedBox(height: 14.0),
                             HomeButtonMin(
                               width: width * 0.9,
                               title: 'Crie treinos com IA',
                               icon: Icons.fitness_center,
                               iconePath: AppImages.treinosFaceis,
+                              isAvailable: isPayUser || userManager.user.availableIATrainingGenerations > 0,
+                              // isAvailable: false,
+                              valueLabel: isPayUser ? null : userManager.user.availableIATrainingGenerations.toString(),
+                              valueTitle: 'Treinos Restantes',
                               onTap: () {
+                                if (!isPayUser && userManager.user.availableIATrainingGenerations <= 0) {
+                                  // if (true) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (_) => const UpdateToPremiumBottomSheet(),
+                                  );
+                                  return;
+                                }
+
                                 Navigator.pushNamed(context, AppRoutes.generateIaTraining);
                               },
                             ),

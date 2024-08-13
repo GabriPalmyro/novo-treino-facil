@@ -29,10 +29,24 @@ workflows:
       - name: 📈 Load environment variables
         script: echo "GEMINI_API_KEY=${GEMINI_API_KEY}" > .env
       - name: 🆕 Generate release notes
-        script: echo "${{ inputs.version }}" | tee release_notes.txt
-      - name: 🔨 Build Android Version
+        script: echo "${{ inputs.changelog }}" | tee release_notes.txt
+      - name: 🔨 Build Android Version 
         script: |
-          flutter build appbundle --release --build-name=${{ inputs.version }}.$(($BUILD_NUMBER + 100)) --build-number=$(($BUILD_NUMBER + 100))
+          # Get the current date in YYYYMMDD format
+          DATE=$(date +'%Y%m%d')
+          LAST_TWO_DIGITS=$((RANDOM % 10))
+          
+          # Calculate the version name and version number
+          # VERSION_NAME="${{ inputs.version }}.${DATE}$((BUILD_NUMBER + 10))"
+          # VERSION_NUMBER=${DATE}$((BUILD_NUMBER + 100))
+          VERSION_NAME="${{ inputs.version }}.${DATE}${LAST_TWO_DIGITS}"
+          VERSION_NUMBER=${DATE}${LAST_TWO_DIGITS}
+
+          # Print out the versions for debugging
+          echo "Building version: $VERSION_NAME and version number: $VERSION_NUMBER"
+
+          # Build the app bundle with the specified version name and version number
+          flutter build appbundle --release --build-name="$VERSION_NAME" --build-number=$VERSION_NUMBER
     artifacts:
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt

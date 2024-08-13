@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
@@ -14,12 +15,7 @@ class CardPlanilha extends StatefulWidget {
   final VoidCallback onTap;
   final bool isPersonalAcess;
 
-  const CardPlanilha(
-      {required this.planilha,
-      required this.userId,
-    required this.index,
-      required this.onTap,
-      this.isPersonalAcess = false});
+  const CardPlanilha({required this.planilha, required this.userId, required this.index, required this.onTap, this.isPersonalAcess = false});
 
   @override
   _CardPlanilhaState createState() => _CardPlanilhaState();
@@ -29,100 +25,101 @@ class _CardPlanilhaState extends State<CardPlanilha> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Consumer<PlanilhaManager>(builder: (_, planilhaManager, __) {
-      return InkWell(
-        onTap: widget.onTap,
-        child: Stack(
-          children: [
-            Container(
-              width: width * 0.9,
-              padding:
-                  const EdgeInsets.symmetric(vertical: 25.0, horizontal: 20),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: AppColors.mainColor,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
+    return Consumer<PlanilhaManager>(
+      builder: (_, planilhaManager, __) {
+        return InkWell(
+          onTap: widget.onTap,
+          child: Stack(
+            children: [
+              Container(
+                width: width * 0.9,
+                padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.mainColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.4), blurRadius: 6, offset: Offset(0, 6))],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      widget.planilha.title!.toUpperCase(),
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 24, fontFamily: AppFonts.gothamBold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Divider(
                       color: AppColors.black.withOpacity(0.4),
-                      blurRadius: 6,
-                      offset: Offset(0, 6))
-                ],
+                      thickness: 0.5,
+                    ),
+                    AutoSizeText(
+                      widget.planilha.description!,
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 18, fontFamily: AppFonts.gothamBook),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  AutoSizeText(
-                    widget.planilha.title!.toUpperCase(),
-                    maxLines: 2,
-                    style: TextStyle(
-                        fontSize: 24, fontFamily: AppFonts.gothamBold),
-                    textAlign: TextAlign.center,
+              if (widget.planilha.isIaGenerated ?? false) ...[
+                Positioned(
+                  top: 12,
+                  left: 32,
+                  child: Tooltip(
+                    message: 'Planilha Gerada por IA',
+                    child: FaIcon(
+                      FontAwesomeIcons.robot,
+                      size: 15,
+                    ),
                   ),
-                  Divider(
-                    color: AppColors.black.withOpacity(0.4),
-                    thickness: 0.5,
-                  ),
-                  AutoSizeText(
-                    widget.planilha.description!,
-                    maxLines: 2,
-                    style: TextStyle(
-                        fontSize: 18, fontFamily: AppFonts.gothamBook),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            if (!widget.isPersonalAcess) ...[
-              Positioned(
+                ),
+              ] else if (!widget.isPersonalAcess) ...[
+                Positioned(
                   top: 0,
                   left: 20,
                   child: IconButton(
-                      onPressed: () async {
-                        var response =
-                            await planilhaManager.changePlanilhaToFavorite(
-                                widget.planilha, widget.index);
-                        if (response != null) {
-                          mostrarSnackBar(
-                              context: context,
-                              message:
-                                  'Não foi possível favoritar esse treino.',
-                              color: AppColors.red);
-                        }
-                      },
-                      icon: Icon(
-                        widget.planilha.favorito!
-                            ? Icons.star
-                            : Icons.star_border,
-                        color: widget.planilha.favorito!
-                            ? AppColors.black
-                            : AppColors.black,
-                      ))),
-            ],
-            Positioned(
-                top: 0,
-                right: 20,
-                child: IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (_) => EditPlanilhaModal(
-                                planilha: widget.planilha,
-                                userId: widget.userId,
-                                index: widget.index,
-                                isPersonalAcess: widget.isPersonalAcess,
-                              ));
+                    onPressed: () async {
+                      var response = await planilhaManager.changePlanilhaToFavorite(widget.planilha, widget.index);
+                      if (response != null) {
+                        mostrarSnackBar(context: context, message: 'Não foi possível favoritar esse treino.', color: AppColors.red);
+                      }
                     },
                     icon: Icon(
-                      Icons.edit_outlined,
-                      color: AppColors.black,
-                    ))),
-          ],
-        ),
-      );
-    });
+                      widget.planilha.favorito! ? Icons.star : Icons.star_border,
+                      color: widget.planilha.favorito! ? AppColors.black : AppColors.black,
+                    ),
+                  ),
+                ),
+              ],
+              Positioned(
+                top: -5,
+                right: 15,
+                child: IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (_) => EditPlanilhaModal(
+                        planilha: widget.planilha,
+                        userId: widget.userId,
+                        index: widget.index,
+                        isPersonalAcess: widget.isPersonalAcess,
+                      ),
+                    );
+                  },
+                  icon: FaIcon(
+                    FontAwesomeIcons.solidPenToSquare,
+                    size: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
@@ -135,11 +136,11 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
-                                  child: Icon(
-                                    Icons.delete_forever,
-                                    size: 28,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.trash,
+                                    size: 20,
                                     color: AppColors.red.withOpacity(0.8),
-                                  ),
+                                  )
                                 ),
                               ),
                             ),
