@@ -132,6 +132,9 @@ class IATrainingController extends ChangeNotifier {
       All the video links are available in the exercises, you can use them to show the user how to do the exercise.
 
       The "peso" field is the weight that the person should use for the exercise and should be returned as integer.
+      When "peso" field is nothing (no weight exercises), sent "peso": 0, and NOT null
+
+      The "pos" field is required for the sequencie list, all unisets and bisets needs to have
 
       This is the json format that I need to receive to create the training plan.
 

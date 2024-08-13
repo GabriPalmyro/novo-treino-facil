@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,38 +25,42 @@ class AjudaDetailsScreen extends StatefulWidget {
 }
 
 class _AjudaDetailsScreenState extends State<AjudaDetailsScreen> {
-  //* ADS
-  // InterstitialAd interstitialAdMuscle;
-  // bool isInterstitialReady = false;
+  InterstitialAd? _interstitialAd;
 
-  // void _loadInterstitialAd() {
-  //   interstitialAdMuscle.load();
-  // }
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void _onInterstitialAdEvent(MobileAdEvent event) {
-  //   switch (event) {
-  //     case MobileAdEvent.loaded:
-  //       isInterstitialReady = true;
-  //       break;
-  //     case MobileAdEvent.failedToLoad:
-  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-  //       isInterstitialReady = false;
-  //       break;
-  //     default:
-  //     // do nothing
-  //   }
-  // }
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
 
-  // @override
-  // void initState() {
-  //   super.initState();
+  @override
+  void initState() {
+    _loadInterstitialAd();
+    super.initState();
+  }
 
-  //   interstitialAdMuscle = InterstitialAd(
-  //     adUnitId: interstitialAdUnitId(),
-  //     listener: _onInterstitialAdEvent,
-  //   );
-  //   _loadInterstitialAd();
-  // }
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +89,9 @@ class _AjudaDetailsScreenState extends State<AjudaDetailsScreen> {
                               '*${widget.title}*\n\n${widget.description.replaceAll("\\n", "\n")}\n\nBaixe de graça o aplicativo Treino Fácil e comece a montar seus treinos ainda hoje: https://bityli.com/UAxpM!';
                           await Share.share(message);
 
-                          // if (isInterstitialReady) {
-                          //   await interstitialAdMuscle.show();
-                          // }
+                          if (_interstitialAd != null) {
+                            _interstitialAd!.show();
+                          }
                         },
                         icon: Icon(
                           Icons.share,

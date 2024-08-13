@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
@@ -38,38 +40,43 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
 
   int sexo = 0;
   bool isPersonal = false;
-  //* ADS
-  // InterstitialAd interstitialAdMuscle;
-  bool isInterstitialReady = false;
+  
+  InterstitialAd? _interstitialAd;
 
-  // void _loadInterstitialAd() {
-  //   interstitialAdMuscle.load();
-  // }
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void _onInterstitialAdEvent(MobileAdEvent event) {
-  //   switch (event) {
-  //     case MobileAdEvent.loaded:
-  //       isInterstitialReady = true;
-  //       break;
-  //     case MobileAdEvent.failedToLoad:
-  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-  //       isInterstitialReady = false;
-  //       break;
-  //     default:
-  //     // do nothing
-  //   }
-  // }
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
-    super.initState();
     getUserInfos();
-
-    // interstitialAdMuscle = InterstitialAd(
-    //   adUnitId: interstitialAdUnitId(),
-    //   listener: _onInterstitialAdEvent,
-    // );
-    // _loadInterstitialAd();
+    _loadInterstitialAd();
+    super.initState();
   }
 
   getUserInfos() {
@@ -377,9 +384,9 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     mostrarSnackBar(message: 'Perfil Atualizado com sucesso!', color: Colors.green, context: context);
     await Future.delayed(Duration(seconds: 2));
 
-    // if (isInterstitialReady) {
-    //   await interstitialAdMuscle.show();
-    // }
+    if (_interstitialAd != null) {
+      await _interstitialAd!.show();
+    }
     Navigator.pop(context);
   }
 
