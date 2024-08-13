@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -153,6 +154,7 @@ class UserManager extends ChangeNotifier {
           DocumentSnapshot docUser = await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).get();
           Map<String, dynamic> _userData = docUser.data() as Map<String, dynamic>;
           _userData['id'] = docUser.id;
+          await FirebaseAnalytics.instance.setUserProperty(name: 'user_id', value: _userData['id']);
           user = User.fromMap(_userData);
         } catch (e) {
           log(e.toString());
