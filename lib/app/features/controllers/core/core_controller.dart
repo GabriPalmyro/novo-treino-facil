@@ -1,13 +1,14 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tabela_treino/app/features/models/core/core.dart';
 
 class CoreAppController extends ChangeNotifier {
   CoreApp coreInfos = CoreApp();
 
-  // final _remoteConfig = FirebaseRemoteConfig.instance;
+  final _remoteConfig = FirebaseRemoteConfig.instance;
 
   Future<void> getAppCore() async {
     try {
@@ -25,8 +26,7 @@ class CoreAppController extends ChangeNotifier {
 
   Future<void> loadIaTraining() async {
     try {
-      // final iaTraining = await _remoteConfig.getBool('is_ia_training_available');
-      final iaTraining = true;
+      final iaTraining = await _remoteConfig.getBool('is_ia_training_available');
       coreInfos = coreInfos.copyWith(mostrarIaTraining: iaTraining);
     } catch (e) {
       log(e.toString());
