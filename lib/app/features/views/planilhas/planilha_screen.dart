@@ -155,13 +155,17 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                                     children: [
                                       CardPlanilha(
                                         onTap: () {
-                                          Navigator.pushNamed(context, AppRoutes.exerciciosPlanilha,
-                                              arguments: ExerciciosPlanilhaArguments(
-                                                  title: planilhas.listaPlanilhas[index].title!,
-                                                  idPlanilha: planilhas.listaPlanilhas[index].id!,
-                                                  idUser: context.read<UserManager>().user.id!,
-                                                  isFriendAcess: false,
-                                                  isPersonalAcess: widget.isPersonalAcess));
+                                          Navigator.pushNamed(
+                                            context,
+                                            AppRoutes.exerciciosPlanilha,
+                                            arguments: ExerciciosPlanilhaArguments(
+                                              title: planilhas.listaPlanilhas[index].title!,
+                                              idPlanilha: planilhas.listaPlanilhas[index].id!,
+                                              idUser: context.read<UserManager>().user.id!,
+                                              isFriendAcess: false,
+                                              isPersonalAcess: widget.isPersonalAcess,
+                                            ),
+                                          );
                                         },
                                         userId: context.read<UserManager>().user.id!,
                                         planilha: planilhas.listaPlanilhas[index],

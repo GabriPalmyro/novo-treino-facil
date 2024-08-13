@@ -49,6 +49,7 @@ class _LogoutButtonWidgetState extends State<LogoutButtonWidget> {
                     isLoading = true;
                   });
                   await context.read<UserManager>().logout();
+                  Navigator.pop(context);
                   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
                 },
                 style: ButtonStyle(

@@ -1,8 +1,11 @@
-
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/amigosProcurados/amigos_procurados_controller.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
@@ -34,11 +37,41 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
     });
   }
 
+  InterstitialAd? _interstitialAd;
+
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
+
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return Consumer2<UserManager, AmigosProcuradosManager>(
-        builder: (_, userManager, amigosProcurados, __) {
+    return Consumer2<UserManager, AmigosProcuradosManager>(builder: (_, userManager, amigosProcurados, __) {
       return Scaffold(
           appBar: AppBar(
             toolbarHeight: 60,
@@ -54,8 +87,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
               },
               onSubmitted: (text) async {
                 nicknameNode.unfocus();
-                friends = await userManager.carregarAmigos(
-                    nickname: nicknameController.text);
+                friends = await userManager.carregarAmigos(nickname: nicknameController.text);
               },
               focusNode: nicknameNode,
               controller: nicknameController,
@@ -80,10 +112,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                                 ? ""
                                 : "Nenhum resultado encontrado"
                             : "",
-                    style: TextStyle(
-                        fontFamily: AppFonts.gotham,
-                        color: AppColors.white,
-                        fontSize: 22.0),
+                    style: TextStyle(fontFamily: AppFonts.gotham, color: AppColors.white, fontSize: 22.0),
                   ),
                 ),
                 if (userManager.loading || amigosProcurados.loading) ...[
@@ -98,10 +127,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                         ),
                         Text(
                           'Procurando "${nicknameController.text}"',
-                          style: TextStyle(
-                              fontFamily: AppFonts.gotham,
-                              color: AppColors.white,
-                              fontSize: 14.0),
+                          style: TextStyle(fontFamily: AppFonts.gotham, color: AppColors.white, fontSize: 14.0),
                         )
                       ],
                     ),
@@ -117,34 +143,23 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                             itemCount: amigosProcurados.amigosProcurados.length,
                             itemBuilder: (_, index) {
                               return CardFriend(
-                                nickname: amigosProcurados
-                                    .amigosProcurados[index].nickname!,
-                                name:
-                                    '${amigosProcurados.amigosProcurados[index].name} ${amigosProcurados.amigosProcurados[index].lastName}',
-                                photoURL: amigosProcurados
-                                    .amigosProcurados[index].photoURL!,
+                                nickname: amigosProcurados.amigosProcurados[index].nickname!,
+                                name: '${amigosProcurados.amigosProcurados[index].name} ${amigosProcurados.amigosProcurados[index].lastName}',
+                                photoURL: amigosProcurados.amigosProcurados[index].photoURL!,
                                 onTap: () async {
-                                  // if (isInterstitialReady) {
-                                  //   SharedPreferences prefs =
-                                  //       await SharedPreferences.getInstance();
+                                  await _loadInterstitialAd();
+                                  if (_interstitialAd != null) {
+                                    //* VALIDAR ANÚNCIO INTERCALADO 3
+                                    int adSeenTimes = await context.read<AdsManager>().getSeenTimesAmigosPerfil();
+                                    if (adSeenTimes < 2) {
+                                      context.read<AdsManager>().setSeenTimesAmigosPerfil(adSeenTimes + 1);
+                                    } else {
+                                      await _interstitialAd!.show();
+                                      context.read<AdsManager>().setSeenTimesAmigosPerfil(0);
+                                    }
+                                  }
 
-                                  //   //* VALIDAR ANÚNCIO INTERCALADO 3
-                                  //   int adSeenTimes =
-                                  //       prefs.getInt('amigos_perfil_add') ?? 0;
-                                  //   if (adSeenTimes < 2) {
-                                  //     await prefs.setInt(
-                                  //         'amigos_perfil_add', adSeenTimes + 1);
-                                  //   } else {
-                                  //     await interstitialAdMuscle.show();
-                                  //     await prefs.setInt(
-                                  //         'amigos_perfil_add', 0);
-                                  //   }
-                                  // }
-
-                                  Navigator.pushNamed(
-                                      context, AppRoutes.perfilAmigo,
-                                      arguments: amigosProcurados
-                                          .amigosProcurados[index]);
+                                  Navigator.pushNamed(context, AppRoutes.perfilAmigo, arguments: amigosProcurados.amigosProcurados[index]);
                                 },
                               );
                             }),
@@ -155,10 +170,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                             },
                             child: Text(
                               "Apagar Histórico",
-                              style: TextStyle(
-                                  fontFamily: AppFonts.gothamLight,
-                                  color: AppColors.white,
-                                  fontSize: 14.0),
+                              style: TextStyle(fontFamily: AppFonts.gothamLight, color: AppColors.white, fontSize: 14.0),
                             ),
                           )
                         ]
@@ -176,21 +188,14 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                           return friends[index].mostrarPerfilPesquisa!
                               ? CardFriend(
                                   nickname: friends[index].nickname!,
-                                  name:
-                                      '${friends[index].name} ${friends[index].lastName}',
+                                  name: '${friends[index].name} ${friends[index].lastName}',
                                   photoURL: friends[index].photoURL!,
                                   onTap: () async {
-                                    if (friends[index].id !=
-                                        userManager.user.id) {
-                                      await amigosProcurados
-                                          .inserirAmigoNaLista(
-                                              user: friends[index]);
-                                      Navigator.pushNamed(
-                                          context, AppRoutes.perfilAmigo,
-                                          arguments: friends[index]);
+                                    if (friends[index].id != userManager.user.id) {
+                                      await amigosProcurados.inserirAmigoNaLista(user: friends[index]);
+                                      Navigator.pushNamed(context, AppRoutes.perfilAmigo, arguments: friends[index]);
                                     } else {
-                                      Navigator.pushNamed(
-                                          context, AppRoutes.meuPerfil);
+                                      Navigator.pushNamed(context, AppRoutes.meuPerfil);
                                     }
                                   },
                                 )

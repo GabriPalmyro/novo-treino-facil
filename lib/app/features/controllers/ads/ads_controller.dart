@@ -71,4 +71,15 @@ class AdsManager extends ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     return prefs.getInt('amigos_perfil_add') ?? 0;
   }
+
+  //* NUMERO DE PLANILHAS CRIADOS
+  Future<void> setTrainingCreated(int value) async {
+    prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('planilhas_criadas', value);
+  }
+
+  Future<int> getTrainingCreated() async {
+    prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('planilhas_criadas') ?? 0;
+  }
 }

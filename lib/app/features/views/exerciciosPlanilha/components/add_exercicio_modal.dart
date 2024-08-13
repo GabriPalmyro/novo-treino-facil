@@ -2,9 +2,12 @@ import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
@@ -37,27 +40,41 @@ class ExercicioAddModal extends StatefulWidget {
 }
 
 class _ExercicioAddModalState extends State<ExercicioAddModal> {
-  // //* ADS
-  // InterstitialAd interstitialAdMuscle;
-  // bool isInterstitialReady = false;
+  InterstitialAd? _interstitialAd;
 
-  // void _loadInterstitialAd() {
-  //   interstitialAdMuscle.load();
-  // }
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void _onInterstitialAdEvent(MobileAdEvent event) {
-  //   switch (event) {
-  //     case MobileAdEvent.loaded:
-  //       isInterstitialReady = true;
-  //       break;
-  //     case MobileAdEvent.failedToLoad:
-  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-  //       isInterstitialReady = false;
-  //       break;
-  //     default:
-  //     // do nothing
-  //   }
-  // }
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   TextEditingController _seriesController = TextEditingController();
   TextEditingController _repsController = TextEditingController();
@@ -431,18 +448,15 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                     textColor: AppColors.black,
                                     onTap: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // //* VALIDAR ANÚNCIO INTERCALADO 2
-                                        // int adSeenTimes =
-                                        //     prefs.getInt('add_exercicio_ad') ??
-                                        //         0;
-                                        // if (adSeenTimes < 2) {
-                                        //   await prefs.setInt('add_exercicio_ad',
-                                        //       adSeenTimes + 1);
-                                        // } else {
-                                        //   await interstitialAdMuscle.show();
-                                        //   await prefs.setInt(
-                                        //       'add_exercicio_ad', 0);
-                                        // }
+                                        //* VALIDAR ANÚNCIO INTERCALADO 2
+                                        int adSeenTimes = await context.read<AdsManager>().getSeenTimesAddExercice();
+                                        if (adSeenTimes < 2) {
+                                          await context.read<AdsManager>().setSeenTimesAddExercice(adSeenTimes + 1);
+                                        } else if (_interstitialAd != null) {
+                                          await _loadInterstitialAd();
+                                          await _interstitialAd!.show();
+                                          await context.read<AdsManager>().setSeenTimesAddExercice(0);
+                                        }
 
                                         if (widget.isBiSet) {
                                           ExerciciosPlanilha exercicio = ExerciciosPlanilha(

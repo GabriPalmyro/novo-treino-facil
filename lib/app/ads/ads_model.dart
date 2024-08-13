@@ -10,7 +10,7 @@ class AdHelper {
     if (Platform.isAndroid) {
       return bannerAdIdAndroid;
     } else if (Platform.isIOS) {
-      return '<YOUR_IOS_BANNER_AD_UNIT_ID>';
+      throw UnsupportedError('Unsupported platform');
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -18,9 +18,9 @@ class AdHelper {
 
   static String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      return interstitialAdUnitId;
+      return intertstitialAdIdAndroid;
     } else if (Platform.isIOS) {
-      return '<YOUR_IOS_INTERSTITIAL_AD_UNIT_ID>';
+      throw UnsupportedError('Unsupported platform');
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -28,9 +28,9 @@ class AdHelper {
 
   static String get rewardedAdUnitId {
     if (Platform.isAndroid) {
-      return rewardedAdUnitId;
+      return rewardedVideoAdIdAndroid;
     } else if (Platform.isIOS) {
-      return '<YOUR_IOS_REWARDED_AD_UNIT_ID>';
+      throw UnsupportedError('Unsupported platform');
     } else {
       throw UnsupportedError('Unsupported platform');
     }

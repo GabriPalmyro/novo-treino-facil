@@ -103,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.grey,
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
+          final isPayUser = userManager.user.isPayApp ?? false;
           return RefreshIndicator(
             onRefresh: () async {
               setState(() {
@@ -327,13 +328,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: 'Crie treinos com IA',
                               icon: Icons.fitness_center,
                               iconePath: AppImages.treinosFaceis,
-                              isAvailable: userManager.user.isPayApp! || userManager.user.availableIATrainingGenerations > 0,
+                              isAvailable: isPayUser || userManager.user.availableIATrainingGenerations > 0,
                               // isAvailable: false,
-                              valueLabel: userManager.user.isPayApp! ? null : userManager.user.availableIATrainingGenerations.toString(),
+                              valueLabel: isPayUser ? null : userManager.user.availableIATrainingGenerations.toString(),
                               valueTitle: 'Treinos Restantes',
                               onTap: () {
-                                if (!userManager.user.isPayApp! && userManager.user.availableIATrainingGenerations <= 0) {
-                                // if (true) {
+                                if (!isPayUser && userManager.user.availableIATrainingGenerations <= 0) {
+                                  // if (true) {
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,

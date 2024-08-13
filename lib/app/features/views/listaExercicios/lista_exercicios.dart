@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -15,44 +20,43 @@ class ListaExerciciosScreen extends StatefulWidget {
 }
 
 class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
-  //* ADS
-  // InterstitialAd interstitialAdMuscle;
-  // bool isInterstitialReady = false;
+  InterstitialAd? _interstitialAd;
 
-  // void _loadInterstitialAd() {
-  //   interstitialAdMuscle.load();
-  // }
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void _onInterstitialAdEvent(MobileAdEvent event) {
-  //   switch (event) {
-  //     case MobileAdEvent.loaded:
-  //       isInterstitialReady = true;
-  //       break;
-  //     case MobileAdEvent.failedToLoad:
-  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-  //       isInterstitialReady = false;
-  //       break;
-  //     default:
-  //     // do nothing
-  //   }
-  // }
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     carregarMeusExercicios();
     _searchController.addListener(_onSearchChanged);
-    // interstitialAdMuscle = InterstitialAd(
-    //   adUnitId: interstitialAdUnitId(),
-    //   listener: _onInterstitialAdEvent,
-    // );
-    // _loadInterstitialAd();
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -259,23 +263,21 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                           CardExercicio(
                             index: index,
                             onTap: () async {
-                              // if (isInterstitialReady) {
-                              //   SharedPreferences prefs =
-                              //       await SharedPreferences.getInstance();
+                              //* VALIDAR ANÚNCIO INTERCALADO 3
+                              final prefs = await SharedPreferences.getInstance();
 
-                              //   //* VALIDAR ANÚNCIO INTERCALADO 3
-                              //   int adSeenTimes =
-                              //       prefs.getInt('view_exercicio') ?? 0;
-                              //   if (adSeenTimes < 3) {
-                              //     await prefs.setInt(
-                              //         'view_exercicio', adSeenTimes + 1);
-                              //   } else {
-                              //     await interstitialAdMuscle.show();
-                              //     await prefs.setInt('view_exercicio', 0);
-                              //   }
+                              int adSeenTimes = prefs.getInt('view_exercicio') ?? 0;
+                              if (adSeenTimes < 3) {
+                                await prefs.setInt('view_exercicio', adSeenTimes + 1);
+                              } else {
+                                await _loadInterstitialAd();
+                                if (_interstitialAd != null) {
+                                  await _interstitialAd!.show();
+                                  await prefs.setInt('view_exercicio', 0);
+                                }
+                              }
 
-                              //   await interstitialAdMuscle.load();
-                              // }
+                              _loadInterstitialAd();
 
                               showModalBottomSheet(
                                   backgroundColor: Colors.transparent,

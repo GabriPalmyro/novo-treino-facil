@@ -111,7 +111,7 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
         ),
         _buildFeatureItem(
           icon: FontAwesomeIcons.circleCheck,
-          text: 'Geração infinita de planilhas com inteligência artificial',
+          text: 'Geração infinita de planilhas com inteligência artificial.',
         ),
       ],
     );
