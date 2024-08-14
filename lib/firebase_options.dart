@@ -67,4 +67,5 @@ class DefaultFirebaseOptions {
     iosClientId: '999959493758-eoeb0km9pis1ijvjjndufs6aif6hgmuc.apps.googleusercontent.com',
     iosBundleId: 'br.com.palmyro.treinofacil.treinoFacil',
   );
+
 }

@@ -167,7 +167,7 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                                             ),
                                           );
                                         },
-                                        userId: context.read<UserManager>().user.id!,
+                                        userId: context.read<UserManager>().user.id ?? '',
                                         planilha: planilhas.listaPlanilhas[index],
                                         index: index,
                                       ),

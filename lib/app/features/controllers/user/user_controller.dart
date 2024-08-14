@@ -154,8 +154,9 @@ class UserManager extends ChangeNotifier {
           DocumentSnapshot docUser = await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).get();
           Map<String, dynamic> _userData = docUser.data() as Map<String, dynamic>;
           _userData['id'] = docUser.id;
-          await FirebaseAnalytics.instance.setUserProperty(name: 'user_id', value: _userData['id']);
+          await FirebaseAnalytics.instance.setUserId(id: _userData['id']);
           user = User.fromMap(_userData);
+          notifyListeners();
         } catch (e) {
           log(e.toString());
         }
@@ -484,8 +485,7 @@ class UserManager extends ChangeNotifier {
     }
   }
 
-  Future<void> removeIAGenerationAvailable() async =>
-      FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(
+  Future<void> removeIAGenerationAvailable() async => FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update(
         {'ia_generations_available': user.availableIATrainingGenerations - 1},
       ).then((_) {
         user.availableIATrainingGenerations -= 1;
