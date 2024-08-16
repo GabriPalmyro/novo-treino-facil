@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
@@ -9,6 +8,7 @@ import 'package:tabela_treino/app/features/controllers/exercises/exercicios_mana
 import 'package:tabela_treino/app/features/controllers/friend/friend_controller.dart';
 import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
 import 'package:tabela_treino/app/features/controllers/meAjuda/ajudas_controller.dart';
+import 'package:tabela_treino/app/features/controllers/payments/payments_controller.dart';
 import 'package:tabela_treino/app/features/controllers/personal/personal_manager.dart';
 import 'package:tabela_treino/app/routes.dart';
 
@@ -70,15 +70,16 @@ class _MyAppState extends State<MyApp> {
           create: (_) => IATrainingController(),
           lazy: true,
         ),
+        ChangeNotifierProvider(
+          create: (context) => PaymentsController(
+            context.read<UserManager>(),
+          ),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         title: 'Treino Fácil',
-        theme: ThemeData(
-          primarySwatch: Colors.amber,
-          primaryColor: AppColors.mainColor,
-          useMaterial3: false,
-          fontFamily: AppFonts.gotham
-        ),
+        theme: ThemeData(primarySwatch: Colors.amber, primaryColor: AppColors.mainColor, useMaterial3: false, fontFamily: AppFonts.gotham),
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
           return MediaQuery(

@@ -1,13 +1,19 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
+import 'package:tabela_treino/app/features/controllers/payments/payments_controller.dart';
+import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 import 'package:tabela_treino/app/shared/formatter.dart';
 
 class UpdateToPremiumBottomSheet extends StatelessWidget {
   const UpdateToPremiumBottomSheet();
+  static const errorMessage = 'Ocorreu um erro ao tentar comprar o plano premium. Tente novamente mais tarde.';
 
   @override
   Widget build(BuildContext context) {
@@ -145,8 +151,34 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
 
   Widget _buildUpgradeButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        // Handle upgrade to premium logic
+      onPressed: () async {
+        try {
+          final paymentsController = context.read<PaymentsController>();
+          final productIds = {'premium_app'};
+
+          if (!(await paymentsController.iap.isAvailable())) {
+            log('In-app purchase is not available');
+            Navigator.pop(context);
+            mostrarSnackBar(message: errorMessage, color: AppColors.red, context: context);
+            return;
+          }
+
+          final ProductDetailsResponse productDetails = await paymentsController.iap.queryProductDetails(productIds);
+
+          if (productDetails.notFoundIDs.isNotEmpty) {
+            log('Product not found: ${productDetails.notFoundIDs}');
+            Navigator.pop(context);
+            mostrarSnackBar(message: errorMessage, color: AppColors.red, context: context);
+            return;
+          }
+
+          final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails.productDetails.first);
+          await paymentsController.iap.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+        } catch (e) {
+          log('Failed to buy plan: $e');
+          Navigator.pop(context);
+          mostrarSnackBar(message: errorMessage, color: AppColors.red, context: context);
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.mainColor,
