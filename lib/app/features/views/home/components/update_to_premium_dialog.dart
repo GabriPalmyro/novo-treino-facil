@@ -165,17 +165,17 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
             return;
           }
 
-          final ProductDetailsResponse productDetails = await paymentsController.iap.queryProductDetails(productIds);
+          final ProductDetailsResponse products = await paymentsController.iap.queryProductDetails(productIds);
 
-          if (productDetails.notFoundIDs.isNotEmpty) {
-            log('Product not found: ${productDetails.notFoundIDs}');
+          if (products.notFoundIDs.isNotEmpty) {
+            log('Product not found: ${products.notFoundIDs}');
             Navigator.pop(context);
             mostrarSnackBar(message: errorMessage, color: AppColors.red, context: context);
             return;
           }
 
-          final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails.productDetails.first);
-          await paymentsController.iap.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+          final PurchaseParam purchaseParam = PurchaseParam(productDetails: products.productDetails.first);
+          await paymentsController.iap.buyNonConsumable(purchaseParam: purchaseParam);
         } catch (e, stack) {
           unawaited(Sentry.captureException(
             e,

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 
 class PaymentsController extends ChangeNotifier {
@@ -52,10 +53,14 @@ class PaymentsController extends ChangeNotifier {
           log(' purchase is in pending ');
           continue;
         case PurchaseStatus.error:
-          log(' purchase error ');
+          unawaited(Sentry.captureException(
+            purchaseDetailsList[index].error,
+            stackTrace: purchaseDetailsList[index].error,
+          ));
+          log(' purchase error ${purchaseDetailsList[index].error} ');
           break;
         case PurchaseStatus.canceled:
-          log(' purchase cancel ');
+          log(' purchase cancel ${purchaseDetailsList[index].error} ');
           break;
         case PurchaseStatus.purchased:
           log(' purchased ');

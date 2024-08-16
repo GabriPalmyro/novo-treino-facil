@@ -37,5 +37,12 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-7831186229252322~9095625736"/>
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.publicKey"
+            android:value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiQ/BI87c5Mh2TQ3WVhX2topfoDZ+V6jOIgU2RnrFLvEN7ubo9aYydxmKfmvm/WBGL6DWh6ujRewkQWTKCT9GYXseniUSJWnd6/pdgKhObgI3spBgf2dPBwl3yRPFilGOBQEOzv9kYJvU8wjUEOvs+zCBZfp3Qj1mCYMwBxCSkb62dQnrUodHNYdc1ETixsC7sLSnFDfhZUHXhKvVVqgGXy8Pq71ztTCwyW/+y+b3yKcye6O1Qyd1giKi2lkDfnRywNla4lt1E+6i4iyU3TYtr60wZyHGB+ruJpz97/6eSvIijsyJG+EOVMg9a5EckFoTwx+mhFEWQA8bJRVDaxIgLwIDAQAB"/>
+
     </application>
 </manifest>
