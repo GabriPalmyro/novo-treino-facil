@@ -62,7 +62,7 @@ class _ExercicioViewModalState extends State<ExercicioViewModal> {
     _seriesController.text = widget.exercicio.series!;
     _repsController.text = widget.exercicio.reps!;
     _cargaController.text = widget.exercicio.carga.toString();
-    _obsController.text = widget.exercicio.comments!;
+    _obsController.text = widget.exercicio.comments ?? '';
   }
 
   void resetFields() {
