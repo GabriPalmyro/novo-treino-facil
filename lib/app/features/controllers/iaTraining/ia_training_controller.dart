@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 import 'package:tabela_treino/app/features/models/iaTraining/ia_training_create_props.dart';
 import 'package:tabela_treino/app/features/models/iaTraining/ia_training_result.dart';
@@ -224,7 +225,7 @@ class IATrainingController extends ChangeNotifier {
   Future<void> createWorksheetFromIATraining({
     required String idUser,
     required VoidCallback onSuccess,
-    required Function(String) onError,
+    required VoidCallback onError,
   }) async {
     setLoading(true);
     String? biSetExeId;
@@ -248,15 +249,15 @@ class IATrainingController extends ChangeNotifier {
               .collection("exercícios")
               .add(item.toMapUniSet());
         } else {
-
           //* ADICIONANDO BI SET
           biSetExeId = (await FirebaseFirestore.instance
-              .collection("users")
-              .doc(idUser)
-              .collection("planilha")
-              .doc(newWorksheet.id)
-              .collection("exercícios")
-              .add(item.toMapBiSet())).id;
+                  .collection("users")
+                  .doc(idUser)
+                  .collection("planilha")
+                  .doc(newWorksheet.id)
+                  .collection("exercícios")
+                  .add(item.toMapBiSet()))
+              .id;
 
           //* PRIMEIRO EXERCICIO BI SET
           await FirebaseFirestore.instance
@@ -284,9 +285,13 @@ class IATrainingController extends ChangeNotifier {
 
       onSuccess.call();
       setLoading(false);
-    } catch (e) {
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
       setLoading(false);
-      onError.call(e.toString());
+      onError.call();
     }
   }
 }

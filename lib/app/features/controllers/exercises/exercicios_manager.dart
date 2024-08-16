@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 
 class ExercisesManager extends ChangeNotifier {
@@ -29,7 +31,11 @@ class ExercisesManager extends ChangeNotifier {
       });
 
       log('EXERCICE LIST LOAD SUCESS');
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       listaExercicios = [];
       log('ERROR LOADING: ' + e.toString());
     }
@@ -119,7 +125,11 @@ class ExercisesManager extends ChangeNotifier {
       });
 
       log('MY LIST EXERCISE LOAD SUCESS');
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       listaMeusExercicios = [];
       log('ERROR LOADING: ' + e.toString());
     }
@@ -132,7 +142,11 @@ class ExercisesManager extends ChangeNotifier {
       listaMeusExercicios.removeAt(index);
       notifyListeners();
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       return e.toString();
     }

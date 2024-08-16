@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 
@@ -80,7 +82,11 @@ class PlanilhaManager extends ChangeNotifier {
       }
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       loading = false;
       log(e.toString());
       return e.toString();
@@ -106,7 +112,11 @@ class PlanilhaManager extends ChangeNotifier {
 
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       loading = false;
       return e.toString();
@@ -233,7 +243,11 @@ class PlanilhaManager extends ChangeNotifier {
       loading = false;
 
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       loading = false;
       log(e.toString());
       return e.toString();

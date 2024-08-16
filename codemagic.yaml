@@ -27,7 +27,7 @@ workflows:
         script: |
           flutter pub get
       - name: 📈 Load environment variables
-        script: echo "GEMINI_API_KEY=${GEMINI_API_KEY}" > .env
+        script: echo "GEMINI_API_KEY=${GEMINI_API_KEY} SENTRY_DNS=${SENTRY_DNS}" > .env
       - name: 🆕 Generate release notes
         script: echo "${{ inputs.changelog }}" | tee release_notes.txt
       - name: 🔨 Build Android Version 

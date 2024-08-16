@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
@@ -131,8 +132,12 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
 
                         await context.read<UserManager>().removeIAGenerationAvailable();
                         Navigator.of(context).pushReplacementNamed(AppRoutes.iaTrainingResult);
-                      } catch (e) {
-                        mostrarSnackBar(message: e.toString(), color: AppColors.red, context: context);
+                      } catch (exception, stackTrace) {
+                        await Sentry.captureException(
+                          exception,
+                          stackTrace: stackTrace,
+                        );
+                        mostrarSnackBar(message: 'Occorreu um erro ao gerar o seu treino. Tente novamente ou aguarde.', color: AppColors.red, context: context);
                       }
                     },
                   ),

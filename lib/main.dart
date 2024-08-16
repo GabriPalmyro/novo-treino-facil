@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/firebase_options.dart';
 
 import 'app/app_widget.dart';
@@ -16,7 +17,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  
+
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.transparent,
@@ -32,5 +33,13 @@ void main() async {
 
   await dotenv.load();
 
-  runApp(MyApp());
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+      options.enableAutoNativeBreadcrumbs = true;
+    },
+    appRunner: () => runApp(MyApp()),
+  );
 }
