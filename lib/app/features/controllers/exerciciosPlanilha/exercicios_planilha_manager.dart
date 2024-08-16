@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/cupertino.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/biset_exercicio.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 
@@ -38,7 +40,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
           .then((value) => id = value.id);
       exercicio.id = id;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       return e.toString();
     }
@@ -74,7 +80,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
 
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       loading = false;
       return e.toString();
@@ -126,7 +136,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       });
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
 
       loading = false;
@@ -158,7 +172,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
         "series": exercicio.series
       });
       loading = false;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       loading = false;
     }
@@ -222,7 +240,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
       isFirstExerciseSelected = false;
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       loading = false;
       log(e.toString());
       return e.toString();
@@ -255,7 +277,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
 
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       loading = false;
       return e.toString();
@@ -319,7 +345,11 @@ class ExerciciosPlanilhaManager extends ChangeNotifier {
 
       loading = false;
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       loading = false;
       return e.toString();

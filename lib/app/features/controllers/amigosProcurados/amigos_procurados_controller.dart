@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/features/models/user/user.dart';
 
 class AmigosProcuradosManager extends ChangeNotifier {
@@ -60,7 +62,11 @@ class AmigosProcuradosManager extends ChangeNotifier {
         },
       ).toList() as List<User>;
       loading = false;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       loading = false;
     }
   }

@@ -194,7 +194,7 @@ class TrainingResultScreen extends StatelessWidget {
                 onTap: () {
                   context.read<IATrainingController>().createWorksheetFromIATraining(
                         idUser: context.read<UserManager>().user.id!,
-                        onError: (error) {
+                        onError: () {
                           mostrarSnackBar(
                             message: 'Occorreu um erro ao gerar o seu treino. Tente novamente ou aguarde alguns instantes,',
                             color: AppColors.red,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/payments/payments_controller.dart';
@@ -174,7 +176,11 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
 
           final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails.productDetails.first);
           await paymentsController.iap.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
-        } catch (e) {
+        } catch (e, stack) {
+          unawaited(Sentry.captureException(
+            e,
+            stackTrace: stack,
+          ));
           log('Failed to buy plan: $e');
           Navigator.pop(context);
           mostrarSnackBar(message: errorMessage, color: AppColors.red, context: context);

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -6,6 +7,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tabela_treino/app/features/models/aluno/aluno.dart';
 import 'package:tabela_treino/app/features/models/seguidor/seguidor.dart';
@@ -60,10 +62,19 @@ class UserManager extends ChangeNotifier {
       //await Future.delayed(Duration(seconds: 2));
       Auth.UserCredential authUser = await _auth.createUserWithEmailAndPassword(email: user.email!, password: pass);
       firebaseUser = authUser.user;
+      Sentry.configureScope((scope) {
+        scope.setUser(
+          SentryUser(id: firebaseUser!.uid, email: user.email, username: user.nickname, name: user.name),
+        );
+      });
       onSucess();
       await saveUserData(user.toMap());
       loading = false;
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       onFailed();
       loading = false;
@@ -99,7 +110,11 @@ class UserManager extends ChangeNotifier {
       log(e.code.toString());
       loading = false;
       return loginErrorType(e.code);
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       log(e.toString());
       loading = false;
       return 'Ocorreu um erro. Verifique seu e-mail e senha e tente novamente.';
@@ -117,7 +132,11 @@ class UserManager extends ChangeNotifier {
       firebaseUser = null;
       loading = false;
       user = User();
-    } catch (e) {
+    } catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       user = userTemp;
       loading = false;
       log(e.toString());
