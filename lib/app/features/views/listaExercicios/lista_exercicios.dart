@@ -271,7 +271,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                                 await prefs.setInt('view_exercicio', adSeenTimes + 1);
                               } else {
                                 await _loadInterstitialAd();
-                                if (_interstitialAd != null) {
+                                if (_interstitialAd != null  && !context.read<UserManager>().user.isPayApp) {
                                   await _interstitialAd!.show();
                                   await prefs.setInt('view_exercicio', 0);
                                 }

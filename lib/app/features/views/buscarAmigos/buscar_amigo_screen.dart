@@ -148,7 +148,7 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
                                 photoURL: amigosProcurados.amigosProcurados[index].photoURL!,
                                 onTap: () async {
                                   await _loadInterstitialAd();
-                                  if (_interstitialAd != null) {
+                                  if (_interstitialAd != null && !userManager.user.isPayApp) {
                                     //* VALIDAR ANÚNCIO INTERCALADO 3
                                     int adSeenTimes = await context.read<AdsManager>().getSeenTimesAmigosPerfil();
                                     if (adSeenTimes < 2) {

@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 
@@ -269,7 +270,7 @@ class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
                                 var adsManager = context.read<AdsManager>();
 
                                 if (_formKey.currentState!.validate()) {
-                                  if (_interstitialAd != null) {
+                                  if (_interstitialAd != null && !context.read<UserManager>().user.isPayApp) {
                                     if (await adsManager.getIsAvaliableNewPlanilha()) {
                                       await _interstitialAd!.show();
                                       await adsManager.setIsAvaliableNewPlanilha(false);

@@ -26,6 +26,11 @@ class CoreAppController extends ChangeNotifier {
 
   Future<void> loadIaTraining() async {
     try {
+      await _remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: const Duration(minutes: 5),
+      ));
+      await _remoteConfig.fetchAndActivate();
       final iaTraining = await _remoteConfig.getBool('is_ia_training_available');
       coreInfos = coreInfos.copyWith(mostrarIaTraining: iaTraining);
     } catch (e) {

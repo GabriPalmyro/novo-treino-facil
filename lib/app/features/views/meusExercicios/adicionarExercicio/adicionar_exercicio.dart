@@ -201,7 +201,7 @@ class _AdicionarExercicioModalState extends State<AdicionarExercicioModal> {
                     enviarExercicio: () async {
                       if (_titleController.text.isNotEmpty && _video != null) {
                         _loadInterstitialAd();
-                        if (_interstitialAd != null) {
+                        if (_interstitialAd != null  && !userManager.user.isPayApp) {
                           await _interstitialAd?.show();
                         }
                         adicionarNovoExercicio();

@@ -82,4 +82,15 @@ class AdsManager extends ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     return prefs.getInt('planilhas_criadas') ?? 0;
   }
+
+  //* EDITAR PLANILHAS
+  Future<void> setEditPlanilhas(int value) async {
+    prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('planilhas_edit', value);
+  }
+
+  Future<int> getEditPlanilhas() async {
+    prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('planilhas_edit') ?? 0;
+  }
 }

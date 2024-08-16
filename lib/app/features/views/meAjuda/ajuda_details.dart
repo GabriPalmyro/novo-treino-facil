@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -89,7 +91,7 @@ class _AjudaDetailsScreenState extends State<AjudaDetailsScreen> {
                               '*${widget.title}*\n\n${widget.description.replaceAll("\\n", "\n")}\n\nBaixe de graça o aplicativo Treino Fácil e comece a montar seus treinos ainda hoje: https://bityli.com/UAxpM!';
                           await Share.share(message);
 
-                          if (_interstitialAd != null) {
+                          if (_interstitialAd != null  && !context.read<UserManager>().user.isPayApp) {
                             _interstitialAd!.show();
                           }
                         },

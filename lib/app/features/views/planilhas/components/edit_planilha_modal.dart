@@ -1,9 +1,15 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
+import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/planilha/planilha_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/planilha/dia_da_semana.dart';
 import 'package:tabela_treino/app/features/models/planilha/planilha.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
@@ -16,11 +22,7 @@ class EditPlanilhaModal extends StatefulWidget {
   final String userId;
   final bool isPersonalAcess;
 
-  const EditPlanilhaModal(
-      {required this.planilha,
-      required this.index,
-      required this.userId,
-      required this.isPersonalAcess});
+  const EditPlanilhaModal({required this.planilha, required this.index, required this.userId, required this.isPersonalAcess});
 
   @override
   _EditPlanilhaModalState createState() => _EditPlanilhaModalState();
@@ -34,27 +36,36 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
 
   List<DiaDaSemana> _diasDaSemana = [];
 
-  //* ADS
-  // InterstitialAd interstitialAdMuscle;
-  bool isInterstitialReady = false;
+  InterstitialAd? _interstitialAd;
 
-  // void _loadInterstitialAd() {
-  //   interstitialAdMuscle.load();
-  // }
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void _onInterstitialAdEvent(MobileAdEvent event) {
-  //   switch (event) {
-  //     case MobileAdEvent.loaded:
-  //       isInterstitialReady = true;
-  //       break;
-  //     case MobileAdEvent.failedToLoad:
-  //       log('Failed to load an interstitial ad. Error: $event'.toUpperCase());
-  //       isInterstitialReady = false;
-  //       break;
-  //     default:
-  //     // do nothing
-  //   }
-  // }
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   void resetCampos() {
     setState(() {
@@ -69,12 +80,7 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
     _titleController.text = widget.planilha.title!;
     _descriptionController.text = widget.planilha.description!;
     _diasDaSemana = widget.planilha.diasDaSemana!;
-
-    // interstitialAdMuscle = InterstitialAd(
-    //   adUnitId: interstitialAdUnitId(),
-    //   listener: _onInterstitialAdEvent,
-    // );
-    // _loadInterstitialAd();
+    _loadInterstitialAd();
   }
 
   @override
@@ -91,10 +97,7 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
             child: Container(
                 height: height * 0.6,
                 decoration: new BoxDecoration(
-                    color: AppColors.grey,
-                    borderRadius: new BorderRadius.only(
-                        topLeft: const Radius.circular(25.0),
-                        topRight: const Radius.circular(25.0))),
+                    color: AppColors.grey, borderRadius: new BorderRadius.only(topLeft: const Radius.circular(25.0), topRight: const Radius.circular(25.0))),
                 child: Padding(
                   padding: EdgeInsets.only(top: 18.0, right: 18, left: 18),
                   child: Column(
@@ -106,27 +109,16 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                         children: [
                           AutoSizeText(
                             'Editar Planilha',
-                            style: TextStyle(
-                                fontFamily: AppFonts.gothamBold,
-                                color: AppColors.white,
-                                fontSize: 26.0),
+                            style: TextStyle(fontFamily: AppFonts.gothamBold, color: AppColors.white, fontSize: 26.0),
                           ),
                           InkWell(
                             onTap: () async {
-                              final response =
-                                  await planilhaManager.deletarPlanilhaCompleta(
-                                      planilhaId: widget.planilha.id!,
-                                      userId: widget.userId,
-                                      index: widget.index,
-                                      isPersonalAcess: widget.isPersonalAcess);
+                              final response = await planilhaManager.deletarPlanilhaCompleta(
+                                  planilhaId: widget.planilha.id!, userId: widget.userId, index: widget.index, isPersonalAcess: widget.isPersonalAcess);
 
                               if (response != null) {
                                 Navigator.pop(context);
-                                mostrarSnackBar(
-                                    context: context,
-                                    message:
-                                        'Não possível excluir essa planilha.',
-                                    color: AppColors.red);
+                                mostrarSnackBar(context: context, message: 'Não possível excluir essa planilha.', color: AppColors.red);
                               } else {
                                 Navigator.pop(context);
                               }
@@ -136,12 +128,11 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.trash,
-                                    size: 20,
-                                    color: AppColors.red.withOpacity(0.8),
-                                  )
-                                ),
+                                    child: FaIcon(
+                                  FontAwesomeIcons.trash,
+                                  size: 20,
+                                  color: AppColors.red.withOpacity(0.8),
+                                )),
                               ),
                             ),
                           ),
@@ -168,12 +159,7 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                   padding: const EdgeInsets.only(top: 12.0),
                                   child: Text(
                                     'Nome Planilha:',
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: state.hasError
-                                            ? Colors.red
-                                            : AppColors.white,
-                                        fontSize: 16.0),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 16.0),
                                   ),
                                 ),
                                 Padding(
@@ -184,18 +170,13 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                       color: AppColors.lightGrey,
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                     child: TextFormField(
                                       controller: _titleController,
                                       keyboardType: TextInputType.text,
                                       cursorColor: AppColors.mainColor,
                                       showCursor: true,
-                                      style: TextStyle(
-                                          fontFamily: AppFonts.gothamBook,
-                                          color: state.hasError
-                                              ? Colors.red
-                                              : AppColors.white),
+                                      style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                       ),
@@ -222,12 +203,7 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                   padding: const EdgeInsets.only(top: 12.0),
                                   child: Text(
                                     'Descrição Planilha:',
-                                    style: TextStyle(
-                                        fontFamily: AppFonts.gothamBook,
-                                        color: state.hasError
-                                            ? Colors.red
-                                            : AppColors.white,
-                                        fontSize: 16.0),
+                                    style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white, fontSize: 16.0),
                                   ),
                                 ),
                                 Padding(
@@ -238,19 +214,14 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                       color: AppColors.lightGrey,
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                     child: TextFormField(
                                       controller: _descriptionController,
                                       keyboardType: TextInputType.text,
                                       cursorColor: AppColors.mainColor,
                                       maxLines: null,
                                       showCursor: true,
-                                      style: TextStyle(
-                                          fontFamily: AppFonts.gothamBook,
-                                          color: state.hasError
-                                              ? Colors.red
-                                              : AppColors.white),
+                                      style: TextStyle(fontFamily: AppFonts.gothamBook, color: state.hasError ? Colors.red : AppColors.white),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                       ),
@@ -264,10 +235,7 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                         padding: const EdgeInsets.only(top: 12.0),
                         child: Text(
                           'Dia da Semana:',
-                          style: TextStyle(
-                              fontFamily: AppFonts.gothamBook,
-                              color: AppColors.white,
-                              fontSize: 16.0),
+                          style: TextStyle(fontFamily: AppFonts.gothamBook, color: AppColors.white, fontSize: 16.0),
                         ),
                       ),
                       Padding(
@@ -288,11 +256,9 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                 color: AppColors.lightGrey,
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 10.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Selecionar dias da semana',
                                       style: TextStyle(
@@ -331,18 +297,21 @@ class _EditPlanilhaModalState extends State<EditPlanilhaModal> {
                                     Planilha planilha = Planilha(
                                         id: widget.planilha.id,
                                         title: _titleController.text,
-                                        description:
-                                            _descriptionController.text,
+                                        description: _descriptionController.text,
                                         diasDaSemana: _diasDaSemana,
                                         favorito: widget.planilha.favorito);
                                     await planilhaManager.editPlanilha(
-                                        idUser: widget.userId,
-                                        planilha: planilha,
-                                        index: widget.index,
-                                        isPersonalAcess:
-                                            widget.isPersonalAcess);
-                                    // 
-                                    
+                                        idUser: widget.userId, planilha: planilha, index: widget.index, isPersonalAcess: widget.isPersonalAcess);
+
+                                    final showAdEditExercise = await context.read<AdsManager>().getIsAvaliableToShowAdEditExercise();
+
+                                    if (_interstitialAd != null && !context.read<UserManager>().user.isPayApp && showAdEditExercise) {
+                                      _interstitialAd!.show();
+                                      context.read<AdsManager>().setIsAvaliableToShowAdEditExercise(false);
+                                    } else {
+                                      context.read<AdsManager>().setIsAvaliableToShowAdEditExercise(true);
+                                    }
+
                                     Navigator.pop(context);
                                   }
                                 },

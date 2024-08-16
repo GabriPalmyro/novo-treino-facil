@@ -9,6 +9,7 @@ import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/ads/ads_controller.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/features/models/exerciciosPlanilha/exercicios_planilha.dart';
 import 'package:tabela_treino/app/features/models/exercises/exercises.dart';
 import 'package:tabela_treino/app/features/views/planilhas/components/custom_button.dart';
@@ -452,7 +453,7 @@ class _ExercicioAddModalState extends State<ExercicioAddModal> {
                                         int adSeenTimes = await context.read<AdsManager>().getSeenTimesAddExercice();
                                         if (adSeenTimes < 2) {
                                           await context.read<AdsManager>().setSeenTimesAddExercice(adSeenTimes + 1);
-                                        } else if (_interstitialAd != null) {
+                                        } else if (_interstitialAd != null && !context.read<UserManager>().user.isPayApp) {
                                           await _loadInterstitialAd();
                                           await _interstitialAd!.show();
                                           await context.read<AdsManager>().setSeenTimesAddExercice(0);

@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.grey,
       body: Consumer2<UserManager, PlanilhaManager>(
         builder: (_, userManager, planManager, __) {
-          final isPayUser = userManager.user.isPayApp ?? false;
+          final isPayUser = userManager.user.isPayApp;
           return RefreshIndicator(
             onRefresh: () async {
               setState(() {

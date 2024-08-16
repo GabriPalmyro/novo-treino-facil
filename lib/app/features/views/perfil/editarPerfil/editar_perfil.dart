@@ -40,7 +40,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
 
   int sexo = 0;
   bool isPersonal = false;
-  
+
   InterstitialAd? _interstitialAd;
 
   Future<void> _loadInterstitialAd() async {
@@ -384,7 +384,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     mostrarSnackBar(message: 'Perfil Atualizado com sucesso!', color: Colors.green, context: context);
     await Future.delayed(Duration(seconds: 2));
 
-    if (_interstitialAd != null) {
+    if (_interstitialAd != null && !context.read<UserManager>().user.isPayApp) {
       await _interstitialAd!.show();
     }
     Navigator.pop(context);

@@ -199,7 +199,6 @@ class TrainingResultScreen extends StatelessWidget {
                         },
                         onSuccess: () async {
                           await context.read<PlanilhaManager>().loadWorksheetList();
-                          await context.read<UserManager>().removeIAGenerationAvailable();
                           Navigator.of(context).pushReplacementNamed(AppRoutes.planilhas);
                         },
                       );

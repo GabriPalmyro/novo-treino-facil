@@ -1,10 +1,13 @@
-import 'dart:developer' as dev;
+
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exerciciosPlanilha/exercicios_planilha_manager.dart';
 import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
@@ -54,29 +57,36 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
   bool _isEditing = false;
   bool isLoading = false;
 
-  // //* ADS
-  // InterstitialAd interstitialAdMuscle;
-  // bool isInterstitialReady = false;
+  InterstitialAd? _interstitialAd;
 
-  // void _loadInterstitialAd() {
-  //   interstitialAdMuscle.load();
-  // }
+  Future<void> _loadInterstitialAd() async {
+    await InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              log('Anuncio fechado: ${ad.responseInfo}');
+            },
+          );
 
-  // void _onInterstitialAdEvent(MobileAdEvent event) {
-  //   switch (event) {
-  //     case MobileAdEvent.loaded:
-  //       isInterstitialReady = true;
-  //       break;
-  //     case MobileAdEvent.failedToLoad:
-  //       dev.log(
-  //           'Failed to load an interstitial ad. Error: $event'.toUpperCase());
-  //       isInterstitialReady = false;
-  //       break;
-  //     default:
-  //     // do nothing
-  //   }
-  // }
-  
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   Future<List<ExerciciosPlanilha>> biSetExerciseList(String idSet, CollectionReference ref) async {
     Map<String, dynamic> data = {};
@@ -92,7 +102,6 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
       });
       return biSets;
     } catch (e) {
-      log(e.toString());
       return biSets;
     }
   }
@@ -136,7 +145,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
       setState(() {
         isLoading = false;
       });
-      dev.log('Erro: ' + e.toString());
+      log('Erro: ' + e.toString());
       return listaExercicios;
     }
   }
@@ -147,12 +156,7 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       loadExerciciosPlanilha();
     });
-
-    // interstitialAdMuscle = InterstitialAd(
-    //   adUnitId: interstitialAdUnitId(),
-    //   listener: _onInterstitialAdEvent,
-    // );
-    // _loadInterstitialAd();
+    _loadInterstitialAd();
   }
 
   @override
@@ -172,9 +176,9 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
               if (!widget.arguments.isFriendAcess && !_isEditing) ...[
                 IconButton(
                   icon: FaIcon(
-                  FontAwesomeIcons.circlePlus,
-                  size: 25,
-                ),
+                    FontAwesomeIcons.circlePlus,
+                    size: 25,
+                  ),
                   tooltip: 'Adicionar Novo Exercício',
                   onPressed: () {
                     showModalBottomSheet(
@@ -213,10 +217,10 @@ class _ExerciciosPlanilhaScreenState extends State<ExerciciosPlanilhaScreen> {
                           if (response != null) {
                             mostrarSnackBar(message: 'Ocorreu um erro. Tente novamente mais tarde.', color: AppColors.red, context: context);
                           } else {
-                            // if (isInterstitialReady &&
-                            //     (Random().nextInt(100) % 2 == 0)) {
-                            //   await interstitialAdMuscle.show();
-                            // }
+                            if ((_interstitialAd != null && (math.Random().nextInt(100) % 2 == 0)) && !userManager.user.isPayApp) {
+                              await _interstitialAd!.show();
+                              _loadInterstitialAd();
+                            }
                             setState(() {
                               listaExercicios = listaExerciciosTemp;
                               listaExerciciosTemp = List.empty(growable: true);

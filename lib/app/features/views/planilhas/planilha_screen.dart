@@ -137,7 +137,7 @@ class _PlanilhaScreenState extends State<PlanilhaScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (_bannerAd != null) ...[
+                            if (_bannerAd != null && !context.read<UserManager>().user.isPayApp) ...[
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 height: 50,

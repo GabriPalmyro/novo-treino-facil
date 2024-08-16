@@ -52,17 +52,16 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
       onPopInvoked: (_) async {
         if (page > 0) {
           _pageController.previousPage(
             duration: Duration(milliseconds: 250),
             curve: Curves.easeInOut,
           );
-          return;
+          return Future.value(false);
         } else {
           Navigator.of(context).pop();
-          return;
+          return Future.value(true);
         }
       },
       child: Scaffold(
@@ -79,6 +78,19 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
           ),
           backgroundColor: AppColors.grey,
           elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              if (page > 0) {
+                _pageController.previousPage(
+                  duration: Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                );
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
         ),
         backgroundColor: AppColors.grey,
         body: Column(
@@ -116,6 +128,8 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
                               groupExercises: exercises,
                               sex: gender!,
                             );
+
+                        await context.read<UserManager>().removeIAGenerationAvailable();
                         Navigator.of(context).pushReplacementNamed(AppRoutes.iaTrainingResult);
                       } catch (e) {
                         mostrarSnackBar(message: e.toString(), color: AppColors.red, context: context);

@@ -11,7 +11,7 @@ class User {
   String? sex;
   String? photoURL;
   bool? isPersonal;
-  bool? isPayApp;
+  bool isPayApp;
   int? seguidores;
   int? seguindo;
   int availableIATrainingGenerations;
@@ -33,7 +33,7 @@ class User {
       this.photoURL,
       this.sex,
       this.isPersonal,
-      this.isPayApp,
+      this.isPayApp = false,
       this.seguidores,
       this.seguindo,
       this.availableIATrainingGenerations = 0,
