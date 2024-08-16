@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -40,26 +38,11 @@ class _BuscarAmigosScreenState extends State<BuscarAmigosScreen> {
   InterstitialAd? _interstitialAd;
 
   Future<void> _loadInterstitialAd() async {
-    await InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              log('Anuncio fechado: ${ad.responseInfo}');
-            },
-          );
-
-          setState(() {
-            _interstitialAd = ad;
-          });
-        },
-        onAdFailedToLoad: (err) {
-          print('Failed to load an interstitial ad: ${err.message}');
-        },
-      ),
-    );
+    AdHelper.loadInterstitialAd((ad) {
+      setState(() {
+        _interstitialAd = ad;
+      });
+    });
   }
 
   @override

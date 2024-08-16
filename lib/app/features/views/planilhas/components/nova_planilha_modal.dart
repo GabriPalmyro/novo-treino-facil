@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -27,27 +25,12 @@ class NovaPlanilhaModal extends StatefulWidget {
 class _NovaPlanilhaModalState extends State<NovaPlanilhaModal> {
   InterstitialAd? _interstitialAd;
 
-  void _loadInterstitialAd() {
-    InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              log('Anuncio fechado: ${ad.responseInfo}');
-            },
-          );
-
-          setState(() {
-            _interstitialAd = ad;
-          });
-        },
-        onAdFailedToLoad: (err) {
-          print('Failed to load an interstitial ad: ${err.message}');
-        },
-      ),
-    );
+  Future<void> _loadInterstitialAd() async {
+    AdHelper.loadInterstitialAd((ad) {
+      setState(() {
+        _interstitialAd = ad;
+      });
+    });
   }
 
   TextEditingController _titleController = TextEditingController();

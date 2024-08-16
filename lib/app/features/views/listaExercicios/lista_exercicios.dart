@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -23,26 +21,11 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   InterstitialAd? _interstitialAd;
 
   Future<void> _loadInterstitialAd() async {
-    await InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              log('Anuncio fechado: ${ad.responseInfo}');
-            },
-          );
-
-          setState(() {
-            _interstitialAd = ad;
-          });
-        },
-        onAdFailedToLoad: (err) {
-          print('Failed to load an interstitial ad: ${err.message}');
-        },
-      ),
-    );
+    AdHelper.loadInterstitialAd((ad) {
+      setState(() {
+        _interstitialAd = ad;
+      });
+    });
   }
 
   @override
@@ -75,9 +58,6 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
   bool _isSearching = false;
   final _searchController = TextEditingController();
   String _selTypeSearch = "title";
-
-  //*ADS
-  // final _controller = NativeAdmobController();
 
   Widget _buildSearchField() {
     return TextField(
@@ -230,36 +210,6 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                       padding: EdgeInsets.only(bottom: (index + 1) == exercicios.resultList.length ? 60.0 : 0),
                       child: Column(
                         children: [
-                          // if (index % 8 == 0 && index != 0) ...[
-                          //   Container(
-                          //     height: 90,
-                          //     padding: EdgeInsets.all(10),
-                          //     child: NativeAdmob(
-                          //       adUnitID: nativeAdUnitId(),
-                          //       loading: Center(
-                          //         child: CircularProgressIndicator(
-                          //           strokeWidth: 1.5,
-                          //           color: AppColors.mainColor,
-                          //           backgroundColor:
-                          //               AppColors.mainColor.withOpacity(0.5),
-                          //         ),
-                          //       ),
-                          //       error: Center(
-                          //         child: Text(
-                          //           "Falha ao carregar anúncio...",
-                          //           style: TextStyle(
-                          //               fontFamily: AppFonts.gothamLight,
-                          //               color: AppColors.mainColor
-                          //                   .withOpacity(0.6),
-                          //               fontSize: 14),
-                          //         ),
-                          //       ),
-                          //       numberAds: 3,
-                          //       controller: _controller,
-                          //       type: NativeAdmobType.banner,
-                          //     ),
-                          //   ),
-                          // ],
                           CardExercicio(
                             index: index,
                             onTap: () async {
@@ -271,7 +221,7 @@ class _ListaExerciciosScreenState extends State<ListaExerciciosScreen> {
                                 await prefs.setInt('view_exercicio', adSeenTimes + 1);
                               } else {
                                 await _loadInterstitialAd();
-                                if (_interstitialAd != null  && !context.read<UserManager>().user.isPayApp) {
+                                if (_interstitialAd != null && !context.read<UserManager>().user.isPayApp) {
                                   await _interstitialAd!.show();
                                   await prefs.setInt('view_exercicio', 0);
                                 }

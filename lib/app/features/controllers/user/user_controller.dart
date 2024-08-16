@@ -106,8 +106,11 @@ class UserManager extends ChangeNotifier {
       await loadCurrentUser();
       loading = false;
       return null;
-    } on Auth.FirebaseAuthException catch (e) {
-      log(e.code.toString());
+    } on Auth.FirebaseAuthException catch (e, stack) {
+      unawaited(Sentry.captureException(
+        e,
+        stackTrace: stack,
+      ));
       loading = false;
       return loginErrorType(e.code);
     } catch (e, stack) {
@@ -174,6 +177,11 @@ class UserManager extends ChangeNotifier {
           Map<String, dynamic> _userData = docUser.data() as Map<String, dynamic>;
           _userData['id'] = docUser.id;
           await FirebaseAnalytics.instance.setUserId(id: _userData['id']);
+          Sentry.configureScope((scope) {
+            scope.setUser(
+              SentryUser(id: _userData['id'], email: user.email, username: user.nickname, name: user.name),
+            );
+          });
           user = User.fromMap(_userData);
           notifyListeners();
         } catch (e) {
