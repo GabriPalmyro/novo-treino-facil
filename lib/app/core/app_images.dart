@@ -9,4 +9,5 @@ class AppImages {
   static const amigos = "${directory}/amigos.png";
   static const ajudas = "${directory}/ajudas.png";
   static const logo = "${directory}/logo.png";
+  static const premium = "${directory}/premium.png";
 }

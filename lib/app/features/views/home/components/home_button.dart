@@ -81,7 +81,6 @@ class _HomeButtonState extends State<HomeButton> {
 
 class HomeButtonMin extends StatelessWidget {
   final String title;
-  final IconData icon;
   final String iconePath;
   final double width;
   final VoidCallback onTap;
@@ -91,7 +90,6 @@ class HomeButtonMin extends StatelessWidget {
 
   const HomeButtonMin({
     required this.title,
-    required this.icon,
     required this.iconePath,
     required this.width,
     required this.onTap,

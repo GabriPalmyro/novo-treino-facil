@@ -197,7 +197,7 @@ class UserManager extends ChangeNotifier {
   Future<void> updateUserPremiumStatus(bool status) async {
     user.isPayApp = status;
     await FirebaseFirestore.instance.collection("users").doc(firebaseUser!.uid).update({
-      "isPayApp": status,
+      'payApp': status,
     });
     notifyListeners();
   }

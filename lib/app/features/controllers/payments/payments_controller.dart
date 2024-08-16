@@ -67,12 +67,13 @@ class PaymentsController extends ChangeNotifier {
           break;
         case PurchaseStatus.restored:
           log(' purchase restore ');
-          break;
+          continue;
       }
 
       if (purchaseDetailsList[index].pendingCompletePurchase) {
         await _iap.completePurchase(purchaseDetailsList[index]).then((value) {
-          if (purchaseStatus == PurchaseStatus.purchased) {
+          if (purchaseStatus == PurchaseStatus.purchased ||
+              purchaseStatus == PurchaseStatus.restored) {
             userManager.updateUserPremiumStatus(true);
           }
         });

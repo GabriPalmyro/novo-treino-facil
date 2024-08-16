@@ -4,6 +4,7 @@ class CoreApp {
   bool? mostrarAlterarSenha;
   bool? mostrarTreinosFaceis;
   bool? mostrarIaTraining;
+  bool? showPremium;
   double? appPremiumPrice;
 
   CoreApp({
@@ -12,6 +13,7 @@ class CoreApp {
     this.mostrarAlterarSenha,
     this.mostrarTreinosFaceis,
     this.mostrarIaTraining,
+    this.showPremium,
     this.appPremiumPrice,
   });
 
@@ -23,6 +25,7 @@ class CoreApp {
       'treinos_faceis': mostrarTreinosFaceis,
       'ia_training': mostrarIaTraining,
       'app_premium_price': appPremiumPrice,
+      'show_premium': showPremium,
     };
   }
 
@@ -33,6 +36,7 @@ class CoreApp {
       mostrarAlterarSenha: map['alterar_senha'] ?? false,
       mostrarTreinosFaceis: map['treinos_faceis'] ?? false,
       appPremiumPrice: double.tryParse(map['app_premium_price'].toString()),
+      showPremium: map['showPremium'] ?? false,
     );
   }
 
@@ -42,6 +46,7 @@ class CoreApp {
     bool? mostrarAlterarSenha,
     bool? mostrarTreinosFaceis,
     bool? mostrarIaTraining,
+    bool? showPremium,
     double? appPremiumPrice,
   }) {
     return CoreApp(
@@ -51,6 +56,7 @@ class CoreApp {
       mostrarTreinosFaceis: mostrarTreinosFaceis ?? this.mostrarTreinosFaceis,
       mostrarIaTraining: mostrarIaTraining ?? this.mostrarIaTraining,
       appPremiumPrice: appPremiumPrice ?? this.appPremiumPrice,
+      showPremium: showPremium ?? this.showPremium,
     );
   }
 

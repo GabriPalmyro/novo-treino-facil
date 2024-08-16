@@ -290,7 +290,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: (width / 2) * 0.85,
                                 // (width / 3) * 0.8,
                                 title: 'Exercícios Personalizados',
-                                icon: Icons.people_alt_outlined,
                                 iconePath: AppImages.meusExercicios,
                                 onTap: () {
                                   Navigator.pushNamed(context, AppRoutes.meusExercicios);
@@ -300,7 +299,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: (width / 2) * 0.85,
                                 // (width / 3) * 0.8,
                                 title: userManager.user.isPersonal ?? false ? "Alunos" : "Personal\nTrainer",
-                                icon: userManager.user.isPersonal ?? false ? Icons.people_rounded : Icons.live_help,
                                 iconePath: AppImages.personal,
                                 onTap: () {
                                   if (userManager.user.isPersonal ?? false) {
@@ -314,7 +312,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 HomeButtonMin(
                                   width: (width / 3) * 0.8,
                                   title: 'Treinos Fáceis - Crie treinos com IA',
-                                  icon: Icons.fitness_center,
                                   iconePath: AppImages.treinosFaceis,
                                   onTap: () {},
                                 )
@@ -326,7 +323,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             HomeButtonMin(
                               width: width * 0.9,
                               title: 'Crie treinos com IA',
-                              icon: Icons.fitness_center,
                               iconePath: AppImages.treinosFaceis,
                               isAvailable: isPayUser || userManager.user.availableIATrainingGenerations > 0,
                               // isAvailable: false,
@@ -435,6 +431,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }),
                         ),
+                      ),
+                    ),
+                  ],
+                  if ((context.read<CoreAppController>().coreInfos.showPremium ?? false) && !isPayUser) ...[
+                    SizedBox(height: 14.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: HomeButtonMin(
+                        width: width,
+                        title: 'Atualizar para o Plano Premium',
+                        iconePath: AppImages.premium,
+                        isAvailable: true,
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (_) => const UpdateToPremiumBottomSheet(),
+                          );
+                        },
                       ),
                     ),
                   ],

@@ -10,6 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/core/core_controller.dart';
 import 'package:tabela_treino/app/features/controllers/payments/payments_controller.dart';
+import 'package:tabela_treino/app/features/controllers/user/user_controller.dart';
 import 'package:tabela_treino/app/shared/dialogs/customSnackbar.dart';
 import 'package:tabela_treino/app/shared/formatter.dart';
 
@@ -23,7 +24,7 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final premiumPrice = context.read<CoreAppController>().coreInfos.appPremiumPrice;
     return Container(
-      height: height * 0.7,
+      height: height * 0.75,
       width: width * 0.9,
       decoration: BoxDecoration(
         color: AppColors.grey,
@@ -91,6 +92,7 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
             ),
             const Spacer(),
             _buildUpgradeButton(context),
+            _buildRestoreButton(context),
             const SizedBox(height: 16.0),
           ],
         ),
@@ -174,16 +176,27 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
             return;
           }
 
-          final PurchaseParam purchaseParam = PurchaseParam(productDetails: products.productDetails.first);
+          final userId = context.read<UserManager>().user.id;
+
+          final PurchaseParam purchaseParam = PurchaseParam(productDetails: products.productDetails.first, applicationUserName: userId);
           await paymentsController.iap.buyNonConsumable(purchaseParam: purchaseParam);
+          Navigator.pop(context);
+          mostrarSnackBar(
+            message: 'Estamos processando a sua compra. Aguarde alguns instante para a liberação!',
+            color: AppColors.mainColor,
+            context: context,
+          );
         } catch (e, stack) {
           unawaited(Sentry.captureException(
             e,
             stackTrace: stack,
           ));
-          log('Failed to buy plan: $e');
           Navigator.pop(context);
-          mostrarSnackBar(message: errorMessage, color: AppColors.red, context: context);
+          mostrarSnackBar(
+            message: errorMessage,
+            color: AppColors.red,
+            context: context,
+          );
         }
       },
       style: ElevatedButton.styleFrom(
@@ -200,6 +213,46 @@ class UpdateToPremiumBottomSheet extends StatelessWidget {
             color: AppColors.grey,
             fontSize: 18,
             fontFamily: AppFonts.gothamBold,
+          ),
+          maxLines: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRestoreButton(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        try {
+          final paymentsController = context.read<PaymentsController>();
+          final userId = context.read<UserManager>().user.id;
+          await paymentsController.iap.restorePurchases(applicationUserName: userId);
+          Navigator.pop(context);
+          mostrarSnackBar(
+            message: 'Estamos processando a sua compra. Aguarde alguns instante para a liberação!',
+            color: AppColors.grey300,
+            context: context,
+          );
+        } catch (e, stack) {
+          unawaited(Sentry.captureException(
+            e,
+            stackTrace: stack,
+          ));
+          Navigator.pop(context);
+          mostrarSnackBar(
+            message: errorMessage,
+            color: AppColors.red,
+            context: context,
+          );
+        }
+      },
+      child: Center(
+        child: AutoSizeText(
+          'Restaurar Compra',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 14,
+            fontFamily: AppFonts.gothamBook,
           ),
           maxLines: 1,
         ),

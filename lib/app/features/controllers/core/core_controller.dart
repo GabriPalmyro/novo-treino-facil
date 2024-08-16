@@ -38,7 +38,8 @@ class CoreAppController extends ChangeNotifier {
       ));
       await _remoteConfig.fetchAndActivate();
       final iaTraining = await _remoteConfig.getBool('is_ia_training_available');
-      coreInfos = coreInfos.copyWith(mostrarIaTraining: iaTraining);
+      final showPremium = await _remoteConfig.getBool('show_premium');
+      coreInfos = coreInfos.copyWith(mostrarIaTraining: iaTraining, showPremium: showPremium);
     } catch (e, stack) {
       unawaited(Sentry.captureException(
         e,
