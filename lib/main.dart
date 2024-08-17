@@ -33,9 +33,11 @@ void main() async {
 
   await dotenv.load();
 
+  final sentryDns = dotenv.env['SENTRY_DSN'] ?? '';
+
   await SentryFlutter.init(
     (options) {
-      options.dsn = dotenv.env['SENTRY_DSN'];
+      options.dsn = sentryDns;
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
       options.enableAutoNativeBreadcrumbs = true;
