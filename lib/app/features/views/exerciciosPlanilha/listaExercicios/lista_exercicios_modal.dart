@@ -88,9 +88,10 @@ class _ListaExerciciosModalState extends State<ListaExerciciosModal> {
               context: context,
               title: 'Cancelar a adição desse(s) exercício(s)?',
               VoidCallBack: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
                 exerciciosPlanilha.limparExercicioBiSetLista();
-                Navigator.pop(context);
-                Navigator.pop(context);
               },
               message: 'Essa ação irá resultar na perda do(s) exercício(s) adicionado(s) até agora.',
             );

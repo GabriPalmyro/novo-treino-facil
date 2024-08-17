@@ -325,12 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: 'Crie treinos com IA',
                               iconePath: AppImages.treinosFaceis,
                               isAvailable: isPayUser || userManager.user.availableIATrainingGenerations > 0,
-                              // isAvailable: false,
                               valueLabel: isPayUser ? null : userManager.user.availableIATrainingGenerations.toString(),
                               valueTitle: 'Treinos Restantes',
                               onTap: () {
                                 if (!isPayUser && userManager.user.availableIATrainingGenerations <= 0) {
-                                  // if (true) {
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,

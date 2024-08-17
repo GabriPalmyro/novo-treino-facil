@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:tabela_treino/app/ads/ads_model.dart';
 import 'package:tabela_treino/app/core/core.dart';
 import 'package:tabela_treino/app/features/controllers/exercises/exercicios_manager.dart';
 import 'package:tabela_treino/app/features/controllers/iaTraining/ia_training_controller.dart';
@@ -23,8 +25,19 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
   late PageController _pageController;
   int page = 0;
 
+  InterstitialAd? _interstitialAd;
+
+  Future<void> _loadInterstitialAd() async {
+    AdHelper.loadInterstitialAd((ad) {
+      setState(() {
+        _interstitialAd = ad;
+      });
+    });
+  }
+
   @override
   void initState() {
+    _loadInterstitialAd();
     _pageController = PageController(
       initialPage: 0,
     )..addListener(() {
@@ -37,6 +50,7 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
 
   @override
   void dispose() {
+    _interstitialAd?.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -50,21 +64,21 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
     }
   }
 
+  void onPop() {
+    if (page > 0) {
+      _pageController.previousPage(
+        duration: Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (_) async {
-        if (page > 0) {
-          _pageController.previousPage(
-            duration: Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-          );
-          return Future.value(false);
-        } else {
-          Navigator.of(context).pop();
-          return Future.value(true);
-        }
-      },
+      onPopInvoked: (_) => onPop,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -81,16 +95,7 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              if (page > 0) {
-                _pageController.previousPage(
-                  duration: Duration(milliseconds: 250),
-                  curve: Curves.easeInOut,
-                );
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
+            onPressed: onPop,
           ),
         ),
         backgroundColor: AppColors.grey,
@@ -131,6 +136,11 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
                             );
 
                         await context.read<UserManager>().removeIAGenerationAvailable();
+
+                        if (_interstitialAd != null && !context.read<UserManager>().user.isPayApp) {
+                          await _interstitialAd!.show();
+                        }
+
                         Navigator.of(context).pushReplacementNamed(AppRoutes.iaTrainingResult);
                       } catch (exception, stackTrace) {
                         await Sentry.captureException(
