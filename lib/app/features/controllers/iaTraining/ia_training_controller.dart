@@ -94,29 +94,30 @@ class IATrainingController extends ChangeNotifier {
       throw Exception("Physical condition is required");
     }
 
-    // All validations passed, proceed with creating the IA training
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
-    if (apiKey == null) {
-      throw Exception("API key not found");
-    }
+    try {
+      // All validations passed, proceed with creating the IA training
+      final apiKey = dotenv.env['GEMINI_API_KEY'];
+      if (apiKey == null) {
+        throw Exception("API key not found");
+      }
 
-    // Simulate a delay to show the loading indicator
-    setLoading(true);
+      // Simulate a delay to show the loading indicator
+      setLoading(true);
 
-    final model = GenerativeModel(
-      model: 'gemini-1.5-flash',
-      apiKey: apiKey,
-      generationConfig: GenerationConfig(
-        temperature: 1,
-        topK: 64,
-        topP: 0.95,
-        maxOutputTokens: 8192,
-        responseMimeType: 'application/json',
-      ),
-    );
+      final model = GenerativeModel(
+        model: 'gemini-1.5-flash',
+        apiKey: apiKey,
+        generationConfig: GenerationConfig(
+          temperature: 1,
+          topK: 64,
+          topP: 0.95,
+          maxOutputTokens: 8192,
+          responseMimeType: 'application/json',
+        ),
+      );
 
-    final chat = model.startChat(history: []);
-    final message = '''
+      final chat = model.startChat(history: []);
+      final message = '''
       Create a training plan for a person with the following characteristics:
       - Name of training: ${props.name}
       - Goal of training: ${props.goal}
@@ -199,11 +200,10 @@ class IATrainingController extends ChangeNotifier {
     }
     ''';
 
-    log('Message: $message', name: 'IATrainingController - createIaTraining');
+      log('Message: $message', name: 'IATrainingController - createIaTraining');
 
-    final content = Content.text(message);
+      final content = Content.text(message);
 
-    try {
       final response = await chat.sendMessage(content);
       log('Response: ${response.text}', name: 'IATrainingController - createIaTraining');
 
