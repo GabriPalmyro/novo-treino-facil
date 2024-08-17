@@ -42,16 +42,12 @@ workflows:
           # Get the current date in YYYYMMDD format
           DATE=$(date +'%Y%m%d')
           LAST_TWO_DIGITS=$((RANDOM % 10))
-
+          
           # Calculate the version name and version number
           # VERSION_NAME="${{ inputs.version }}.${DATE}$((BUILD_NUMBER + 10))"
           # VERSION_NUMBER=${DATE}$((BUILD_NUMBER + 100))
           VERSION_NAME="${{ inputs.version }}.${DATE}${LAST_TWO_DIGITS}"
-          if [[ ${{ inputs.environment }} == "release" ]]; then
-            VERSION_NUMBER="2025${LAST_TWO_DIGITS}"
-          else
-            VERSION_NUMBER=${DATE}${LAST_TWO_DIGITS}
-          fi
+          VERSION_NUMBER=${DATE}${LAST_TWO_DIGITS}
 
           # Print out the versions for debugging
           echo "Building version: $VERSION_NAME and version number: $VERSION_NUMBER"
