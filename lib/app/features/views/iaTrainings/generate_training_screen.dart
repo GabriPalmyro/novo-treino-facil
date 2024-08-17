@@ -143,10 +143,7 @@ class _GenerateTrainingScreenState extends State<GenerateTrainingScreen> {
 
                         Navigator.of(context).pushReplacementNamed(AppRoutes.iaTrainingResult);
                       } catch (exception, stackTrace) {
-                        await Sentry.captureException(
-                          exception,
-                          stackTrace: stackTrace,
-                        );
+                        await Sentry.captureException(exception, stackTrace: stackTrace);
                         mostrarSnackBar(message: 'Occorreu um erro ao gerar o seu treino. Tente novamente ou aguarde.', color: AppColors.red, context: context);
                       }
                     },
