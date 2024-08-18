@@ -216,7 +216,8 @@ class IATrainingController extends ChangeNotifier {
       );
 
       setLoading(false);
-    } catch (e) {
+    } catch (e, s) {
+      await Sentry.captureException(e, stackTrace: s);
       setLoading(false);
       throw Exception("Failed to create the IA training: $e");
     }
