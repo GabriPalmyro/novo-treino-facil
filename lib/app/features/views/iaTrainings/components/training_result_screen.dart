@@ -19,15 +19,6 @@ class TrainingResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final loading = context.watch<IATrainingController>().getIsLoading;
 
-    if (loading) {
-      return Scaffold(
-        backgroundColor: AppColors.grey,
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     if (context.read<IATrainingController>().result == null) {
       return Scaffold(
         backgroundColor: AppColors.grey,
@@ -186,9 +177,10 @@ class TrainingResultScreen extends StatelessWidget {
               // : SizedBox();
             },
           ),
+          SliverToBoxAdapter(child: SizedBox(height: 12.0)),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               child: ButtonContinue(
                 title: 'Adicionar Treino',
                 onTap: () {
@@ -208,10 +200,26 @@ class TrainingResultScreen extends StatelessWidget {
                       );
                 },
                 isEnable: true,
-                isLoading: context.watch<IATrainingController>().getIsLoading,
+                isLoading: loading,
               ),
             ),
-          )
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 8.0)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Você pode editar o treino após adicioná-lo',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 14,
+                  fontFamily: AppFonts.gothamLight,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 24.0)),
         ],
       ),
     );

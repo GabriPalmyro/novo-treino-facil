@@ -328,7 +328,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               valueLabel: isPayUser ? null : userManager.user.availableIATrainingGenerations.toString(),
                               valueTitle: 'Treinos Restantes',
                               onTap: () {
-                                if (!isPayUser && userManager.user.availableIATrainingGenerations <= 0) {
+                                final showUpdateModal = !isPayUser &&
+                                    userManager.user.availableIATrainingGenerations <= 0 &&
+                                    (context.read<CoreAppController>().coreInfos.showPremium ?? false);
+
+                                if (showUpdateModal) {
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,

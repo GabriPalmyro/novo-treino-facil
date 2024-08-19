@@ -118,7 +118,7 @@ class ExerciseIA {
 
   Map<String, dynamic> toMapBiSet() {
     return {
-      'pos': 0,
+      'pos': pos,
       'set_type': set_type,
       'title1': title1,
       'title2': title2,
